@@ -30,3 +30,7 @@
 *.exe
 *.out
 *.app
+
+# Previous versions
+.vs\*
+.vs/*
