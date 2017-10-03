@@ -18,8 +18,10 @@ class Sprite
 
 public:
 	// Textured quads can only be created inside an OpenGL context
+	static Sprite *createSprite(const glm::vec2 &quadSize, const glm::vec2 &texSize, const glm::vec2 &texPos, Texture *spritesheet, ShaderProgram *program);
 	static Sprite *createSprite(const glm::vec2 &quadSize, const glm::vec2 &sizeInSpritesheet, Texture *spritesheet, ShaderProgram *program);
 
+	Sprite(const glm::vec2 &quadSize, const glm::vec2 &sizeInSpritesheet, const glm::vec2 &posInSpritesheet, Texture *spritesheet, ShaderProgram *program);
 	Sprite(const glm::vec2 &quadSize, const glm::vec2 &sizeInSpritesheet, Texture *spritesheet, ShaderProgram *program);
 
 	void update(int deltaTime);

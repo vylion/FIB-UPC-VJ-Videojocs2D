@@ -3,6 +3,17 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "Sprite.h"
 
+/*
+Supports subtextures starting at posInSpritesheet pixels
+*/
+Sprite * Sprite::createSprite(const glm::vec2 & quadSize, const glm::vec2 & texSize, const glm::vec2 & texPos, Texture * spritesheet, ShaderProgram * program)
+{
+	glm::vec2 texSizeInSpritesheet = glm::vec2(texSize.x / spritesheet->width(), texSize.y / spritesheet->height());
+	glm::vec2 texPosInSpritesheet = glm::vec2(texPos.x / spritesheet->width(), texPos.y / spritesheet->height());
+	Sprite *quad = new Sprite(quadSize, texSizeInSpritesheet, texPosInSpritesheet, spritesheet, program);
+
+	return quad;
+}
 
 Sprite *Sprite::createSprite(const glm::vec2 &quadSize, const glm::vec2 &sizeInSpritesheet, Texture *spritesheet, ShaderProgram *program)
 {
@@ -12,14 +23,40 @@ Sprite *Sprite::createSprite(const glm::vec2 &quadSize, const glm::vec2 &sizeInS
 }
 
 
+Sprite::Sprite(const glm::vec2 & quadSize, const glm::vec2 & sizeInSpritesheet, const glm::vec2 & posInSpritesheet, Texture * spritesheet, ShaderProgram * program)
+{
+	glm::vec2 t_pos = posInSpritesheet;
+	glm::vec2 t_siz = sizeInSpritesheet;
+	//						Lower right triangle
+	float vertices[24] = {  0.f,		0.f,		t_pos.x,			t_pos.y,
+							quadSize.x, 0.f,		t_pos.x + t_siz.x,	t_pos.y,
+							quadSize.x, quadSize.y, t_pos.x + t_siz.x,	t_pos.y + t_siz.y,
+	//						Upper left triangle
+							0.f,		0.f,		t_pos.x,			t_pos.y,
+							quadSize.x, quadSize.y, t_pos.x + t_siz.x,	t_pos.y + t_siz.y,
+							0.f,		quadSize.y, t_pos.x,			t_pos.y + t_siz.y };
+
+	glGenVertexArrays(1, &vao);
+	glBindVertexArray(vao);
+	glGenBuffers(1, &vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBufferData(GL_ARRAY_BUFFER, 24 * sizeof(float), vertices, GL_STATIC_DRAW);
+	posLocation = program->bindVertexAttribute("position", 2, 4 * sizeof(float), 0);
+	texCoordLocation = program->bindVertexAttribute("texCoord", 2, 4 * sizeof(float), (void *)(2 * sizeof(float)));
+	texture = spritesheet;
+	shaderProgram = program;
+	currentAnimation = -1;
+	position = glm::vec2(0.f);
+}
+
 Sprite::Sprite(const glm::vec2 &quadSize, const glm::vec2 &sizeInSpritesheet, Texture *spritesheet, ShaderProgram *program)
 {
 	float vertices[24] = {0.f, 0.f, 0.f, 0.f, 
-												quadSize.x, 0.f, sizeInSpritesheet.x, 0.f, 
-												quadSize.x, quadSize.y, sizeInSpritesheet.x, sizeInSpritesheet.y, 
-												0.f, 0.f, 0.f, 0.f, 
-												quadSize.x, quadSize.y, sizeInSpritesheet.x, sizeInSpritesheet.y, 
-												0.f, quadSize.y, 0.f, sizeInSpritesheet.y};
+						  quadSize.x, 0.f, sizeInSpritesheet.x, 0.f, 
+						  quadSize.x, quadSize.y, sizeInSpritesheet.x, sizeInSpritesheet.y, 
+						  0.f, 0.f, 0.f, 0.f, 
+						  quadSize.x, quadSize.y, sizeInSpritesheet.x, sizeInSpritesheet.y, 
+						  0.f, quadSize.y, 0.f, sizeInSpritesheet.y};
 
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
