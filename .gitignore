@@ -37,3 +37,6 @@
 .vs/*
 #Logs
 *-logs*
+*tlog\*
+*.log
+*.tlog
