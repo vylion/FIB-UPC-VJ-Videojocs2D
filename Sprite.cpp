@@ -14,13 +14,13 @@ Sprite * Sprite::createSprite(const glm::vec2 & quadSize, const glm::vec2 & texS
 
 	return quad;
 }
-
+/*
 Sprite *Sprite::createSprite(const glm::vec2 &quadSize, const glm::vec2 &sizeInSpritesheet, Texture *spritesheet, ShaderProgram *program)
 {
 	Sprite *quad = new Sprite(quadSize, sizeInSpritesheet, spritesheet, program);
 
 	return quad;
-}
+}*/
 
 
 Sprite::Sprite(const glm::vec2 & quadSize, const glm::vec2 & sizeInSpritesheet, const glm::vec2 & posInSpritesheet, Texture * spritesheet, ShaderProgram * program)
@@ -48,7 +48,7 @@ Sprite::Sprite(const glm::vec2 & quadSize, const glm::vec2 & sizeInSpritesheet, 
 	currentAnimation = -1;
 	position = glm::vec2(0.f);
 }
-
+/*
 Sprite::Sprite(const glm::vec2 &quadSize, const glm::vec2 &sizeInSpritesheet, Texture *spritesheet, ShaderProgram *program)
 {
 	float vertices[24] = {0.f, 0.f, 0.f, 0.f, 
@@ -70,7 +70,7 @@ Sprite::Sprite(const glm::vec2 &quadSize, const glm::vec2 &sizeInSpritesheet, Te
 	currentAnimation = -1;
 	position = glm::vec2(0.f);
 }
-
+*/
 void Sprite::update(int deltaTime)
 {
 	if(currentAnimation >= 0)

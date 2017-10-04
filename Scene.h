@@ -23,8 +23,6 @@ public:
 	void init();
 	void update(int deltaTime);
 	void render();
-
-private:
 	void initShaders();
 
 private:
@@ -34,9 +32,6 @@ private:
 	ShaderProgram texProgram;
 	float currentTime;
 	glm::mat4 projection;
-
 };
-
-
 #endif // _SCENE_INCLUDE
 
