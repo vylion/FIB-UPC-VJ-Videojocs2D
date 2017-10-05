@@ -4,14 +4,14 @@
 #include "../Sprite.h"
 //#include "../Game.h"
 //Soon(TM)
-//#include "BallManager.h"
+#include "BallManager.h"
 
 class Aimer
 {
 
 public:
 	Aimer() {}
-	void init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram);
+	void init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram, BallManager &bmng);
 	void update(int deltaTime);
 	void render();
 
@@ -21,9 +21,9 @@ private:
 	int _shootTime;
 	float _angle;
 	Texture _spritesheet;
-	Sprite *_sprite, *_heldBall;
-	//Soon(TM)
-	//BallManager *_bmng;
+	Sprite *_sprite;
+	//Ball *_heldBall;
+	BallManager *_bmng;
 };
 #endif
 

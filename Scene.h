@@ -7,6 +7,7 @@
 #include "TileMap.h"
 #include "Player.h"
 #include "02-Bubble/Aimer.h"
+#include "02-Bubble/BallManager.h"
 
 
 // Scene contains all the entities of our game.
@@ -29,6 +30,7 @@ private:
 	TileMap *map;
 	Player *player;
 	Aimer *aimer;
+	BallManager *bmng;
 	ShaderProgram texProgram;
 	float currentTime;
 	glm::mat4 projection;

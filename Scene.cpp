@@ -42,7 +42,9 @@ void Scene::init()
 	//player->setTileMap(map);
 
 	aimer = new Aimer();
-	aimer->init(glm::ivec2(INIT_PLAYER_X_TILES, INIT_PLAYER_Y_TILES), texProgram);
+	bmng = new BallManager();
+	bmng->init("../levels/level01.txt");
+	aimer->init(glm::ivec2(INIT_PLAYER_X_TILES, INIT_PLAYER_Y_TILES), texProgram, *bmng);
 
 	projection = glm::ortho(0.f, float(SCREEN_WIDTH - 1), float(SCREEN_HEIGHT - 1), 0.f);
 	currentTime = 0.0f;
@@ -53,6 +55,7 @@ void Scene::update(int deltaTime)
 	currentTime += deltaTime;
 	//player->update(deltaTime);
 	aimer->update(deltaTime);
+	bmng->update(deltaTime);
 }
 
 void Scene::render()
@@ -67,6 +70,7 @@ void Scene::render()
 	texProgram.setUniform2f("texCoordDispl", 0.f, 0.f);
 	map->render();
 	aimer->render();
+	bmng->render();
 	//player->render();
 }
 

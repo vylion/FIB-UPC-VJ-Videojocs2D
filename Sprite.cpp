@@ -47,6 +47,7 @@ Sprite::Sprite(const glm::vec2 & quadSize, const glm::vec2 & sizeInSpritesheet, 
 	shaderProgram = program;
 	currentAnimation = -1;
 	position = glm::vec2(0.f);
+	size = quadSize;
 }
 /*
 Sprite::Sprite(const glm::vec2 &quadSize, const glm::vec2 &sizeInSpritesheet, Texture *spritesheet, ShaderProgram *program)
@@ -88,6 +89,23 @@ void Sprite::update(int deltaTime)
 void Sprite::render() const
 {
 	glm::mat4 modelview = glm::translate(glm::mat4(1.0f), glm::vec3(position.x, position.y, 0.f));
+	shaderProgram->setUniformMatrix4f("modelview", modelview);
+	shaderProgram->setUniform2f("texCoordDispl", texCoordDispl.x, texCoordDispl.y);
+	glEnable(GL_TEXTURE_2D);
+	texture->use();
+	glBindVertexArray(vao);
+	glEnableVertexAttribArray(posLocation);
+	glEnableVertexAttribArray(texCoordLocation);
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+	glDisable(GL_TEXTURE_2D);
+}
+
+void Sprite::render(float angle) const
+{
+	glm::mat4 modelview = glm::translate(glm::mat4(1.0f), glm::vec3(position.x, position.y, 0.f));
+	modelview = glm::translate(modelview, glm::vec3(size.x / 2, size.y / 2, 0.f));
+	modelview = glm::rotate(modelview, angle, glm::vec3(0.f, 0.f, 1.f));
+	modelview = glm::translate(modelview, glm::vec3(-size.x/2, -size.y/2, 0.f));
 	shaderProgram->setUniformMatrix4f("modelview", modelview);
 	shaderProgram->setUniform2f("texCoordDispl", texCoordDispl.x, texCoordDispl.y);
 	glEnable(GL_TEXTURE_2D);
