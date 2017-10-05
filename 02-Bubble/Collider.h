@@ -5,14 +5,14 @@
 
 class Collider
 {
-    typedef std::pair<vec2, vec2> lineSegment;
+    typedef std::pair<glm::vec2, glm::vec2> lineSegment;
 
     public:
-        bool lineCrollision(const lineSegment& s, const lineSegment& t);
+        bool lineCollision(const lineSegment& s, const lineSegment& t);
 
     private:
-        float orientation2D(const vec2& p, const vec2& q, const vec2& r);
-        float orientation25D(const vec2& p, const vec2& q, const vec2& r, const vec2& t);
+        float orientation2D(const glm::vec2& p, const glm::vec2& q, const glm::vec2& r);
+        float orientation25D(const glm::vec2& p, const glm::vec2& q, const glm::vec2& r, const glm::vec2& t);
         bool Collider::checkInsideRectangle(const Collider::lineSegment& t, const Collider::lineSegment& s);
         int lineCrossTest(const lineSegment& s, const lineSegment& t);
 

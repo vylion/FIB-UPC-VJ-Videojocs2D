@@ -1,18 +1,18 @@
 
 #include "Collider.h"
 
-float Collider::orientation2D(const vec2& p, const vec2& q, const vec2& r)
+float Collider::orientation2D(const glm::vec2& p, const glm::vec2& q, const glm::vec2& r)
 {
     // Indica la orientacion del vector pq respecto al vector pr
     // O, dicho de otra forma, si r está "por encima" o "por debajo" de la recta
     // formada por pq
-    vec2 pq = q - p;
-    vec2 pr = r - p;
+    glm::vec2 pq = q - p;
+    glm::vec2 pr = r - p;
 
     return pq.x * pr.y - pr.x * pq.y;
 }
 
-float Collider::orientation25D(const vec2& p, const vec2& q, const vec2& r, const vec2& t)
+float Collider::orientation25D(const glm::vec2& p, const glm::vec2& q, const glm::vec2& r, const glm::vec2& t)
 {
     // Indica la orientacion de un punto respecto un círculo
     // Dentro, fuera o en la circumferencia
@@ -53,16 +53,16 @@ bool Collider::checkInsideRectangle(const Collider::lineSegment& t, const Collid
         y_max = t.second.y;
     }
     /*
-    return (((s.first.x >= x_min and s.first.x <= x_max) and
-        (s.first.y >= y_min and s.first.y <= y_max)) or
-        (s.second.x >= x_min and s.second.x <= x_max) and
-        (s.second.y >= y_min and s.second.y <= y_max));
+    return (((s.first.x >= x_min && s.first.x <= x_max) and
+        (s.first.y >= y_min && s.first.y <= y_max)) or
+        (s.second.x >= x_min && s.second.x <= x_max) and
+        (s.second.y >= y_min && s.second.y <= y_max));
         */
 
     //Since we only call this function when lines are aligned, just checking in
     // one axis already works
-    return ((s.first.x >= x_min and s.first.x <= x_max) or
-        (s.second.x >= x_min and s.second.x <= x_max));
+    return ((s.first.x >= x_min && s.first.x <= x_max) ||
+        (s.second.x >= x_min && s.second.x <= x_max));
 }
 
 int Collider::lineCrossTest(Collider::lineSegment& s, Collider::lineSegment& t)
@@ -89,8 +89,8 @@ int Collider::lineCrossTest(Collider::lineSegment& s, Collider::lineSegment& t)
     }
     //Segment t has just one endpoint on the line over segment s
     else if((t1 > 0) != (t2 > 0)) {
-        //Segment t and segment s share an endpoint
-        if(s.first == t.first or s.second == t.first or s.first == t.second or s.second == t.second) {
+        //Segment t && segment s share an endpoint
+        if(s.first == t.first || s.second == t.first || s.first == t.second || s.second == t.second) {
             return ANGLE_CROSS;
         }
         //Segment s has endpoints on either side of t
@@ -99,12 +99,12 @@ int Collider::lineCrossTest(Collider::lineSegment& s, Collider::lineSegment& t)
         }
     }
     //Segment t has both endpoints on the line over segment s
-    else if((t1 == 0) and (t2 == 0)) {
+    else if((t1 == 0) && (t2 == 0)) {
 
-        //Segment s and segment t share one endpoint
-        if(s.first == t.first or s.second == t.first or s.first == t.second or s.second == t.second) {
-            //Segment s and t share both endpoints
-            if((s.first == t.first and s.second == t.second) or (s.first == t.second and s.second == t.first)) {
+        //Segment s && segment t share one endpoint
+        if(s.first == t.first || s.second == t.first || s.first == t.second || s.second == t.second) {
+            //Segment s && t share both endpoints
+            if((s.first == t.first && s.second == t.second) || (s.first == t.second && s.second == t.first)) {
                 return FULL_OVERLAP;
             }
             else {
@@ -127,7 +127,7 @@ int Collider::lineCrossTest(Collider::lineSegment& s, Collider::lineSegment& t)
 
 // Auxiliar function to pick the line cross cases we want to consider a
 // collision
-bool lineCrollision(Collider::lineSegment& s, Collider::lineSegment& t)
+bool lineCollision(Collider::lineSegment& s, Collider::lineSegment& t)
 {
     test = lineCrossTest(s, t);
 
