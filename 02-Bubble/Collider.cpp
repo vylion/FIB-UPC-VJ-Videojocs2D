@@ -65,7 +65,7 @@ bool Collider::checkInsideRectangle(const Collider::lineSegment& t, const Collid
         (s.second.x >= x_min && s.second.x <= x_max));
 }
 
-int Collider::lineCrossTest(Collider::lineSegment& s, Collider::lineSegment& t)
+int Collider::lineCrossTest(const Collider::lineSegment& s, const Collider::lineSegment& t)
 {
     //Indica si una línea cruza o no, y un montón de casos límite
 
@@ -127,9 +127,9 @@ int Collider::lineCrossTest(Collider::lineSegment& s, Collider::lineSegment& t)
 
 // Auxiliar function to pick the line cross cases we want to consider a
 // collision
-bool lineCollision(Collider::lineSegment& s, Collider::lineSegment& t)
+bool Collider::lineCollision(const Collider::lineSegment& s, const Collider::lineSegment& t)
 {
-    test = lineCrossTest(s, t);
+    int test = lineCrossTest(s, t);
 
     return test > 0;
 }

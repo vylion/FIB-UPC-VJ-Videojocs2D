@@ -1,6 +1,7 @@
 #ifndef _COLLIDER_INCLUDE
 #define _COLLIDER_INCLUDE
 
+#include <utility>
 #include <glm/glm.hpp>
 
 class Collider
@@ -13,7 +14,7 @@ class Collider
     private:
         float orientation2D(const glm::vec2& p, const glm::vec2& q, const glm::vec2& r);
         float orientation25D(const glm::vec2& p, const glm::vec2& q, const glm::vec2& r, const glm::vec2& t);
-        bool Collider::checkInsideRectangle(const Collider::lineSegment& t, const Collider::lineSegment& s);
+        bool checkInsideRectangle(const Collider::lineSegment& t, const Collider::lineSegment& s);
         int lineCrossTest(const lineSegment& s, const lineSegment& t);
 
         // Line cross cases:
