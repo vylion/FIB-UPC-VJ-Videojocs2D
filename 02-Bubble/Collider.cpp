@@ -3,6 +3,9 @@
 
 float Collider::orientation2D(const vec2& p, const vec2& q, const vec2& r)
 {
+    // Indica la orientacion del vector pq respecto al vector pr
+    // O, dicho de otra forma, si r está "por encima" o "por debajo" de la recta
+    // formada por pq
     vec2 pq = q - p;
     vec2 pr = r - p;
 
@@ -11,6 +14,8 @@ float Collider::orientation2D(const vec2& p, const vec2& q, const vec2& r)
 
 float Collider::orientation25D(const vec2& p, const vec2& q, const vec2& r, const vec2& t)
 {
+    // Indica la orientacion de un punto respecto un círculo
+    // Dentro, fuera o en la circumferencia
     float pos = (q.x-p.x)*(r.y-p.y)*((t.x-p.x)*(t.x+p.x)+(t.y-p.y)*(t.y+p.y));
     pos +=    (r.x-p.x)*(t.y-p.y)*((q.x-p.x)*(q.x+p.x)+(q.y-p.y)*(q.y+p.y));
     pos +=    (t.x-p.x)*(q.y-p.y)*((r.x-p.x)*(r.x+p.x)+(r.y-p.y)*(r.y+p.y));
@@ -23,11 +28,12 @@ float Collider::orientation25D(const vec2& p, const vec2& q, const vec2& r, cons
 }
 
 bool Collider::checkInsideRectangle(const Collider::lineSegment& t, const Collider::lineSegment& s) {
-
-    num x_min;
-    num y_min;
-    num x_max;
-    num y_max;
+    // Comprueba si al menos una parte de un segmento está dentro del rectángulo
+    // que forman los extremos del otro segmento
+    float x_min;
+    float y_min;
+    float x_max;
+    float y_max;
 
     if(t.first.x > t.second.x) {
         x_min = t.second.x;
@@ -59,72 +65,71 @@ bool Collider::checkInsideRectangle(const Collider::lineSegment& t, const Collid
         (s.second.x >= x_min and s.second.x <= x_max));
 }
 
-bool Collider::lineCross(Collider::lineSegment& s, Collider::lineSegment& t)
+int Collider::lineCrossTest(Collider::lineSegment& s, Collider::lineSegment& t)
 {
-    num t1 = Collider::orientation2D(s.first, s.second, t.first);
-    num t2 = Collider::orientation2D(s.first, s.second, t.second);
-    num s1 = Collider::orientation2D(t.first, t.second, s.first);
-    num s2 = Collider::orientation2D(t.first, t.second, s.second);
+    //Indica si una línea cruza o no, y un montón de casos límite
+
+    float t1 = Collider::orientation2D(s.first, s.second, t.first);
+    float t2 = Collider::orientation2D(s.first, s.second, t.second);
+    float s1 = Collider::orientation2D(t.first, t.second, s.first);
+    float s2 = Collider::orientation2D(t.first, t.second, s.second);
 
     //Segment t has endpoints on either side of s
     if((t1 < 0) != (t2 < 0)) {
         //Segment s has endpoints on either side of t
         if((s1 < 0) != (s2 < 0)) {
             // Intersection in a middle point
-            return true;
+            return FULL_CROSS;
         }
         //Segment s has just one endpoint on the line over segment t
         else if((s1 > 0) != (s2 > 0)) {
             // Endpoint on the intersection
-            return true;
+            return T_CROSS;
         }
     }
-
-    /*
     //Segment t has just one endpoint on the line over segment s
     else if((t1 > 0) != (t2 > 0)) {
         //Segment t and segment s share an endpoint
-
-
-        if(s[0] == t[0] or s[1] == t[0] or s[0] == t[1] or s[1] == t[1]) {
-            desc = "Intersection at a shared endpoint (orange)";
-            colour = orange;
+        if(s.first == t.first or s.second == t.first or s.first == t.second or s.second == t.second) {
+            return ANGLE_CROSS;
         }
         //Segment s has endpoints on either side of t
         else if((s1 < 0) != (s2 < 0)) {
-            desc = "Endpoint on the intersection (yellow)";
-            colour = yellow;
+            return T_CROSS;
         }
     }
     //Segment t has both endpoints on the line over segment s
     else if((t1 == 0) and (t2 == 0)) {
-        desc = " on a shared line";
 
         //Segment s and segment t share one endpoint
-        if(s[0] == t[0] or s[1] == t[0] or s[0] == t[1] or s[1] == t[1]) {
+        if(s.first == t.first or s.second == t.first or s.first == t.second or s.second == t.second) {
             //Segment s and t share both endpoints
-            if((s[0] == t[0] and s[1] == t[1]) or (s[0] == t[1] and s[1] == t[0])) {
-                desc = "Full overlap (white)";
-                colour = white;
+            if((s.first == t.first and s.second == t.second) or (s.first == t.second and s.second == t.first)) {
+                return FULL_OVERLAP;
             }
             else {
-                desc = "Intersection at a shared endpoint (purple)";
-                colour = purple;
+                return CLOCKHAND_OVERLAP;
             }
         }
         //Segment t has one endpoint inside the rectangle covering both endpoints of s
         //Since t's endpoints are already on the line over s, this means having it on s
         else if(checkInsideRectangle(s, t)) {
-            desc = "Overlap (intersection)" + desc + " (dark blue)";
-            colour = darkblue;
+            return PARTIAL_OVERLAP;
         }
         //Segment t has both endpoints on the line over s, but none inside s
         else {
-            desc = "No intersection, but" + desc + " (blue)";
-            colour = blue;
+            return NOT_CROSS;
         }
     }
-    */
-    
-    return false;
+
+    return NOT_CROSS;
+}
+
+// Auxiliar function to pick the line cross cases we want to consider a
+// collision
+bool lineCrollision(Collider::lineSegment& s, Collider::lineSegment& t)
+{
+    test = lineCrossTest(s, t);
+
+    return test > 0;
 }
