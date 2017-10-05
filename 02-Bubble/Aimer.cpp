@@ -7,7 +7,7 @@
 
 
 #define SHOOT_COOLDOWN 50						//Time between ball stop and next shot
-#define MAX_ANGLE 0.75f							//Angle will be 75 degrees -> radians
+#define MAX_ANGLE 1.f							//Angle will be 75 degrees -> radians
 
 void Aimer::init(const glm::ivec2 & tileMapPos, ShaderProgram & shaderProgram, BallManager & bmng)
 {
@@ -55,6 +55,6 @@ void Aimer::update(int deltaTime)
 
 void Aimer::render()
 {
-	_sprite->render(_angle);
+	_sprite->render(_angle, glm::vec2(0.5f, 37.75f / 64.f));
 	//_heldBall->render();
 }

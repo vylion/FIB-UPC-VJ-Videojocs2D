@@ -27,3 +27,12 @@ bool BallManager::ballUpdatesLeft()
 {
 	return false;
 }
+
+Ball * BallManager::getNextHeldBall()
+{
+	return nullptr;
+}
+
+void BallManager::launchHeldBall(Ball * heldBall, float angle)
+{
+}

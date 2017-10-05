@@ -5,7 +5,7 @@
 #include <string>
 using namespace std;
 
-//#include "Ball.h"
+#include "Ball.h"
 
 class BallManager
 {
@@ -19,14 +19,12 @@ public:
 
 	
 	bool ballUpdatesLeft();
-	/*
+	
 	Ball *getNextHeldBall();
 	void launchHeldBall(Ball *heldBall, float angle);
-	*/
-
 
 private:
-	//Ball *_ballMatrix, *_heldBall, *_nextBall;
+	Ball *_ballMatrix, *_heldBall, *_nextBall;
 
 };
 #endif

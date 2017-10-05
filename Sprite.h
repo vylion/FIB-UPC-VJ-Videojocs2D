@@ -27,6 +27,7 @@ public:
 	void update(int deltaTime);
 	void render() const;
 	void render(float angle) const;
+	void render(float angle, const glm::vec2 rotationAxisRatio) const;
 	void free();
 
 	void setNumberAnimations(int nAnimations);

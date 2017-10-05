@@ -21,7 +21,9 @@
     <ClCompile Include="..\Texture.cpp" />
     <ClCompile Include="..\TileMap.cpp" />
     <ClCompile Include="Aimer.cpp" />
+    <ClCompile Include="Ball.cpp" />
     <ClCompile Include="BallManager.cpp" />
+    <ClCompile Include="Collider.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Game.h" />
@@ -33,7 +35,9 @@
     <ClInclude Include="..\Texture.h" />
     <ClInclude Include="..\TileMap.h" />
     <ClInclude Include="Aimer.h" />
+    <ClInclude Include="Ball.h" />
     <ClInclude Include="BallManager.h" />
+    <ClInclude Include="Collider.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{5BE6CA2A-E5A8-40CC-9015-047CE0C78036}</ProjectGuid>
