@@ -19,7 +19,7 @@ void Aimer::init(const glm::ivec2 & tileMapPos, ShaderProgram & shaderProgram, B
 		printf("A");
 	}
 	//Quad size, Texture size, Texture position, Texture sheet, program
-	_sprite = Sprite::createSprite(glm::ivec2(16, 64), glm::vec2(16.f, 64.f), glm::vec2(32.f, 0.f), &_spritesheet, &shaderProgram);
+	_sprite = Sprite::createSprite(glm::ivec2(16, 64), glm::vec2(16.f, 64.f), glm::vec2(0.f, 0.f), &_spritesheet, &shaderProgram);
 	_sprite->setPosition(tileMapPos*16);
 	_bmng = &bmng;
 
