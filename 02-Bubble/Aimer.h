@@ -11,7 +11,7 @@ class Aimer
 
 public:
 	Aimer() {}
-	void init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram, BallManager &bmng);
+	void init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram, BallManager *bmng);
 	void update(int deltaTime);
 	void render();
 
@@ -22,7 +22,7 @@ private:
 	float _angle;
 	Texture _spritesheet;
 	Sprite *_sprite;
-	//Ball *_heldBall;
+	Ball *_heldBall;
 	BallManager *_bmng;
 };
 #endif

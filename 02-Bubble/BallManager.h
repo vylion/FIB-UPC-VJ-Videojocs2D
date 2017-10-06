@@ -24,7 +24,8 @@ public:
 	void launchHeldBall(Ball *heldBall, float angle);
 
 private:
-	Ball *_ballMatrix, *_heldBall, *_nextBall;
+	Ball *_ballMatrix, *_launchedBall, *_heldBall, *_nextBall;
 
+	Ball *getNewBall();
 };
 #endif

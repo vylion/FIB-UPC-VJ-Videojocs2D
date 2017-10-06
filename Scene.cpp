@@ -44,7 +44,7 @@ void Scene::init()
 	aimer = new Aimer();
 	bmng = new BallManager();
 	bmng->init("../levels/level01.txt");
-	aimer->init(glm::ivec2(INIT_PLAYER_X_TILES, INIT_PLAYER_Y_TILES), texProgram, *bmng);
+	aimer->init(glm::ivec2(INIT_PLAYER_X_TILES, INIT_PLAYER_Y_TILES), texProgram, bmng);
 
 	projection = glm::ortho(0.f, float(SCREEN_WIDTH - 1), float(SCREEN_HEIGHT - 1), 0.f);
 	currentTime = 0.0f;
@@ -55,7 +55,7 @@ void Scene::update(int deltaTime)
 	currentTime += deltaTime;
 	//player->update(deltaTime);
 	aimer->update(deltaTime);
-	bmng->update(deltaTime);
+	//bmng->update(deltaTime);
 }
 
 void Scene::render()

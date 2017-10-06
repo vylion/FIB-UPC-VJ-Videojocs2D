@@ -100,6 +100,7 @@ void Sprite::render() const
 	glDisable(GL_TEXTURE_2D);
 }
 
+//Renders a rotated sprite at @angle
 void Sprite::render(float angle) const
 {
 	glm::mat4 modelview = glm::translate(glm::mat4(1.0f), glm::vec3(position.x, position.y, 0.f));
@@ -117,6 +118,10 @@ void Sprite::render(float angle) const
 	glDisable(GL_TEXTURE_2D);
 }
 
+/*
+Renders a rotated sprite at @angle, and relative to point @rotationAxisRatio
+@rotationAxisRatio represents the %s of the sprite that will serve as center
+*/
 void Sprite::render(float angle, const glm::vec2 rotationAxisRatio) const
 {
 	glm::mat4 modelview = glm::translate(glm::mat4(1.0f), glm::vec3(position.x, position.y, 0.f));
