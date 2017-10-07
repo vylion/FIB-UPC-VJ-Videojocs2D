@@ -84,7 +84,22 @@ glm::vec2 Ball::getPosition()
 void Ball::setPosition(glm::vec2 & pos)
 {
 	_position = pos;
-	_sprite->setPosition(_position);
+	glm::vec2 oddPos = glm::vec2(_position.x + _size.x / 2 * _oddRow, _position.y);
+	_sprite->setPosition(oddPos);
+}
+
+bool Ball::getOddRow()
+{
+	return _oddRow;
+}
+
+void Ball::setOddRow(const bool & oddRow)
+{
+	_oddRow = oddRow;
+	//Will add half the sprite of distance if odd
+	glm::vec2 oddPos = glm::vec2(_position.x + _size.x / 2 * _oddRow, _position.y);
+
+	_sprite->setPosition(oddPos);
 }
 
 void Ball::setSpeed(const glm::vec2 & speed)

@@ -126,16 +126,15 @@ bool BallManager::readLevel(const string & levelFile, glm::vec2 &mapSize)
 	_ballTexSize = glm::vec2(1.f / _spritesheetSize.x, 1.f / _spritesheetSize.y);
 
 	int *colorMatrix = new int[_matrixSize.x * _matrixSize.y];
+	int iterated = 0;
 	for (int j = 0; j<_matrixSize.y; j++)
 	{
 		//Account for odd rows having less balls (0 = even!)
-		for (int i = 0; i<_matrixSize.x - i%2; i++)
+		for (int i = 0; i<_matrixSize.x - j%2; i++)
 		{
 			fin.get(ballColor);
-			if (ballColor == ' ')
-				colorMatrix[j*_matrixSize.x + i] = 0;
-			else
-				colorMatrix[j*_matrixSize.x + i] = ballColor - int('0');
+			colorMatrix[iterated] = ballColor - int('0');
+			iterated++;
 		}
 		fin.get(ballColor);
 #ifndef _WIN32

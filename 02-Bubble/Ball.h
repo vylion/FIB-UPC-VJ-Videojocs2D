@@ -30,10 +30,13 @@ public:
 	glm::vec2 getPosition();
 	void setPosition(glm::vec2 &pos);
 
+	bool getOddRow();
+	void setOddRow(const bool &oddRow);
+
 private:
 	glm::vec2 _position, _size, _sizeInSpritesheet, _speed;
 	int _color;
-	bool _falling;
+	bool _falling, _oddRow;
 	Sprite *_sprite;
 	Texture *_texture;
 

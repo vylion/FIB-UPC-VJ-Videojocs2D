@@ -14,16 +14,18 @@ BallMatrix::BallMatrix( int * colorMatrix,
 	_spritesheet = spritesheet;
 	_shaderProgram = shaderProgram;
 
-	//Iterate through y to create rows
+	int iterated = 0;
 	for (int i = 0; i < matrixDimensions.y; ++i) {
 		vector<Ball*> ballRow;
 		//If row is odd, consider 1 less ball to give hex pattern
 		for (int j = 0; j < matrixDimensions.x - i%2; ++j) {
-			Ball *b = ballFromColor(colorMatrix[i]);
-			b->setPosition(glm::vec2(16.f*i, 16.f*j));
+			Ball *b = ballFromColor(colorMatrix[iterated]);
+			//Change to in-screen limits
+			b->setPosition(glm::vec2(16.f*(j + 3), 32.f));
 			//To account for displacement
-			//b->setOddRow(i%2);
+			b->setOddRow((i % 2 != 0));
 			ballRow.push_back(b);
+			iterated++;
 		}
 		_hiddenBallMatrix.push_back(ballRow);
 	}
@@ -31,6 +33,7 @@ BallMatrix::BallMatrix( int * colorMatrix,
 	for (int i = 0; i < visibleMatrixHeight; ++i) {
 		passRowToShown();
 	}
+
 }
 
 void BallMatrix::update(int &deltaTime)
