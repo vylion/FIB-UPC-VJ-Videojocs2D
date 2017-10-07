@@ -96,6 +96,6 @@ void BallMatrix::passRowToShown()
 			_shownBallMatrix[i][j]->setPosition(nextPos);
 		}
 	}
-	_shownBallMatrix.push_back(_hiddenBallMatrix[0]);
-	_hiddenBallMatrix.erase(_hiddenBallMatrix.begin());
+	_shownBallMatrix.push_back(_hiddenBallMatrix[_hiddenBallMatrix.size()-1]);
+	_hiddenBallMatrix.erase(_hiddenBallMatrix.end()-1);
 }
