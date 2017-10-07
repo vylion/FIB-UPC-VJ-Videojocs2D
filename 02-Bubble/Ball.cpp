@@ -1,26 +1,23 @@
 #include "Ball.h"
 
-Ball::Ball()
+Ball::Ball(const glm::vec2 & sizeInSpritesheet, Texture *spritesheet, ShaderProgram & shaderProgram)
 {
-}
-
-
-Ball::~Ball()
-{
-}
-
-void Ball::init(int color, const glm::vec2 & position, const glm::vec2 & size, Texture *spritesheet, ShaderProgram & shaderProgram)
-{
-	_sprite = Sprite::createSprite(glm::vec2(32,32), size, glm::vec2(16.f*color,0.f), spritesheet, &shaderProgram);
-	_isHeld = false;
+	_size = glm::vec2(32, 32);
+	_sprite = Sprite::createSprite(_size, sizeInSpritesheet, spritesheet, &shaderProgram);
 	_falling = false;
+}
+
+void Ball::init(int color, const glm::vec2 & position, bool falling)
+{
 	_color = color;
+	//Set texture according to color code (x = 1.f sheet size / 8 different colors * color code)
+	_sprite->setTexturePosition(glm::vec2(1.f/8 * color, 0.f));
 	_position = position;
-	_size = size;
+	_falling = falling;
 	_speed = glm::vec2(0.f, 0.f);
 }
 
-void Ball::update(int deltaTime)
+void Ball::update(int & deltaTime)
 {
 	if (_falling) {
 		_position = glm::vec2(_position.x + _speed.x*deltaTime / 200, _position.y + _speed.y*deltaTime / 200);
@@ -30,22 +27,18 @@ void Ball::update(int deltaTime)
 
 void Ball::render()
 {
-	//_sprite->render();
-}
-
-void Ball::renderHeld(float & angle, glm::vec2 & aimerPos, glm::vec2 & aimerSize)
-{
-
 	_sprite->render();
 }
 
-bool Ball::checkCollision(Ball & b)
+bool Ball::checkCollision(Ball * b)
 {
 	return false;
 }
 
 void Ball::launch(float & angle)
 {
+	//Restore original size
+	_sprite->setSize(_size);
 }
 
 void Ball::fall()
@@ -59,9 +52,36 @@ bool Ball::isFalling()
 
 int Ball::getColor()
 {
-	return 0;
+	return _color;
+}
+
+void Ball::setColor(int color)
+{
+	_color = color;
+}
+
+glm::vec2 Ball::getSize()
+{
+	return _size;
+}
+
+void Ball::setSize(glm::vec2 & size)
+{
+	_size = size;
+}
+
+glm::vec2 Ball::getPosition()
+{
+	return _position;
+}
+
+void Ball::setPosition(glm::vec2 & pos)
+{
+	_position = pos;
+	_sprite->setPosition(_position);
 }
 
 void Ball::setSpeed(const glm::vec2 & speed)
 {
+	_speed = speed;
 }

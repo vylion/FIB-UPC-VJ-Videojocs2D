@@ -6,25 +6,32 @@
 class Ball
 {
 public:
-	Ball();
-	~Ball();
+	//sizeinspritesheet, spritesheet, shaderprogram
+	Ball(const glm::vec2 &sizeInSpritesheet, Texture *spritesheet, ShaderProgram & shaderProgram);
 
-	void init(int color, const glm::vec2 &position, const glm::vec2 &size, Texture *spritesheet, ShaderProgram & shaderProgram);
-	void update(int deltaTime);
+	void init(int color, const glm::vec2 &position, bool falling);
+	void update(int &deltaTime);
 	void render();
-	void renderHeld(float &angle, glm::vec2 &aimerPos, glm::vec2 &aimerSize);
 	
-	bool checkCollision(Ball &b);
+	bool checkCollision(Ball * b);
 	void launch(float &angle);
-	void fall();
+
 	bool isFalling();
+	void fall();
 
 	int getColor();
+	void setColor(int color);
+
+	glm::vec2 getSize();
+	void setSize(glm::vec2 &size);
+
+	glm::vec2 getPosition();
+	void setPosition(glm::vec2 &pos);
 
 private:
 	glm::vec2 _position, _size, _speed;
 	int _color;
-	bool _falling, _isHeld;
+	bool _falling;
 	Sprite *_sprite;
 	Texture *_texture;
 

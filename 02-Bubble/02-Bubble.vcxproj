@@ -23,7 +23,9 @@
     <ClCompile Include="Aimer.cpp" />
     <ClCompile Include="Ball.cpp" />
     <ClCompile Include="BallManager.cpp" />
+    <ClCompile Include="BallMatrix.cpp" />
     <ClCompile Include="Collider.cpp" />
+    <ClCompile Include="Ball_Held.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Game.h" />
@@ -37,7 +39,9 @@
     <ClInclude Include="Aimer.h" />
     <ClInclude Include="Ball.h" />
     <ClInclude Include="BallManager.h" />
+    <ClInclude Include="BallMatrix.h" />
     <ClInclude Include="Collider.h" />
+    <ClInclude Include="Ball_Held.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{5BE6CA2A-E5A8-40CC-9015-047CE0C78036}</ProjectGuid>

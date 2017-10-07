@@ -209,6 +209,11 @@ bool TileMap::collisionMoveDown(const glm::ivec2 &pos, const glm::ivec2 &size, i
 	return false;
 }
 
+glm::vec2 TileMap::getMapSize()
+{
+	return mapSize;
+}
+
 
 
 

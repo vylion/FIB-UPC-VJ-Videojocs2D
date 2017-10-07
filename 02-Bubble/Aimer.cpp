@@ -19,10 +19,11 @@ void Aimer::init(const glm::ivec2 & tileMapPos, ShaderProgram & shaderProgram, B
 		printf("Couldn't load spritesheet.png");
 	}
 	//Quad size, Texture size, Texture position, Texture sheet, program
-	_sprite = Sprite::createSprite(glm::ivec2(16, 64), glm::vec2(16.f, 64.f), glm::vec2(0.f, 0.f), &_spritesheet, &shaderProgram);
+	_sprite = Sprite::createSprite(glm::ivec2(16, 64), glm::vec2(16.f, 64.f), &_spritesheet, &shaderProgram);
 	_sprite->setPosition(tileMapPos*16);
+	//_sprite->setTexturePosition(glm::vec2(0.f, 0.f));
 	_bmng = bmng;
-	//_heldBall = _bmng->getNextHeldBall();
+	ballToHeldball(_bmng->getNextHeldBall());
 
 }
 
@@ -41,14 +42,14 @@ void Aimer::update(int deltaTime)
 	//Shoot with UP or SPACE
 	if (Game::instance().getSpecialKey(GLUT_KEY_UP) || Game::instance().getKey(32) ) {
 		if (_canShoot) {
-			//_bmng->launchHeldBall(_heldBall, _angle);
+			//_bmng->launchHeldBall(_angle);
 			//_heldBall = _bmng->getNextHeldBall();
 			_shootTime = SHOOT_COOLDOWN;
 			_canShoot = false;
 			
 		}
 	}
-	//_heldBall->update(deltaTime);
+	//_heldBall->update(deltaTime, _angle);
 	_shootTime = std::max(0, _shootTime - deltaTime);
 	_canShoot = (_shootTime == 0 && !_bmng->ballUpdatesLeft());
 
@@ -58,4 +59,8 @@ void Aimer::render()
 {
 	_sprite->render(_angle, glm::vec2(0.5f, 37.75f / 64.f));
 	//_heldBall->render();
+}
+
+void Aimer::ballToHeldball(Ball * b)
+{
 }

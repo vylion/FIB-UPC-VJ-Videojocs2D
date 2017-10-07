@@ -4,6 +4,8 @@
 #include "../Sprite.h"
 //#include "../Game.h"
 //Soon(TM)
+
+#include "Ball_Held.h"
 #include "BallManager.h"
 
 class Aimer
@@ -22,8 +24,10 @@ private:
 	float _angle;
 	Texture _spritesheet;
 	Sprite *_sprite;
-	Ball *_heldBall;
+	Ball_Held *_heldBall;
 	BallManager *_bmng;
+
+	void ballToHeldball(Ball *b);
 };
 #endif
 

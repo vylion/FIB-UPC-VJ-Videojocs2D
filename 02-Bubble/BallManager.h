@@ -6,26 +6,41 @@
 using namespace std;
 
 #include "Ball.h"
+#include "BallMatrix.h"
 
 class BallManager
 {
 public:
-	BallManager();
-	~BallManager();
+	static BallManager *createBallManager(const string &levelFile, glm::vec2 &mapSize, ShaderProgram &shaderProgram);
 
-	void init(const string &levelFile);
+	BallManager::BallManager(const string & levelFile, glm::vec2 & mapSize, ShaderProgram & shaderProgram);
+
+	//void init(const string &levelFile, glm::vec2 &mapSize, ShaderProgram &shaderProgram);
 	void update(int deltaTime);
 	void render() const;
 
-	
 	bool ballUpdatesLeft();
+	bool ballsLeft();
 	
 	Ball *getNextHeldBall();
 	void launchHeldBall(Ball *heldBall, float angle);
 
 private:
-	Ball *_ballMatrix, *_launchedBall, *_heldBall, *_nextBall;
+	int _spritePixelSize, _ballPixelSize;
+	glm::ivec2 _matrixSize;
+	glm::vec2 _ballTexSize, _ballSheetSize;
+	//Need these for new balls
+	Texture *_spritesheet;
+	ShaderProgram _shaderProgram;
+	//Flying ball, ball after current shot
+	//Current ball is managed by aimer.cpp as it only needs to be displayed
+	Ball *_launchedBall, *_nextBall;
+	bool _thereIsLaunchedBall;
+	//Static balls are managed by BallMatrix
+	BallMatrix * _bmat;
 
 	Ball *getNewBall();
+	bool readLevel(const string & levelFile, glm::vec2 &mapSize);
+	void setUpBalls(int *colorMatrix, int visibleMatrixHeight);
 };
 #endif

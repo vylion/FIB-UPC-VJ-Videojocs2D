@@ -5,7 +5,9 @@
 
 /*
 Supports subtextures starting at posInSpritesheet pixels
-*/
+
+Deprecated. Use default + setTexturePosition
+
 Sprite * Sprite::createSprite(const glm::vec2 & quadSize, const glm::vec2 & texSize, const glm::vec2 & texPos, Texture * spritesheet, ShaderProgram * program)
 {
 	glm::vec2 texSizeInSpritesheet = glm::vec2(texSize.x / spritesheet->width(), texSize.y / spritesheet->height());
@@ -14,15 +16,15 @@ Sprite * Sprite::createSprite(const glm::vec2 & quadSize, const glm::vec2 & texS
 
 	return quad;
 }
-/*
+*/
 Sprite *Sprite::createSprite(const glm::vec2 &quadSize, const glm::vec2 &sizeInSpritesheet, Texture *spritesheet, ShaderProgram *program)
 {
 	Sprite *quad = new Sprite(quadSize, sizeInSpritesheet, spritesheet, program);
 
 	return quad;
-}*/
+}
 
-
+/*
 Sprite::Sprite(const glm::vec2 & quadSize, const glm::vec2 & sizeInSpritesheet, const glm::vec2 & posInSpritesheet, Texture * spritesheet, ShaderProgram * program)
 {
 	glm::vec2 t_pos = posInSpritesheet;
@@ -49,7 +51,8 @@ Sprite::Sprite(const glm::vec2 & quadSize, const glm::vec2 & sizeInSpritesheet, 
 	position = glm::vec2(0.f);
 	size = quadSize;
 }
-/*
+*/
+
 Sprite::Sprite(const glm::vec2 &quadSize, const glm::vec2 &sizeInSpritesheet, Texture *spritesheet, ShaderProgram *program)
 {
 	float vertices[24] = {0.f, 0.f, 0.f, 0.f, 
@@ -71,7 +74,7 @@ Sprite::Sprite(const glm::vec2 &quadSize, const glm::vec2 &sizeInSpritesheet, Te
 	currentAnimation = -1;
 	position = glm::vec2(0.f);
 }
-*/
+
 void Sprite::update(int deltaTime)
 {
 	if(currentAnimation >= 0)
@@ -181,6 +184,18 @@ int Sprite::animation() const
 void Sprite::setPosition(const glm::vec2 &pos)
 {
 	position = pos;
+}
+
+//Values 0..1 (floats)
+void Sprite::setTexturePosition(const glm::vec2 & displacement)
+{
+	texCoordDispl = displacement;
+}
+
+//In pixels
+void Sprite::setSize(const glm::vec2 & size)
+{
+	this->size = size;
 }
 
 

@@ -35,15 +35,11 @@ Scene::~Scene()
 void Scene::init()
 {
 	initShaders();
-	map = TileMap::createTileMap("../levels/level01.txt", glm::vec2(SCREEN_X, SCREEN_Y), texProgram);
-	//player = new Player();
-	//player->init(glm::ivec2(SCREEN_X, SCREEN_Y), texProgram);
-	//player->setPosition(glm::vec2(INIT_PLAYER_X_TILES * map->getTileSize(), INIT_PLAYER_Y_TILES * map->getTileSize()));
-	//player->setTileMap(map);
-
+	map = TileMap::createTileMap("../levels/level01_Tile.txt", glm::vec2(SCREEN_X, SCREEN_Y), texProgram);
+	
+	//bmng = new BallManager();
+	bmng = BallManager::createBallManager("../levels/level01_Ball.txt", map->getMapSize(), texProgram);
 	aimer = new Aimer();
-	bmng = new BallManager();
-	bmng->init("../levels/level01.txt");
 	aimer->init(glm::ivec2(INIT_PLAYER_X_TILES, INIT_PLAYER_Y_TILES), texProgram, bmng);
 
 	projection = glm::ortho(0.f, float(SCREEN_WIDTH - 1), float(SCREEN_HEIGHT - 1), 0.f);
@@ -55,7 +51,7 @@ void Scene::update(int deltaTime)
 	currentTime += deltaTime;
 	//player->update(deltaTime);
 	aimer->update(deltaTime);
-	//bmng->update(deltaTime);
+	bmng->update(deltaTime);
 }
 
 void Scene::render()
@@ -68,6 +64,7 @@ void Scene::render()
 	modelview = glm::mat4(1.0f);
 	texProgram.setUniformMatrix4f("modelview", modelview);
 	texProgram.setUniform2f("texCoordDispl", 0.f, 0.f);
+
 	map->render();
 	aimer->render();
 	bmng->render();
