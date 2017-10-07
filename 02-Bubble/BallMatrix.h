@@ -11,8 +11,8 @@ public:
 	BallMatrix(	int *_colorMatrix,
 				glm::ivec2 &matrixDimensions,
 				int visibleMatrixHeight,
-				const glm::vec2 &ballSizeInSpritesheet,
 				const glm::vec2 &ballSize,
+				const glm::vec2 &ballSizeInSpritesheet,
 				Texture *spritesheet,
 				ShaderProgram &shaderProgram);
 
@@ -29,7 +29,7 @@ private:
 	vector<vector<Ball*> > _hiddenBallMatrix;
 	int _visibleMatrixHeight;
 
-	glm::vec2 _ballSizeInSpritesheet, _ballSize;
+	glm::vec2  _ballSize, _ballSizeInSpritesheet;
 	Texture *_spritesheet;
 	ShaderProgram _shaderProgram;
 

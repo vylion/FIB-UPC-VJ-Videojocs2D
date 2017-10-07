@@ -3,14 +3,14 @@
 BallMatrix::BallMatrix( int * colorMatrix,
 						glm::ivec2 &matrixDimensions,
 						int visibleMatrixHeight,
-						const glm::vec2 &ballSizeInSpritesheet,
 						const glm::vec2 &ballSize,
+						const glm::vec2 &ballSizeInSpritesheet,
 						Texture *spritesheet,
 						ShaderProgram &shaderProgram)
 {
 	_visibleMatrixHeight = visibleMatrixHeight;
-	_ballSizeInSpritesheet = ballSizeInSpritesheet;
 	_ballSize = ballSize;
+	_ballSizeInSpritesheet = ballSizeInSpritesheet;
 	_spritesheet = spritesheet;
 	_shaderProgram = shaderProgram;
 
@@ -79,7 +79,7 @@ int BallMatrix::ballsLeft()
 
 Ball * BallMatrix::ballFromColor(int & color)
 {
-	Ball *b = new Ball(_ballSizeInSpritesheet, _spritesheet, _shaderProgram);
+	Ball *b = new Ball(_ballSize, _ballSizeInSpritesheet, _spritesheet, _shaderProgram);
 	b->init(color, glm::vec2(0.f, 0.f), false);
 	return b;
 }

@@ -1,9 +1,10 @@
 #include "Ball.h"
 
-Ball::Ball(const glm::vec2 & sizeInSpritesheet, Texture *spritesheet, ShaderProgram & shaderProgram)
+Ball::Ball(const glm::vec2 &size, const glm::vec2 & sizeInSpritesheet,  Texture *spritesheet, ShaderProgram & shaderProgram)
 {
-	_size = glm::vec2(32, 32);
-	_sprite = Sprite::createSprite(_size, sizeInSpritesheet, spritesheet, &shaderProgram);
+	_size = size;
+	_sizeInSpritesheet = sizeInSpritesheet;
+	_sprite = Sprite::createSprite(size, sizeInSpritesheet, spritesheet, &shaderProgram);
 	_falling = false;
 }
 
@@ -68,6 +69,11 @@ glm::vec2 Ball::getSize()
 void Ball::setSize(glm::vec2 & size)
 {
 	_size = size;
+}
+
+glm::vec2 Ball::getSpritesheetSize()
+{
+	return _sizeInSpritesheet;
 }
 
 glm::vec2 Ball::getPosition()

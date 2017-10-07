@@ -28,10 +28,10 @@ public:
 private:
 	int _spritePixelSize, _ballPixelSize;
 	glm::ivec2 _matrixSize;
-	glm::vec2 _ballTexSize, _ballSheetSize;
-	//Need these for new balls
-	Texture *_spritesheet;
-	ShaderProgram _shaderProgram;
+	glm::vec2 _ballTexSize, _spritesheetSize;
+	glm::vec2 _ballSize;
+	//Need these two for new balls
+	Texture *_spritesheet; ShaderProgram _shaderProgram;
 	//Flying ball, ball after current shot
 	//Current ball is managed by aimer.cpp as it only needs to be displayed
 	Ball *_launchedBall, *_nextBall;

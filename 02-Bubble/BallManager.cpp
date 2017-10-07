@@ -77,7 +77,7 @@ void BallManager::launchHeldBall(Ball * heldBall, float angle)
 Ball * BallManager::getNewBall()
 {
 	int color = 1;
-	Ball *b = new Ball(_ballTexSize, _spritesheet, _shaderProgram);
+	Ball *b = new Ball(glm::vec2(_ballPixelSize, _ballPixelSize), _ballTexSize, _spritesheet, _shaderProgram);
 	b->init(color, glm::vec2(0.f, 0.f), false);
 	return b;
 }
@@ -107,6 +107,8 @@ bool BallManager::readLevel(const string & levelFile, glm::vec2 &mapSize)
 	getline(fin, line);
 	sstream.str(line);
 	sstream >> _spritePixelSize >> _ballPixelSize;
+	//_ballTexSize = glm::vec2(_spritePixelSize, _spritePixelSize);
+	_ballSize = glm::vec2(_ballPixelSize, _ballPixelSize);
 	//Tilesheet name
 	getline(fin, line);
 	sstream.str(line);
@@ -120,8 +122,8 @@ bool BallManager::readLevel(const string & levelFile, glm::vec2 &mapSize)
 	//Number of tiles in _spritesheet
 	getline(fin, line);
 	sstream.str(line);
-	sstream >> _ballSheetSize.x >> _ballSheetSize.y;
-	_ballTexSize = glm::vec2(1.f / _ballSheetSize.x, 1.f / _ballSheetSize.y);
+	sstream >> _spritesheetSize.x >> _spritesheetSize.y;
+	_ballTexSize = glm::vec2(1.f / _spritesheetSize.x, 1.f / _spritesheetSize.y);
 
 	int *colorMatrix = new int[_matrixSize.x * _matrixSize.y];
 	for (int j = 0; j<_matrixSize.y; j++)
@@ -149,5 +151,5 @@ bool BallManager::readLevel(const string & levelFile, glm::vec2 &mapSize)
 
 void BallManager::setUpBalls(int *colorMatrix, int visibleMatrixHeight)
 {
-	_bmat = new BallMatrix(colorMatrix, _matrixSize, visibleMatrixHeight, glm::vec2(_ballPixelSize, _ballPixelSize), _ballTexSize, _spritesheet, _shaderProgram);
+	_bmat = new BallMatrix(colorMatrix, _matrixSize, visibleMatrixHeight, _ballSize, _ballTexSize, _spritesheet, _shaderProgram);
 }
