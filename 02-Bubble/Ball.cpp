@@ -15,15 +15,15 @@ void Ball::init(int color, const glm::vec2 & position, bool falling)
 	_sprite->setTexturePosition(glm::vec2(1.f/8 * color, 0.f));
 	_position = position;
 	_falling = falling;
-	_speed = glm::vec2(0.f, 0.f);
+	//_speed = glm::vec2(0.f, 0.f);
 }
 
 void Ball::update(int & deltaTime)
 {
-	if (_falling) {
+	/*if (_falling) {
 		_position = glm::vec2(_position.x + _speed.x*deltaTime / 200, _position.y + _speed.y*deltaTime / 200);
 		_speed = glm::vec2(_speed.x*0.95f, _speed.y*1.2f);
-	}
+	}*/
 }
 
 void Ball::render()
@@ -35,16 +35,13 @@ bool Ball::checkCollision(Ball * b)
 {
 	return false;
 }
-
+/*
 void Ball::launch(float & angle)
 {
 	//Restore original size
 	_sprite->setSize(_size);
 }
-
-void Ball::fall()
-{
-}
+*/
 
 bool Ball::isFalling()
 {
@@ -102,7 +99,8 @@ void Ball::setOddRow(const bool & oddRow)
 	_sprite->setPosition(oddPos);
 }
 
+/*
 void Ball::setSpeed(const glm::vec2 & speed)
 {
 	_speed = speed;
-}
+}*/

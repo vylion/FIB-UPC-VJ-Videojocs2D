@@ -1,4 +1,5 @@
 #include <iostream>
+#include <stdlib.h>
 #include <fstream>
 #include <sstream>
 #include "BallManager.h"
@@ -76,7 +77,7 @@ void BallManager::launchHeldBall(Ball * heldBall, float angle)
 
 Ball * BallManager::getNewBall()
 {
-	int color = 1;
+	int color = rand()%8;
 	Ball *b = new Ball(glm::vec2(_ballPixelSize, _ballPixelSize), _ballTexSize, _spritesheet, _shaderProgram);
 	b->init(color, glm::vec2(0.f, 0.f), false);
 	return b;

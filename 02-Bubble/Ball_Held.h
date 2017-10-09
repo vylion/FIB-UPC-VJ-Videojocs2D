@@ -14,6 +14,7 @@ public:
 
 private:
 	glm::vec2 _aimerPos, _aimerSize;
+	float _angle;
 };
 
 #endif

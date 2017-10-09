@@ -14,10 +14,9 @@ public:
 	void render();
 	
 	bool checkCollision(Ball * b);
-	void launch(float &angle);
 
 	bool isFalling();
-	void fall();
+	//void fall();
 
 	int getColor();
 	void setColor(int color);
@@ -34,13 +33,13 @@ public:
 	void setOddRow(const bool &oddRow);
 
 private:
-	glm::vec2 _position, _size, _sizeInSpritesheet, _speed;
+	glm::vec2 _position, _size, _sizeInSpritesheet;
 	int _color;
 	bool _falling, _oddRow;
 	Sprite *_sprite;
 	Texture *_texture;
 
-	void setSpeed(const glm::vec2 &speed);
+	//void setSpeed(const glm::vec2 &speed);
 };
 #endif
 

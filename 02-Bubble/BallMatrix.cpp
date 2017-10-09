@@ -77,7 +77,7 @@ void BallMatrix::addBallToMat(Ball * b)
 
 int BallMatrix::ballsLeft()
 {
-	return _hiddenBallMatrix.size();
+	return _hiddenBallMatrix.size() + _shownBallMatrix.size();
 }
 
 Ball * BallMatrix::ballFromColor(int & color)

@@ -13,6 +13,7 @@ Ball_Held::Ball_Held(	Texture * spritesheet,
 }
 
 void Ball_Held::update(int deltaTime, float &angle) {
+	_angle = angle;
 	update(deltaTime);
 }
 
