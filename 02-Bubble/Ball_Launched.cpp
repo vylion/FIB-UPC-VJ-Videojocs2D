@@ -3,20 +3,18 @@
 #include <math.h>
 #include <algorithm>
 
-Ball_Launched::Ball_Launched(	Texture * spritesheet,
-								ShaderProgram & shaderProgram,
+Ball_Launched::Ball_Launched(	ShaderProgram & shaderProgram,
 								Ball * b,
 								float &angle,
 								glm::vec2 &fieldLimits)
-	: Ball(b->getSize(), b->getSpritesheetSize(), spritesheet, shaderProgram), _fieldLimits(fieldLimits)
+	: Ball(b->getSize(), b->getSpritesheetSize(), b->getTexture(), shaderProgram), _fieldLimits(fieldLimits)
 {
-	setPosition(b->getPosition());
+	setColor(b->getColor());
 
 	float spd_angle = angle + float(M_PI);
 	float spdx = 2 * std::cos(spd_angle);
 	float spdy = 2 * std::sin(spd_angle);
 	_speed = glm::vec2(spdx, spdy);
-	
 }
 
 void Ball_Launched::update(int deltaTime)

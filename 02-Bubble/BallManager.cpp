@@ -57,11 +57,12 @@ bool BallManager::ballsLeft()
 	return (_bmat->ballsLeft() > 0);
 }
 
-Ball * BallManager::getNextHeldBall()
+Ball_Held * BallManager::getNextHeldBall()
 {
 	
 	//Store next held ball for the return
-	Ball *ret = _nextBall;
+	Ball_Held *ret = new Ball_Held(_shaderProgram, _nextBall);
+
 	//Generate a new ball for display
 	_nextBall = getNewBall();
 	_nextBall->setPosition(glm::vec2(400.f, 400.f));
@@ -78,8 +79,10 @@ void BallManager::launchHeldBall(Ball * heldBall, float angle)
 Ball * BallManager::getNewBall()
 {
 	int color = rand()%8;
+
 	Ball *b = new Ball(glm::vec2(_ballPixelSize, _ballPixelSize), _ballTexSize, _spritesheet, _shaderProgram);
-	b->init(color, glm::vec2(0.f, 0.f), false);
+	b->init(color, glm::vec2(0.f, 0.f));
+
 	return b;
 }
 

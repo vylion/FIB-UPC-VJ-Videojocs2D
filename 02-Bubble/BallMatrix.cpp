@@ -16,14 +16,14 @@ BallMatrix::BallMatrix( int * colorMatrix,
 
 	int iterated = 0;
 	for (int i = 0; i < matrixDimensions.y; ++i) {
-		vector<Ball*> ballRow;
+		vector<Ball_InMatrix*> ballRow;
 		//If row is odd, consider 1 less ball to give hex pattern
 		for (int j = 0; j < matrixDimensions.x - i%2; ++j) {
-			Ball *b = ballFromColor(colorMatrix[iterated]);
+			Ball_InMatrix *b = ballFromColor(colorMatrix[iterated]);
 			//Change to in-screen limits
-			b->setPosition(glm::vec2(16.f*(j + 3), 32.f));
-			//To account for displacement
+			b->init(colorMatrix[iterated], glm::vec2(16.f*(j + 3), 32.f));
 			b->setOddRow((i % 2 != 0));
+			//To account for displacement
 			ballRow.push_back(b);
 			iterated++;
 		}
@@ -80,11 +80,14 @@ int BallMatrix::ballsLeft()
 	return _hiddenBallMatrix.size() + _shownBallMatrix.size();
 }
 
-Ball * BallMatrix::ballFromColor(int & color)
+Ball_InMatrix * BallMatrix::ballFromColor(int & color)
 {
+	//Create ball at 0,0 with the set color
 	Ball *b = new Ball(_ballSize, _ballSizeInSpritesheet, _spritesheet, _shaderProgram);
-	b->init(color, glm::vec2(0.f, 0.f), false);
-	return b;
+	b->init(color, glm::vec2(0.f, 0.f));
+	//Create ball_inmatrix using the stablished ball
+	Ball_InMatrix * bim = new Ball_InMatrix(_shaderProgram, b);
+	return bim;
 }
 
 void BallMatrix::passRowToShown()

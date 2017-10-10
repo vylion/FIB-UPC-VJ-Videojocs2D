@@ -4,18 +4,16 @@ Ball::Ball(const glm::vec2 &size, const glm::vec2 & sizeInSpritesheet,  Texture 
 {
 	_size = size;
 	_sizeInSpritesheet = sizeInSpritesheet;
+	_texture = spritesheet;
 	_sprite = Sprite::createSprite(size, sizeInSpritesheet, spritesheet, &shaderProgram);
-	_falling = false;
 }
 
-void Ball::init(int color, const glm::vec2 & position, bool falling)
+void Ball::init(int color, const glm::vec2 & position)
 {
 	_color = color;
 	//Set texture according to color code (x = 1.f sheet size / 8 different colors * color code)
 	_sprite->setTexturePosition(glm::vec2(1.f/8 * color, 0.f));
-	_position = position;
-	_falling = falling;
-	//_speed = glm::vec2(0.f, 0.f);
+	setPosition(position);
 }
 
 void Ball::update(int & deltaTime)
@@ -31,23 +29,6 @@ void Ball::render()
 	_sprite->render();
 }
 
-bool Ball::checkCollision(Ball * b)
-{
-	return false;
-}
-/*
-void Ball::launch(float & angle)
-{
-	//Restore original size
-	_sprite->setSize(_size);
-}
-*/
-
-bool Ball::isFalling()
-{
-	return _falling;
-}
-
 int Ball::getColor()
 {
 	return _color;
@@ -56,6 +37,7 @@ int Ball::getColor()
 void Ball::setColor(int color)
 {
 	_color = color;
+	_sprite->setTexturePosition(glm::vec2(1.f / 8 * color, 0.f));
 }
 
 glm::vec2 Ball::getSize()
@@ -73,34 +55,19 @@ glm::vec2 Ball::getSpritesheetSize()
 	return _sizeInSpritesheet;
 }
 
+Texture * Ball::getTexture()
+{
+
+	return _texture;
+}
+
 glm::vec2 Ball::getPosition()
 {
 	return _position;
 }
 
-void Ball::setPosition(glm::vec2 & pos)
+void Ball::setPosition(const glm::vec2 & pos)
 {
 	_position = pos;
-	glm::vec2 oddPos = glm::vec2(_position.x + _size.x / 2 * _oddRow, _position.y);
-	_sprite->setPosition(oddPos);
+	_sprite->setPosition(_position);
 }
-
-bool Ball::getOddRow()
-{
-	return _oddRow;
-}
-
-void Ball::setOddRow(const bool & oddRow)
-{
-	_oddRow = oddRow;
-	//Will add half the sprite of distance if odd
-	glm::vec2 oddPos = glm::vec2(_position.x + _size.x / 2 * _oddRow, _position.y);
-
-	_sprite->setPosition(oddPos);
-}
-
-/*
-void Ball::setSpeed(const glm::vec2 & speed)
-{
-	_speed = speed;
-}*/

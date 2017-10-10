@@ -1,9 +1,6 @@
-#ifndef _AIMER_INCLUDE
-#define _AIMER_INCLUDE
+#pragma once
 
 #include "../Sprite.h"
-//#include "../Game.h"
-//Soon(TM)
 
 #include "Ball_Held.h"
 #include "BallManager.h"
@@ -22,12 +19,12 @@ private:
 	bool _canShoot;
 	int _shootTime;
 	float _angle;
-	Texture _spritesheet;
+	glm::vec2 _position, _size;
+	Texture *_spritesheet;
 	Sprite *_sprite;
 	Ball_Held *_heldBall;
 	BallManager *_bmng;
 
 	void ballToHeldball(Ball *b);
 };
-#endif
 

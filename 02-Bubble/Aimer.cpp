@@ -12,20 +12,25 @@
 
 void Aimer::init(const glm::ivec2 & tileMapPos, ShaderProgram & shaderProgram, BallManager *bmng)
 {
-	
+
+	_position = tileMapPos * 16;
+	_size = PIXEL_SIZE;
 	_canShoot = true;
 	_angle = 0;
 
-	if (!_spritesheet.loadFromFile("../media/images/spritesheet.png", TEXTURE_PIXEL_FORMAT_RGBA)) {
+	_spritesheet = new Texture();
+
+	if (!_spritesheet->loadFromFile("../media/images/spritesheet.png", TEXTURE_PIXEL_FORMAT_RGBA)) {
 		printf("Couldn't load spritesheet.png");
 	}
 	//Quad size, Texture size, Texture position, Texture sheet, program
-	glm::vec2 sizeInSpriteSheet = glm::vec2(PIXEL_SIZE.x / _spritesheet.width(), PIXEL_SIZE.y / _spritesheet.height());
-	_sprite = Sprite::createSprite(PIXEL_SIZE, sizeInSpriteSheet, &_spritesheet, &shaderProgram);
+	glm::vec2 sizeInSpriteSheet = glm::vec2(PIXEL_SIZE.x / _spritesheet->width(), PIXEL_SIZE.y / _spritesheet->height());
+	_sprite = Sprite::createSprite(PIXEL_SIZE, sizeInSpriteSheet, _spritesheet, &shaderProgram);
 	_sprite->setPosition(tileMapPos*16);
 	_bmng = bmng;
-	ballToHeldball(_bmng->getNextHeldBall());
-
+	//heldball from manager
+	_heldBall = new Ball_Held(shaderProgram, _bmng->getNextHeldBall());
+	_heldBall->init(_position, _size);
 }
 
 void Aimer::update(int deltaTime)
@@ -44,13 +49,16 @@ void Aimer::update(int deltaTime)
 	if (Game::instance().getSpecialKey(GLUT_KEY_UP) || Game::instance().getKey(32) ) {
 		if (_canShoot) { 
 			//_bmng->launchHeldBall(_angle);
-			//_heldBall = _bmng->getNextHeldBall();
+
+			//heldball from manager
+			_heldBall = _bmng->getNextHeldBall();
+			_heldBall->init(_position, _size);
 			_shootTime = SHOOT_COOLDOWN;
 			_canShoot = false;
 			
 		}
 	}
-	//_heldBall->update(deltaTime, _angle);
+	_heldBall->update(deltaTime, _angle);
 	_shootTime = std::max(0, _shootTime - deltaTime);
 	_canShoot = (_shootTime == 0 && !_bmng->ballUpdatesLeft());
 
@@ -60,7 +68,7 @@ void Aimer::render()
 {
 
 	_sprite->render(_angle, glm::vec2(0.5f, 37.75f / PIXEL_SIZE.y));
-	//_heldBall->render();
+	_heldBall->render();
 }
 
 void Aimer::ballToHeldball(Ball * b)

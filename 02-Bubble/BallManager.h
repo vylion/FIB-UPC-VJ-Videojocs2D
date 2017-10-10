@@ -1,11 +1,11 @@
-#ifndef _BALLMANAGER_INCLUDE
-#define _BALLMANAGER_INCLUDE
+#pragma once
 
 #include <vector>
 #include <string>
 using namespace std;
 
 #include "Ball.h"
+#include "Ball_Held.h"
 #include "BallMatrix.h"
 
 class BallManager
@@ -15,14 +15,13 @@ public:
 
 	BallManager::BallManager(const string & levelFile, glm::vec2 & mapSize, ShaderProgram & shaderProgram);
 
-	//void init(const string &levelFile, glm::vec2 &mapSize, ShaderProgram &shaderProgram);
 	void update(int deltaTime);
 	void render() const;
 
 	bool ballUpdatesLeft();
 	bool ballsLeft();
 	
-	Ball *getNextHeldBall();
+	Ball_Held *getNextHeldBall();
 	void launchHeldBall(Ball *heldBall, float angle);
 
 private:
@@ -43,4 +42,3 @@ private:
 	bool readLevel(const string & levelFile, glm::vec2 &mapSize);
 	void setUpBalls(int *colorMatrix, int visibleMatrixHeight);
 };
-#endif

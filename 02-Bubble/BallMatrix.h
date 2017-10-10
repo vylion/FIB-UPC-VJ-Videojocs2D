@@ -1,8 +1,7 @@
-#ifndef _BALLMATRIX_INCLUDE
-#define _BALLMATRIX_INCLUDE
+#pragma once
 
 #include <vector>
-#include "Ball.h"
+#include "Ball_InMatrix.h"
 
 class BallMatrix
 {
@@ -25,16 +24,16 @@ public:
 	int ballsLeft();
 
 private:
-	vector<vector<Ball*> > _shownBallMatrix;
-	vector<vector<Ball*> > _hiddenBallMatrix;
+	vector<vector<Ball_InMatrix*> > _shownBallMatrix;
+	vector<vector<Ball_InMatrix*> > _hiddenBallMatrix;
 	int _visibleMatrixHeight;
 
 	glm::vec2  _ballSize, _ballSizeInSpritesheet;
 	Texture *_spritesheet;
 	ShaderProgram _shaderProgram;
 
-	Ball * ballFromColor(int &color);
+	Ball_InMatrix * ballFromColor(int &color);
 	void passRowToShown();
 };
 
-#endif
+#pragma once

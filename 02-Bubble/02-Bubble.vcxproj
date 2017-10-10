@@ -25,6 +25,7 @@
     <ClCompile Include="BallManager.cpp" />
     <ClCompile Include="BallMatrix.cpp" />
     <ClCompile Include="Ball_Launched.cpp" />
+    <ClCompile Include="Ball_InMatrix.cpp" />
     <ClCompile Include="Collider.cpp" />
     <ClCompile Include="Ball_Held.cpp" />
   </ItemGroup>
@@ -42,6 +43,7 @@
     <ClInclude Include="BallManager.h" />
     <ClInclude Include="BallMatrix.h" />
     <ClInclude Include="Ball_Launched.h" />
+    <ClInclude Include="Ball_InMatrix.h" />
     <ClInclude Include="Collider.h" />
     <ClInclude Include="Ball_Held.h" />
   </ItemGroup>
