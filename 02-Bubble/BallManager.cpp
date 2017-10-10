@@ -3,20 +3,21 @@
 #include <fstream>
 #include <sstream>
 #include "BallManager.h"
+#include "Ball_Launched.h"
 
-
-BallManager::BallManager(const string & levelFile, glm::vec2 & mapSize, ShaderProgram & shaderProgram)
+BallManager::BallManager(const string & levelFile, glm::ivec2 &minCoords, glm::vec2 & mapSize, ShaderProgram & shaderProgram)
 {
 	_shaderProgram = shaderProgram;
 	if (!readLevel(levelFile, mapSize)) printf("BallManager: Failed to read levelFile");
 	_nextBall = getNewBall();
 	_thereIsLaunchedBall = false;
+	_minCoords = glm::ivec2(minCoords);
 }
 
 
-BallManager * BallManager::createBallManager(const string & levelFile, glm::vec2 & mapSize, ShaderProgram & shaderProgram)
+BallManager * BallManager::createBallManager(const string & levelFile, glm::ivec2 &minCoords, glm::vec2 & mapSize, ShaderProgram & shaderProgram)
 {
-	BallManager *bm = new BallManager(levelFile, mapSize, shaderProgram);
+	BallManager *bm = new BallManager(levelFile, minCoords, mapSize, shaderProgram);
 
 	return bm;
 }
@@ -29,6 +30,7 @@ void BallManager::update(int deltaTime)
 {
 	_bmat->update(deltaTime);
 	if (_thereIsLaunchedBall) {
+
 		_launchedBall->update(deltaTime);
 		if (_bmat->checkCollision(_launchedBall))
 			_bmat->addBallToMat(_launchedBall);
@@ -69,9 +71,10 @@ Ball_Held * BallManager::getNextHeldBall()
 	return ret;
 }
 
-void BallManager::launchHeldBall(Ball * heldBall, float angle)
+void BallManager::launchHeldBall(Ball_Held * heldBall, float angle)
 {
-	_launchedBall = heldBall;
+	_launchedBall = new Ball_Launched(_shaderProgram, heldBall, heldBall->getAngle(), _minCoords, _matrixSpace);
+	_thereIsLaunchedBall = true;
 	//_launchedBall = new LaunchedBall(heldBall, angle);
 	//_heldBall->launch(angle);
 }
@@ -88,6 +91,8 @@ Ball * BallManager::getNewBall()
 
 bool BallManager::readLevel(const string & levelFile, glm::vec2 &mapSize)
 {
+	_matrixSpace = glm::vec2(mapSize.x-2, mapSize.y-1);
+
 	ifstream fin;
 	string line, spritesheetFile;
 	stringstream sstream;
@@ -105,8 +110,7 @@ bool BallManager::readLevel(const string & levelFile, glm::vec2 &mapSize)
 	sstream.str(line);
 	sstream >> _matrixSize.x >> _matrixSize.y >> visibleMatrixHeight;
 	//Check if the balls fit in the hole :^)
-	if (_matrixSize.x >= mapSize.x-1)
-		return false;
+	if (_matrixSize.x > _matrixSpace.x || visibleMatrixHeight > _matrixSpace.y) return false;
 	//Tile and block size
 	getline(fin, line);
 	sstream.str(line);

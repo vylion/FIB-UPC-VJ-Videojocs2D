@@ -48,7 +48,7 @@ void Aimer::update(int deltaTime)
 	//Shoot with UP or SPACE
 	if (Game::instance().getSpecialKey(GLUT_KEY_UP) || Game::instance().getKey(32) ) {
 		if (_canShoot) { 
-			//_bmng->launchHeldBall(_angle);
+			_bmng->launchHeldBall(_heldBall, _angle);
 
 			//heldball from manager
 			_heldBall = _bmng->getNextHeldBall();

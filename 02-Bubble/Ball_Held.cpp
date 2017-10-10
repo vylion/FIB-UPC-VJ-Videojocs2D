@@ -26,3 +26,8 @@ void Ball_Held::update(int deltaTime, float &angle) {
 	Ball::update(deltaTime);
 }
 
+float Ball_Held::getAngle()
+{
+	return _angle;
+}
+

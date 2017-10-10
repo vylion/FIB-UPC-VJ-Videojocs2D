@@ -6,14 +6,15 @@ using namespace std;
 
 #include "Ball.h"
 #include "Ball_Held.h"
+#include "Ball_Launched.h"
 #include "BallMatrix.h"
 
 class BallManager
 {
 public:
-	static BallManager *createBallManager(const string &levelFile, glm::vec2 &mapSize, ShaderProgram &shaderProgram);
+	static BallManager *createBallManager(const string &levelFile, glm::ivec2 &minCoords, glm::vec2 &mapSize, ShaderProgram &shaderProgram);
 
-	BallManager::BallManager(const string & levelFile, glm::vec2 & mapSize, ShaderProgram & shaderProgram);
+	BallManager::BallManager(const string & levelFile, glm::ivec2 &minCoords, glm::vec2 & mapSize, ShaderProgram & shaderProgram);
 
 	void update(int deltaTime);
 	void render() const;
@@ -22,18 +23,19 @@ public:
 	bool ballsLeft();
 	
 	Ball_Held *getNextHeldBall();
-	void launchHeldBall(Ball *heldBall, float angle);
+	void launchHeldBall(Ball_Held *heldBall, float angle);
 
 private:
 	int _spritePixelSize, _ballPixelSize;
-	glm::ivec2 _matrixSize;
+	glm::ivec2 _minCoords, _matrixSpace, _matrixSize;
 	glm::vec2 _ballTexSize, _spritesheetSize;
 	glm::vec2 _ballSize;
 	//Need these two for new balls
 	Texture *_spritesheet; ShaderProgram _shaderProgram;
 	//Flying ball, ball after current shot
 	//Current ball is managed by aimer.cpp as it only needs to be displayed
-	Ball *_launchedBall, *_nextBall;
+	Ball *_nextBall;
+	Ball_Launched *_launchedBall;
 	bool _thereIsLaunchedBall;
 	//Static balls are managed by BallMatrix
 	BallMatrix * _bmat;
