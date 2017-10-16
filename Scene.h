@@ -21,10 +21,10 @@ public:
 	Scene();
 	~Scene();
 
-	void init();
+	void init(ShaderProgram _texProgram, int level);
 	void update(int deltaTime);
 	void render();
-	void initShaders();
+	//void initShaders();
 
 private:
 	TileMap *map;

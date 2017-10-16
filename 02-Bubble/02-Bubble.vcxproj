@@ -28,6 +28,7 @@
     <ClCompile Include="Ball_InMatrix.cpp" />
     <ClCompile Include="Collider.cpp" />
     <ClCompile Include="Ball_Held.cpp" />
+    <ClCompile Include="Menu.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Game.h" />
@@ -46,6 +47,7 @@
     <ClInclude Include="Ball_InMatrix.h" />
     <ClInclude Include="Collider.h" />
     <ClInclude Include="Ball_Held.h" />
+    <ClInclude Include="Menu.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{5BE6CA2A-E5A8-40CC-9015-047CE0C78036}</ProjectGuid>

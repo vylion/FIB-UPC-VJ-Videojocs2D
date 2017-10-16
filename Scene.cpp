@@ -32,13 +32,21 @@ Scene::~Scene()
 }
 
 
-void Scene::init()
+void Scene::init(ShaderProgram _texProgram, int level)
 {
-	initShaders();
-	map = TileMap::createTileMap("../levels/level01_Tile.txt", glm::vec2(SCREEN_X, SCREEN_Y), texProgram);
+	//initShaders();
+	texProgram = _texProgram;
+
+	string levelFiller = "";
+	if (level < 10) {
+		levelFiller = "0";
+	}
+	string levelLocation = "../levels/level" + levelFiller + std::to_string(level);
+	map = TileMap::createTileMap(levelLocation + "_Tile.txt", glm::vec2(SCREEN_X, SCREEN_Y), texProgram);
 	
 	//bmng = new BallManager();
-	bmng = BallManager::createBallManager("../levels/level01_Ball.txt", glm::ivec2(SCREEN_X+16, SCREEN_Y+16), map->getMapSize(), texProgram);
+	bmng = BallManager::createBallManager(levelLocation + "_Ball.txt", glm::ivec2(SCREEN_X+16, SCREEN_Y+16), map->getMapSize(), texProgram);
+
 	aimer = new Aimer();
 	aimer->init(glm::ivec2(INIT_PLAYER_X_TILES, INIT_PLAYER_Y_TILES), texProgram, bmng);
 
@@ -69,36 +77,3 @@ void Scene::render()
 	bmng->render();
 	//player->render();
 }
-
-void Scene::initShaders()
-{
-	Shader vShader, fShader;
-
-	vShader.initFromFile(VERTEX_SHADER, "shaders/texture.vert");
-	if(!vShader.isCompiled())
-	{
-		cout << "Vertex Shader Error" << endl;
-		cout << "" << vShader.log() << endl << endl;
-	}
-	fShader.initFromFile(FRAGMENT_SHADER, "shaders/texture.frag");
-	if(!fShader.isCompiled())
-	{
-		cout << "Fragment Shader Error" << endl;
-		cout << "" << fShader.log() << endl << endl;
-	}
-	texProgram.init();
-	texProgram.addShader(vShader);
-	texProgram.addShader(fShader);
-	texProgram.link();
-	if(!texProgram.isLinked())
-	{
-		cout << "Shader Linking Error" << endl;
-		cout << "" << texProgram.log() << endl << endl;
-	}
-	texProgram.bindFragmentOutput("outColor");
-	vShader.free();
-	fShader.free();
-}
-
-
-
