@@ -83,7 +83,7 @@ void Scene_Menu::update(int deltaTime)
 	currentTime += deltaTime;
 
 	_logo->setPosition(glm::vec2(
-		_state * 100.f,//(SCREEN_WIDTH - LOGO_SIZE.x) / 2.f,
+		(SCREEN_WIDTH - LOGO_SIZE.x) / 2.f,
 		(SCREEN_HEIGHT - LOGO_SIZE.y) / 2.f + 2*sin(currentTime/500) - 95.f
 	));
 
