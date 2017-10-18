@@ -2,8 +2,9 @@
 #define _GAME_INCLUDE
 
 
-//#include "Scene.h"
-#include "02-Bubble\Menu.h"
+#include "Scene.h"
+#include "02-Bubble\Scene_Menu.h"
+#include "02-Bubble\Scene_Level.h"
 
 
 
@@ -46,8 +47,7 @@ public:
 
 private:
 	bool bPlay;                       // Continue to play game?
-	Menu _menu;						  //Open menu
-	//Scene scene;                      // Scene to render
+	Scene *scene;                      // Scene to render
 	bool keys[256], specialKeys[256]; // Store key states so that 
 	                                  // we can have access at any time
 

@@ -3,37 +3,36 @@
 
 
 #include <glm/glm.hpp>
+#include <GL/glew.h>
+#include <GL/glut.h>
+#include <glm/gtc/matrix_transform.hpp>
+
 #include "ShaderProgram.h"
 #include "TileMap.h"
-#include "Player.h"
+
 #include "02-Bubble/Aimer.h"
 #include "02-Bubble/BallManager.h"
-
-
-// Scene contains all the entities of our game.
-// It is responsible for updating and render them.
-
+//#include "02-Bubble/Scene_Menu.h"
 
 class Scene
 {
 
 public:
-	Scene();
-	~Scene();
+	Scene() {}
 
-	void init(ShaderProgram _texProgram, int level);
-	void update(int deltaTime);
-	void render();
-	//void initShaders();
+	virtual void init() {};
+	virtual void init(int level) {};
 
-private:
-	TileMap *map;
-	Player *player;
-	Aimer *aimer;
-	BallManager *bmng;
+	virtual void update(int deltaTime) {};
+	virtual void render() {};
+
+protected:
 	ShaderProgram texProgram;
 	float currentTime;
 	glm::mat4 projection;
+
+	void initShaders();
+
 };
 #endif // _SCENE_INCLUDE
 
