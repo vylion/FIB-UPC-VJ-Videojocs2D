@@ -2,11 +2,6 @@
 #include <cmath>
 #include "Scene.h"
 
-/*void Scene::update(int deltaTime)
-{
-	currentTime += deltaTime;
-}*/
-
 void Scene::initShaders()
 {
 	Shader vShader, fShader;

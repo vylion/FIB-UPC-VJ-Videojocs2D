@@ -7,17 +7,35 @@ void Game::init()
 {
 	bPlay = true;
 	glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
-	scene = new Scene_Level();
-	scene->init(1);
+	scene = new Scene_Menu();
+	scene->init();
+	//scene->init(1);
 }
 
 bool Game::update(int deltaTime)
 {
 	scene->update(deltaTime);
-	//if (_menu.wantsToQuit()) bPlay = false;
+	bool launchLevel = false;
+	switch (scene->getState()) {
+		case 1: launchLevel = true; break;
+		case 3: bPlay = false; break;
+	}
+	if (launchLevel) {
+
+		int lv = scene->getLevel();
+		scene = new Scene_Level();
+		scene->init(lv);
+	}
 	return bPlay;
 }
 
+
+
+/*
+
+
+
+*/
 void Game::render()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

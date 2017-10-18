@@ -28,14 +28,15 @@ Scene_Level::~Scene_Level()
 void Scene_Level::init(int level)
 {
 
+	_level = level;
 	initShaders();
 	
 
 	string levelFiller = "";
-	if (level < 10) {
+	if (_level < 10) {
 		levelFiller = "0";
 	}
-	string levelLocation = "../levels/level" + levelFiller + std::to_string(level);
+	string levelLocation = "../levels/level" + levelFiller + std::to_string(_level);
 	map = TileMap::createTileMap(levelLocation + "_Tile.txt", glm::vec2(SCREEN_X, SCREEN_Y), texProgram);
 
 	bmng = BallManager::createBallManager(levelLocation + "_Ball.txt", glm::ivec2(SCREEN_X + 16, SCREEN_Y + 16), map->getMapSize(), texProgram);
@@ -70,4 +71,14 @@ void Scene_Level::render()
 	map->render();
 	aimer->render();
 	bmng->render();
+}
+
+int Scene_Level::getState()
+{
+	return 0;
+}
+
+int Scene_Level::getLevel()
+{
+	return _level;
 }

@@ -12,7 +12,6 @@
 
 #include "02-Bubble/Aimer.h"
 #include "02-Bubble/BallManager.h"
-//#include "02-Bubble/Scene_Menu.h"
 
 class Scene
 {
@@ -25,6 +24,9 @@ public:
 
 	virtual void update(int deltaTime) {};
 	virtual void render() {};
+
+	virtual int getState() { return 0; };
+	virtual int getLevel() { return 0; };
 
 protected:
 	ShaderProgram texProgram;
