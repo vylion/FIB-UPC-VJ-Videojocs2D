@@ -24,6 +24,7 @@ bool Game::update(int deltaTime)
 				scene = new Scene_Level();
 				scene->init(level);
 			}
+
 			break;
 
 		case Scene::EXIT:
@@ -34,12 +35,6 @@ bool Game::update(int deltaTime)
 }
 
 
-
-/*
-
-
-
-*/
 void Game::render()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
