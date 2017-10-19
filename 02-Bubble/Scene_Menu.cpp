@@ -16,7 +16,7 @@ void Scene_Menu::init()
 {
 	initShaders();
 
-	_state = NONE;
+	_state = RUNNING;
 
 	/*----------------------------------------TEXTURES--------------------------------------------------*/
 
@@ -78,7 +78,7 @@ void Scene_Menu::init()
 	currentTime = 0.0f;
 }
 
-void Scene_Menu::update(int deltaTime)
+int Scene_Menu::update(int deltaTime)
 {
 	currentTime += deltaTime;
 
@@ -86,39 +86,39 @@ void Scene_Menu::update(int deltaTime)
 		(SCREEN_WIDTH - LOGO_SIZE.x) / 2.f,
 		(SCREEN_HEIGHT - LOGO_SIZE.y) / 2.f + 2*sin(currentTime/500) - 95.f
 	));
+	
+	if (Game::instance().getSpecialKey(GLUT_KEY_UP) && _moveCooldown == 0) {
+		_buttons[_selectedButton]->setTexturePosition(glm::vec2(0.6f, BUTTON_SPRITESHEET_SIZE.y * (2 * _selectedButton)));
+		_selectedButton = (_selectedButton + (_buttons.size() - 1)) % _buttons.size();
+		_moveCooldown = MOVE_COOLDOWN;
+		_buttons[_selectedButton]->setTexturePosition(glm::vec2(0.6f, BUTTON_SPRITESHEET_SIZE.y * (2 * _selectedButton + 1)));
+	}
+	else if (Game::instance().getSpecialKey(GLUT_KEY_DOWN) && _moveCooldown == 0) {
+		_buttons[_selectedButton]->setTexturePosition(glm::vec2(0.6f, BUTTON_SPRITESHEET_SIZE.y * (2 * _selectedButton)));
+		_selectedButton = (_selectedButton + 1) % _buttons.size();
+		_moveCooldown = MOVE_COOLDOWN;
+		_buttons[_selectedButton]->setTexturePosition(glm::vec2(0.6f, BUTTON_SPRITESHEET_SIZE.y * (2 * _selectedButton + 1)));
+	}
+	_moveCooldown = std::max(_moveCooldown - deltaTime, 0);
 
 
 	if (Game::instance().getKey(13)) { /*Enter key pressed*/
-
 		switch (_selectedButton) {
-			case 0: play(); break;
-			case 1: openOptions(); break;
-			case 2: exit(); break;
+		case 0: //Play
+			return OPEN_LEVEL;
+		case 1: //Options
+			_state = RUNNING;
+			//#include <shenanigans>
+			break;
+		case 2: //Exit
+			return EXIT;
 		}
 	}
-	else if (Game::instance().getSpecialKey(GLUT_KEY_UP) && _moveCooldown == 0) {
-		_buttons[_selectedButton]->setTexturePosition(glm::vec2(
-			0.6f, BUTTON_SPRITESHEET_SIZE.y * (2 * _selectedButton)
-		));
-		_selectedButton += 2;
-		_selectedButton %= 3;
-		_moveCooldown = MOVE_COOLDOWN;
-		_buttons[_selectedButton]->setTexturePosition(glm::vec2(
-			0.6f, BUTTON_SPRITESHEET_SIZE.y * (2 * _selectedButton + 1)
-		));
+	else if (Game::instance().getKey(27)) {
+		return EXIT;
 	}
-	else if (Game::instance().getSpecialKey(GLUT_KEY_DOWN) && _moveCooldown == 0) {
-		_buttons[_selectedButton]->setTexturePosition(glm::vec2(
-			0.6f, BUTTON_SPRITESHEET_SIZE.y * (2 * _selectedButton)
-		));
-		_selectedButton += 1;
-		_selectedButton %= 3;
-		_moveCooldown = MOVE_COOLDOWN;
-		_buttons[_selectedButton]->setTexturePosition(glm::vec2(
-			0.6f, BUTTON_SPRITESHEET_SIZE.y * (2 * _selectedButton + 1)
-		));
-	}
-	_moveCooldown = std::max(_moveCooldown - deltaTime, 0);
+
+	return _state;
 }
 
 void Scene_Menu::render()
@@ -141,31 +141,7 @@ void Scene_Menu::render()
 	_b_exit->render();
 }
 
-int Scene_Menu::getState()
-{
-	return _state;
-}
-
-int Scene_Menu::getLevel()
+int Scene_Menu::getLevelToOpen()
 {
 	return 1;
-}
-
-
-
-
-
-void Scene_Menu::play()
-{
-	_state = PLAY;
-}
-
-void Scene_Menu::openOptions()
-{
-	_state = OPTIONS;
-}
-
-void Scene_Menu::exit()
-{
-	_state = EXIT;
 }

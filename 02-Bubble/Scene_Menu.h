@@ -6,19 +6,17 @@ class Scene_Menu :
 	public Scene
 {
 public:
-	enum state { NONE, PLAY, OPTIONS, EXIT };
 
 	Scene_Menu() {}
 
 	void init() override;
-	void update(int deltaTime);
+	int update(int deltaTime) override;
 	void render() override;
 
-	int getState() override;
-	int getLevel() override;
+	int getLevelToOpen() override;
 
 private:
-	int _selectedButton, _moveCooldown, _state;
+	int _selectedButton, _moveCooldown;
 
 	//Textures
 	Texture *_b_Texture, *_bg_Texture;
@@ -31,8 +29,4 @@ private:
 	//Background
 	Sprite *_bg;
 
-	//State switch
-	void play();
-	void openOptions();
-	void exit();
 };

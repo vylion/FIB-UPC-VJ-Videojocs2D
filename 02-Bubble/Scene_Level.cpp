@@ -27,7 +27,7 @@ Scene_Level::~Scene_Level()
 
 void Scene_Level::init(int level)
 {
-
+	_state = RUNNING;
 	_level = level;
 	initShaders();
 	
@@ -48,12 +48,29 @@ void Scene_Level::init(int level)
 	currentTime = 0.0f;
 }
 
-void Scene_Level::update(int deltaTime)
+int Scene_Level::update(int deltaTime)
 {
 	currentTime += deltaTime;
 
 	aimer->update(deltaTime);
 	bmng->update(deltaTime);
+
+	if (!bmng->ballsLeft()) {
+		//Overlay to ask if next level or straight to menu(?)
+		//Could also be used to display statistics(?)
+			//^ We need a text class for that
+		_state = OPEN_LEVEL;
+		_level = -2;
+	}
+
+	if (Game::instance().getKey(27)) {
+		
+		_level = -2;
+		//return EXIT;
+		return OPEN_LEVEL;
+	}
+
+	return _state;
 }
 
 void Scene_Level::render()
@@ -73,12 +90,7 @@ void Scene_Level::render()
 	bmng->render();
 }
 
-int Scene_Level::getState()
+int Scene_Level::getLevelToOpen()
 {
-	return 0;
-}
-
-int Scene_Level::getLevel()
-{
-	return _level;
+	return _level + 1;
 }

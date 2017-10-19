@@ -9,11 +9,10 @@ public:
 	~Scene_Level();
 
 	void init(int level) override;
-	void update(int deltaTime) override;
+	int update(int deltaTime) override;
 	void render() override;
 
-	int getState() override;
-	int getLevel() override;
+	int getLevelToOpen() override;
 
 private:
 	int _level;

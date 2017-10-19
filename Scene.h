@@ -17,18 +17,21 @@ class Scene
 {
 
 public:
+	enum state { RUNNING, OPEN_LEVEL, EXIT };
+
 	Scene() {}
 
 	virtual void init() {};
 	virtual void init(int level) {};
 
-	virtual void update(int deltaTime) {};
+	virtual int update(int deltaTime) { return OPEN_LEVEL; };
 	virtual void render() {};
 
-	virtual int getState() { return 0; };
-	virtual int getLevel() { return 0; };
+	virtual int getLevelToOpen() { return -1; };
 
 protected:
+	int _state;
+
 	ShaderProgram texProgram;
 	float currentTime;
 	glm::mat4 projection;
