@@ -32,8 +32,12 @@ public:
 	bool collisionMoveRight(const glm::ivec2 &pos, const glm::ivec2 &size) const;
 	bool collisionMoveDown(const glm::ivec2 &pos, const glm::ivec2 &size, int *posY) const;
 	
+	//Total tiles
 	glm::vec2 getMapSize();
-	glm::ivec2 getBallOffset();
+	//Starting tile for balls
+	glm::vec2 getBallOffset();
+	//Tile space for balls
+	glm::vec2 getBallSpace();
 
 private:
 	bool loadLevel(const string &levelFile);
@@ -43,7 +47,8 @@ private:
 	GLuint vao;
 	GLuint vbo;
 	GLint posLocation, texCoordLocation;
-	glm::ivec2 position, mapSize, tilesheetSize, ballOffset;
+	glm::ivec2 position, mapSize, tilesheetSize;
+	glm::vec2 ballOffset, ballSpace;
 	int tileSize, blockSize;
 	Texture tilesheet;
 	glm::vec2 tileTexSize;

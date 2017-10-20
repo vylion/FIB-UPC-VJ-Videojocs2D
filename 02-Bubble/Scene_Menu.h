@@ -16,6 +16,7 @@ public:
 	int getLevelToOpen() override;
 
 private:
+	//Selection and change button cooldown
 	int _selectedButton, _moveCooldown;
 
 	//Textures

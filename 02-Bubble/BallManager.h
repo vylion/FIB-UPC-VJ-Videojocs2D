@@ -12,10 +12,11 @@ using namespace std;
 class BallManager
 {
 public:
-	static BallManager *createBallManager(const string &levelFile, glm::ivec2 &minCoords, glm::vec2 &mapSize, ShaderProgram &shaderProgram);
+	static BallManager *createBallManager(const string &levelFile, glm::vec2 &mapSize, ShaderProgram &shaderProgram);
 
-	BallManager::BallManager(const string & levelFile, glm::ivec2 &minCoords, glm::vec2 & mapSize, ShaderProgram & shaderProgram);
-
+	BallManager::BallManager(const string & levelFile, glm::vec2 & mapSize, ShaderProgram & shaderProgram);
+	
+	void init(glm::ivec2 &minCoords);
 	void update(int deltaTime);
 	void render() const;
 
@@ -26,8 +27,11 @@ public:
 	void launchHeldBall(Ball_Held *heldBall, float angle);
 
 private:
+	//Size in spritesheet (Pixels) and size in screen (Pixels)
 	int _spritePixelSize, _ballPixelSize;
-	glm::ivec2 _minCoords, _matrixSpace, _matrixSize;
+	//Starting coords for balls (tilemap), Space available for balls (tilemap), Space used for balls (read from file)
+	glm::ivec2 _minBallCoords, _matrixSpace, _matrixTileSize;
+	//Ball size in spritesheet (0..1) and total spritesheet size
 	glm::vec2 _ballTexSize, _spritesheetSize;
 	//Need these two for new balls
 	Texture *_spritesheet; ShaderProgram _shaderProgram;
@@ -39,7 +43,10 @@ private:
 	//Static balls are managed by BallMatrix
 	BallMatrix * _bmat;
 
+	//Create ball
 	Ball *getNewBall();
+	//Open new level
 	bool readLevel(const string & levelFile, glm::vec2 &mapSize);
+	//Prepare ball matrix
 	void setUpBalls(int *colorMatrix, int visibleMatrixHeight);
 };

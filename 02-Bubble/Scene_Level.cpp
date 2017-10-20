@@ -2,8 +2,8 @@
 
 #include "../Game.h"
 
-#define SCREEN_X 32
-#define SCREEN_Y 16
+#define MIN_SCREEN_X 32
+#define MIN_SCREEN_Y 16
 
 #define INIT_PLAYER_X_TILES 9
 #define INIT_PLAYER_Y_TILES 26
@@ -37,12 +37,17 @@ void Scene_Level::init(int level)
 		levelFiller = "0";
 	}
 	string levelLocation = "../levels/level" + levelFiller + std::to_string(_level);
-	map = TileMap::createTileMap(levelLocation + "_Tile.txt", glm::vec2(SCREEN_X, SCREEN_Y), texProgram);
+	map = TileMap::createTileMap(levelLocation + "_Tile.txt", glm::vec2(MIN_SCREEN_X, MIN_SCREEN_Y), texProgram);
 
-	bmng = BallManager::createBallManager(levelLocation + "_Ball.txt", glm::ivec2(SCREEN_X + map->getBallOffset().x, SCREEN_Y + map->getBallOffset().y), map->getMapSize(), texProgram);
+	bmng = BallManager::createBallManager(levelLocation + "_Ball.txt", map->getBallSpace(), texProgram);
+	bmng->init(glm::ivec2(MIN_SCREEN_X + map->getBallOffset().x, MIN_SCREEN_Y + map->getBallOffset().y));
 
 	aimer = new Aimer();
-	aimer->init(glm::ivec2(INIT_PLAYER_X_TILES, INIT_PLAYER_Y_TILES), texProgram, bmng);
+	//Horizontal position is ball starting position + ball space / 2
+	//Vertical position is ball starting position + ball space - 2 to compensate for aimer height
+	glm::vec2 aimerDist = map->getBallSpace() * glm::vec2(0.5f, 1.f) + glm::vec2(0.5f, -2);
+	glm::vec2 aimerPos = map->getBallOffset();
+	aimer->init(aimerPos + aimerDist, texProgram, bmng);
 
 	projection = glm::ortho(0.f, float(SCREEN_WIDTH - 1), float(SCREEN_HEIGHT - 1), 0.f);
 	currentTime = 0.0f;
@@ -64,9 +69,7 @@ int Scene_Level::update(int deltaTime)
 	}
 
 	if (Game::instance().getKey(27)) {
-		
 		_level = -2;
-		//return EXIT;
 		return OPEN_LEVEL;
 	}
 

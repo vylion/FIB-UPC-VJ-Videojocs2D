@@ -6,14 +6,15 @@
 #include <math.h>
 
 
-#define SHOOT_COOLDOWN 50						//Time between ball stop and next shot
+#define SHOOT_COOLDOWN 1000						//Time between ball stop and next shot
 #define MAX_ANGLE 1.f							//Angle will be 75 degrees -> radians
 #define PIXEL_SIZE glm::vec2(16.f,64.f)			//Pixel size in spritesheet
 
-void Aimer::init(const glm::ivec2 & tileMapPos, ShaderProgram & shaderProgram, BallManager *bmng)
+void Aimer::init(const glm::vec2 & tileMapPos, ShaderProgram & shaderProgram, BallManager *bmng)
 {
 
-	_position = tileMapPos * 16;
+	_position = tileMapPos * 16.f;
+	_bmng = bmng;
 	_size = PIXEL_SIZE;
 	_canShoot = true;
 	_angle = 0;
@@ -26,11 +27,11 @@ void Aimer::init(const glm::ivec2 & tileMapPos, ShaderProgram & shaderProgram, B
 	//Quad size, Texture size, Texture position, Texture sheet, program
 	glm::vec2 sizeInSpriteSheet = glm::vec2(PIXEL_SIZE.x / _spritesheet->width(), PIXEL_SIZE.y / _spritesheet->height());
 	_sprite = Sprite::createSprite(PIXEL_SIZE, sizeInSpriteSheet, _spritesheet, &shaderProgram);
-	_sprite->setPosition(tileMapPos*16);
-	_bmng = bmng;
+	_sprite->setPosition(_position);
 	//heldball from manager
 	_heldBall = new Ball_Held(shaderProgram, _bmng->getNextHeldBall());
 	_heldBall->init(_position, _size);
+
 }
 
 void Aimer::update(int deltaTime)

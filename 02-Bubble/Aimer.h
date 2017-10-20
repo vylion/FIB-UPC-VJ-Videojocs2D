@@ -10,7 +10,7 @@ class Aimer
 
 public:
 	Aimer() {}
-	void init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram, BallManager *bmng);
+	void init(const glm::vec2 &tileMapPos, ShaderProgram &shaderProgram, BallManager *bmng);
 	void update(int deltaTime);
 	void render();
 

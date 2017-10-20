@@ -63,10 +63,10 @@ bool TileMap::loadLevel(const string &levelFile)
 	getline(fin, line);
 	sstream.str(line);
 	sstream >> mapSize.x >> mapSize.y;
-	//Ball offset
+	//Ball offset and space
 	getline(fin, line);
 	sstream.str(line);
-	sstream >> ballOffset.x >> ballOffset.y;
+	sstream >> ballOffset.x >> ballOffset.y >> ballSpace.x >> ballSpace.y;
 	//Tile and block size
 	getline(fin, line);
 	sstream.str(line);
@@ -221,11 +221,16 @@ glm::vec2 TileMap::getMapSize()
 	return mapSize;
 }
 
-glm::ivec2 TileMap::getBallOffset()
+
+glm::vec2 TileMap::getBallOffset()
 {
 	return ballOffset;
 }
 
+glm::vec2 TileMap::getBallSpace()
+{
+	return ballSpace;
+}
 
 
 

@@ -5,20 +5,30 @@
 #include "BallManager.h"
 #include "Ball_Launched.h"
 
-BallManager::BallManager(const string & levelFile, glm::ivec2 &minCoords, glm::vec2 & mapSize, ShaderProgram & shaderProgram)
-{
-	_shaderProgram = shaderProgram;
-	if (!readLevel(levelFile, mapSize)) printf("BallManager: Failed to read levelFile");
-	_nextBall = getNewBall();
-	_thereIsLaunchedBall = false;
-	_minCoords = glm::ivec2(minCoords);
-}
 
-BallManager * BallManager::createBallManager(const string & levelFile, glm::ivec2 &minCoords, glm::vec2 & mapSize, ShaderProgram & shaderProgram)
+BallManager * BallManager::createBallManager(const string & levelFile, glm::vec2 & mapSize, ShaderProgram & shaderProgram)
 {
-	BallManager *bm = new BallManager(levelFile, minCoords, mapSize, shaderProgram);
+	BallManager *bm = new BallManager(levelFile, mapSize, shaderProgram);
 
 	return bm;
+}
+
+
+BallManager::BallManager(const string & levelFile, glm::vec2 & mapSize, ShaderProgram & shaderProgram)
+{
+	_shaderProgram = shaderProgram;
+
+	if (!readLevel(levelFile, mapSize)) printf("BallManager: Failed to read levelFile");
+	
+}
+
+
+
+void BallManager::init(glm::ivec2 &minBallCoords)
+{
+	_minBallCoords = glm::ivec2(minBallCoords);
+	_nextBall = getNewBall();
+	_thereIsLaunchedBall = false;
 }
 
 void BallManager::update(int deltaTime)
@@ -65,7 +75,7 @@ Ball_Held * BallManager::getNextHeldBall()
 
 void BallManager::launchHeldBall(Ball_Held * heldBall, float angle)
 {
-	_launchedBall = new Ball_Launched(_shaderProgram, heldBall, heldBall->getAngle(), _minCoords, _matrixSpace);
+	_launchedBall = new Ball_Launched(_shaderProgram, heldBall, heldBall->getAngle(), _minBallCoords, _matrixSpace);
 	_thereIsLaunchedBall = true;
 	//_launchedBall = new LaunchedBall(heldBall, angle);
 	//_heldBall->launch(angle);
@@ -83,7 +93,7 @@ Ball * BallManager::getNewBall()
 
 bool BallManager::readLevel(const string & levelFile, glm::vec2 &mapSize)
 {
-	_matrixSpace = glm::vec2(mapSize.x-2, mapSize.y-1);
+	_matrixSpace = glm::vec2(mapSize.x, mapSize.y);
 
 	ifstream fin;
 	string line, spritesheetFile;
@@ -100,9 +110,10 @@ bool BallManager::readLevel(const string & levelFile, glm::vec2 &mapSize)
 	//Map size
 	getline(fin, line);
 	sstream.str(line);
-	sstream >> _matrixSize.x >> _matrixSize.y >> visibleMatrixHeight;
+	sstream >> _matrixTileSize.x >> _matrixTileSize.y >> visibleMatrixHeight;
 	//Check if the balls fit in the hole :^)
-	if (_matrixSize.x > _matrixSpace.x || visibleMatrixHeight > _matrixSpace.y) return false;
+
+	if (_matrixTileSize.x > _matrixSpace.x || visibleMatrixHeight > _matrixSpace.y) return false;
 	//Tile and block size
 	getline(fin, line);
 	sstream.str(line);
@@ -124,12 +135,12 @@ bool BallManager::readLevel(const string & levelFile, glm::vec2 &mapSize)
 	sstream >> _spritesheetSize.x >> _spritesheetSize.y;
 	_ballTexSize = glm::vec2(1.f / _spritesheetSize.x, 1.f / _spritesheetSize.y);
 
-	int *colorMatrix = new int[_matrixSize.x * _matrixSize.y];
+	int *colorMatrix = new int[_matrixTileSize.x * _matrixTileSize.y];
 	int iterated = 0;
-	for (int j = 0; j<_matrixSize.y; j++)
+	for (int j = 0; j<_matrixTileSize.y; j++)
 	{
 		//Account for odd rows having less balls (0 = even!)
-		for (int i = 0; i<_matrixSize.x - j%2; i++)
+		for (int i = 0; i<_matrixTileSize.x - j%2; i++)
 		{
 			fin.get(ballColor);
 			colorMatrix[iterated] = ballColor - int('0');
@@ -149,5 +160,6 @@ bool BallManager::readLevel(const string & levelFile, glm::vec2 &mapSize)
 
 void BallManager::setUpBalls(int *colorMatrix, int visibleMatrixHeight)
 {
-	_bmat = new BallMatrix(colorMatrix, _matrixSize, visibleMatrixHeight, _ballPixelSize, _ballTexSize, _spritesheet, _shaderProgram);
+	_bmat = new BallMatrix(colorMatrix, _matrixTileSize, visibleMatrixHeight, _ballPixelSize, _ballTexSize, _spritesheet, _shaderProgram);
+	//_bmat = new BallMatrix(colorMatrix, _matrixTileSize, visibleMatrixHeight, _minBallCoords, _ballPixelSize, _ballTexSize, _spritesheet, _shaderProgram);
 }

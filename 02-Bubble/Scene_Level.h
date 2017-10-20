@@ -15,9 +15,13 @@ public:
 	int getLevelToOpen() override;
 
 private:
+	//Current level
 	int _level;
+	//Tile map
 	TileMap *map;
+	//Aimer arrow
 	Aimer *aimer;
+	//Ball manager
 	BallManager *bmng;
 };
 
