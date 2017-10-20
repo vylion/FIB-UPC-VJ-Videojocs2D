@@ -39,7 +39,7 @@ void Scene_Level::init(int level)
 	string levelLocation = "../levels/level" + levelFiller + std::to_string(_level);
 	map = TileMap::createTileMap(levelLocation + "_Tile.txt", glm::vec2(SCREEN_X, SCREEN_Y), texProgram);
 
-	bmng = BallManager::createBallManager(levelLocation + "_Ball.txt", glm::ivec2(SCREEN_X + 16, SCREEN_Y + 16), map->getMapSize(), texProgram);
+	bmng = BallManager::createBallManager(levelLocation + "_Ball.txt", glm::ivec2(SCREEN_X + map->getBallOffset().x, SCREEN_Y + map->getBallOffset().y), map->getMapSize(), texProgram);
 
 	aimer = new Aimer();
 	aimer->init(glm::ivec2(INIT_PLAYER_X_TILES, INIT_PLAYER_Y_TILES), texProgram, bmng);
