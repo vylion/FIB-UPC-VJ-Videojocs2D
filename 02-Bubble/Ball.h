@@ -7,7 +7,7 @@ class Ball
 {
 public:
 	//sizeinspritesheet, spritesheet, shaderprogram
-	Ball(const glm::vec2 &size, const glm::vec2 &sizeInSpritesheet, Texture *spritesheet, ShaderProgram & shaderProgram);
+	Ball(const int &size, const glm::vec2 &sizeInSpritesheet, Texture *spritesheet, ShaderProgram & shaderProgram);
 
 	void init(int color, const glm::vec2 &position);
 	void update(int &deltaTime);
@@ -16,8 +16,8 @@ public:
 	int getColor();
 	void setColor(int color);
 
-	glm::vec2 getSize();
-	void setSize(glm::vec2 &size);
+	int getSize();
+	void setSize(int &size);
 
 	glm::vec2 getSpritesheetSize();
 	Texture * getTexture();
@@ -25,9 +25,11 @@ public:
 	glm::vec2 getPosition();
 	void setPosition(const glm::vec2 &pos);
 
+	vector<glm::vec2> collisionPoints();
+
 private:
-	glm::vec2 _position, _size, _sizeInSpritesheet;
-	int _color;
+	glm::vec2 _position, _sizeInSpritesheet;
+	int _size, _color;
 	Sprite *_sprite;
 	Texture *_texture;
 };

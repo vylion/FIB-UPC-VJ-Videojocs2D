@@ -8,7 +8,8 @@ Ball_Held::Ball_Held(ShaderProgram & shaderProgram, Ball * b)
 {
 
 	setColor(b->getColor());
-	setSize(b->getSize());
+	int size = b->getSize();
+	setSize(size);
 	//setSize(glm::vec2(b->getSize().x,b->getSize().y));
 }
 

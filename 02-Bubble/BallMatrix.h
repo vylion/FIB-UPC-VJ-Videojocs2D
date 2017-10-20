@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <algorithm>
 #include "Ball_InMatrix.h"
 
 class BallMatrix
@@ -10,7 +11,7 @@ public:
 	BallMatrix(	int *_colorMatrix,
 				glm::ivec2 &matrixDimensions,
 				int visibleMatrixHeight,
-				const glm::vec2 &ballSize,
+				const int &ballSize,
 				const glm::vec2 &ballSizeInSpritesheet,
 				Texture *spritesheet,
 				ShaderProgram &shaderProgram);
@@ -24,16 +25,18 @@ public:
 	int ballsLeft();
 
 private:
-	vector<vector<Ball_InMatrix*> > _shownBallMatrix;
-	vector<vector<Ball_InMatrix*> > _hiddenBallMatrix;
+	vector<vector<Ball_InMatrix*> > _ballMatrix;
 	int _visibleMatrixHeight;
 
-	glm::vec2  _ballSize, _ballSizeInSpritesheet;
+	glm::vec2  _ballSizeInSpritesheet;
+	int _ballSize;
 	Texture *_spritesheet;
 	ShaderProgram _shaderProgram;
 
 	Ball_InMatrix * ballFromColor(int &color);
 	void passRowToShown();
+
+	glm::vec2 snapToGrid(Ball *b);
 };
 
 #pragma once

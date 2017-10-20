@@ -14,17 +14,12 @@ BallManager::BallManager(const string & levelFile, glm::ivec2 &minCoords, glm::v
 	_minCoords = glm::ivec2(minCoords);
 }
 
-
 BallManager * BallManager::createBallManager(const string & levelFile, glm::ivec2 &minCoords, glm::vec2 & mapSize, ShaderProgram & shaderProgram)
 {
 	BallManager *bm = new BallManager(levelFile, minCoords, mapSize, shaderProgram);
 
 	return bm;
 }
-
-
-
-
 
 void BallManager::update(int deltaTime)
 {
@@ -43,9 +38,6 @@ void BallManager::render() const
 	_bmat->render();
 	_nextBall->render();
 }
-
-
-
 
 bool BallManager::ballUpdatesLeft()
 {
@@ -83,7 +75,7 @@ Ball * BallManager::getNewBall()
 {
 	int color = rand()%8;
 
-	Ball *b = new Ball(glm::vec2(_ballPixelSize, _ballPixelSize), _ballTexSize, _spritesheet, _shaderProgram);
+	Ball *b = new Ball(_ballPixelSize, _ballTexSize, _spritesheet, _shaderProgram);
 	b->init(color, glm::vec2(0.f, 0.f));
 
 	return b;
@@ -116,7 +108,6 @@ bool BallManager::readLevel(const string & levelFile, glm::vec2 &mapSize)
 	sstream.str(line);
 	sstream >> _spritePixelSize >> _ballPixelSize;
 	//_ballTexSize = glm::vec2(_spritePixelSize, _spritePixelSize);
-	_ballSize = glm::vec2(_ballPixelSize, _ballPixelSize);
 	//Tilesheet name
 	getline(fin, line);
 	sstream.str(line);
@@ -158,5 +149,5 @@ bool BallManager::readLevel(const string & levelFile, glm::vec2 &mapSize)
 
 void BallManager::setUpBalls(int *colorMatrix, int visibleMatrixHeight)
 {
-	_bmat = new BallMatrix(colorMatrix, _matrixSize, visibleMatrixHeight, _ballSize, _ballTexSize, _spritesheet, _shaderProgram);
+	_bmat = new BallMatrix(colorMatrix, _matrixSize, visibleMatrixHeight, _ballPixelSize, _ballTexSize, _spritesheet, _shaderProgram);
 }

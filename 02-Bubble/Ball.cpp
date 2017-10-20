@@ -1,11 +1,13 @@
 #include "Ball.h"
+#define _USE_MATH_DEFINES
+#include <math.h>
 
-Ball::Ball(const glm::vec2 &size, const glm::vec2 & sizeInSpritesheet,  Texture *spritesheet, ShaderProgram & shaderProgram)
+Ball::Ball(const int &size, const glm::vec2 & sizeInSpritesheet,  Texture *spritesheet, ShaderProgram & shaderProgram)
 {
 	_size = size;
 	_sizeInSpritesheet = sizeInSpritesheet;
 	_texture = spritesheet;
-	_sprite = Sprite::createSprite(size, sizeInSpritesheet, spritesheet, &shaderProgram);
+	_sprite = Sprite::createSprite(glm::vec2(size, size), sizeInSpritesheet, spritesheet, &shaderProgram);
 }
 
 void Ball::init(int color, const glm::vec2 & position)
@@ -40,14 +42,15 @@ void Ball::setColor(int color)
 	_sprite->setTexturePosition(glm::vec2(1.f / 8 * color, 0.f));
 }
 
-glm::vec2 Ball::getSize()
+int Ball::getSize()
 {
 	return _size;
 }
 
-void Ball::setSize(glm::vec2 & size)
+void Ball::setSize(int & size)
 {
 	_size = size;
+	_sprite->setSize(glm::vec2(size, size));
 }
 
 glm::vec2 Ball::getSpritesheetSize()
@@ -70,4 +73,19 @@ void Ball::setPosition(const glm::vec2 & pos)
 {
 	_position = pos;
 	_sprite->setPosition(_position);
+}
+
+vector<glm::vec2> Ball::collisionPoints()
+{
+	float r = _size / 2;
+	glm::vec2 p;
+	vector<glm::vec2> points = vector<glm::vec2>();
+
+	for (int i = 0; i < 6; ++i) {
+		p = glm::vec2(r*sin(i*(30 * M_PI / 180)), r*cos(i*(30 * M_PI / 180)));
+
+		points.push_back(p + _position);
+	}
+
+	return points;
 }

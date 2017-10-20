@@ -1,8 +1,10 @@
 BALLMAP
-14 8 8							-- Size of tile map in tiles (x, y) and visible starting height
+14 10 8							-- Size of tile map in tiles (x, y) and visible starting height
 16 16 							-- Tile size & block size
 ../media/images/balls.png	 			-- Tilesheet
 8 8 							-- Number of tiles in tilesheet
+00000000000000
+0001234567000
 00000000000000
 1111111111111
 22222222222222
