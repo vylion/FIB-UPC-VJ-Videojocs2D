@@ -7,16 +7,33 @@ void Game::init()
 {
 	bPlay = true;
 	glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
-	scene = new Scene_Level();
-	scene->init(1);
+	scene = new Scene_Menu();
+	scene->init();
 }
 
 bool Game::update(int deltaTime)
 {
-	scene->update(deltaTime);
-	//if (_menu.wantsToQuit()) bPlay = false;
+	switch (scene->update(deltaTime)) {
+		case Scene::OPEN_LEVEL:
+			if (scene->getLevelToOpen() < 0) {
+				scene = new Scene_Menu();
+				scene->init();
+			}
+			else {
+				int level = scene->getLevelToOpen();
+				scene = new Scene_Level();
+				scene->init(level);
+			}
+
+			break;
+
+		case Scene::EXIT:
+			bPlay = false;
+			break;
+	}
 	return bPlay;
 }
+
 
 void Game::render()
 {
@@ -27,8 +44,8 @@ void Game::render()
 
 void Game::keyPressed(int key)
 {
-	if(key == 27) // Escape code
-		bPlay = false;
+	//if(key == 27) // Escape code
+	//	bPlay = false;
 	keys[key] = true;
 }
 

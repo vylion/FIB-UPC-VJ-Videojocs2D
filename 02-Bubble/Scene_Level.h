@@ -9,10 +9,13 @@ public:
 	~Scene_Level();
 
 	void init(int level) override;
-	void update(int deltaTime) override;
+	int update(int deltaTime) override;
 	void render() override;
 
+	int getLevelToOpen() override;
+
 private:
+	int _level;
 	TileMap *map;
 	Aimer *aimer;
 	BallManager *bmng;

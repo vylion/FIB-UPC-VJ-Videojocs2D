@@ -27,18 +27,19 @@ Scene_Level::~Scene_Level()
 
 void Scene_Level::init(int level)
 {
-
+	_state = RUNNING;
+	_level = level;
 	initShaders();
 	
 
 	string levelFiller = "";
-	if (level < 10) {
+	if (_level < 10) {
 		levelFiller = "0";
 	}
-	string levelLocation = "../levels/level" + levelFiller + std::to_string(level);
+	string levelLocation = "../levels/level" + levelFiller + std::to_string(_level);
 	map = TileMap::createTileMap(levelLocation + "_Tile.txt", glm::vec2(SCREEN_X, SCREEN_Y), texProgram);
 
-	bmng = BallManager::createBallManager(levelLocation + "_Ball.txt", glm::ivec2(SCREEN_X + 16, SCREEN_Y + 16), map->getMapSize(), texProgram);
+	bmng = BallManager::createBallManager(levelLocation + "_Ball.txt", glm::ivec2(SCREEN_X + map->getBallOffset().x, SCREEN_Y + map->getBallOffset().y), map->getMapSize(), texProgram);
 
 	aimer = new Aimer();
 	aimer->init(glm::ivec2(INIT_PLAYER_X_TILES, INIT_PLAYER_Y_TILES), texProgram, bmng);
@@ -47,12 +48,29 @@ void Scene_Level::init(int level)
 	currentTime = 0.0f;
 }
 
-void Scene_Level::update(int deltaTime)
+int Scene_Level::update(int deltaTime)
 {
 	currentTime += deltaTime;
 
 	aimer->update(deltaTime);
 	bmng->update(deltaTime);
+
+	if (!bmng->ballsLeft()) {
+		//Overlay to ask if next level or straight to menu(?)
+		//Could also be used to display statistics(?)
+			//^ We need a text class for that
+		_state = OPEN_LEVEL;
+		_level = -2;
+	}
+
+	if (Game::instance().getKey(27)) {
+		
+		_level = -2;
+		//return EXIT;
+		return OPEN_LEVEL;
+	}
+
+	return _state;
 }
 
 void Scene_Level::render()
@@ -70,4 +88,9 @@ void Scene_Level::render()
 	map->render();
 	aimer->render();
 	bmng->render();
+}
+
+int Scene_Level::getLevelToOpen()
+{
+	return _level + 1;
 }

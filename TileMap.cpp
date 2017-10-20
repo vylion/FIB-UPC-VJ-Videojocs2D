@@ -19,6 +19,7 @@ TileMap *TileMap::createTileMap(const string &levelFile, const glm::vec2 &minCoo
 TileMap::TileMap(const string &levelFile, const glm::vec2 &minCoords, ShaderProgram &program)
 {
 	loadLevel(levelFile);
+
 	prepareArrays(minCoords, program);
 }
 
@@ -62,6 +63,10 @@ bool TileMap::loadLevel(const string &levelFile)
 	getline(fin, line);
 	sstream.str(line);
 	sstream >> mapSize.x >> mapSize.y;
+	//Ball offset
+	getline(fin, line);
+	sstream.str(line);
+	sstream >> ballOffset.x >> ballOffset.y;
 	//Tile and block size
 	getline(fin, line);
 	sstream.str(line);
@@ -90,7 +95,9 @@ bool TileMap::loadLevel(const string &levelFile)
 			if(tile == ' ')
 				map[j*mapSize.x+i] = 0;
 			else
-				map[j*mapSize.x+i] = tile - int('0');
+				if (tile >= int('A') && tile <= int('F')) map[j*mapSize.x + i] = tile - int('A') + 10;
+				else if (tile >= int('0') && tile <= int('9')) map[j*mapSize.x+i] = tile - int('0');
+				else map[j*mapSize.x + i] = 0;
 		}
 		fin.get(tile);
 #ifndef _WIN32
@@ -212,6 +219,11 @@ bool TileMap::collisionMoveDown(const glm::ivec2 &pos, const glm::ivec2 &size, i
 glm::vec2 TileMap::getMapSize()
 {
 	return mapSize;
+}
+
+glm::ivec2 TileMap::getBallOffset()
+{
+	return ballOffset;
 }
 
 

@@ -12,21 +12,26 @@
 
 #include "02-Bubble/Aimer.h"
 #include "02-Bubble/BallManager.h"
-//#include "02-Bubble/Scene_Menu.h"
 
 class Scene
 {
 
 public:
+	enum state { RUNNING, OPEN_LEVEL, EXIT };
+
 	Scene() {}
 
 	virtual void init() {};
 	virtual void init(int level) {};
 
-	virtual void update(int deltaTime) {};
+	virtual int update(int deltaTime) { return OPEN_LEVEL; };
 	virtual void render() {};
 
+	virtual int getLevelToOpen() { return -1; };
+
 protected:
+	int _state;
+
 	ShaderProgram texProgram;
 	float currentTime;
 	glm::mat4 projection;
