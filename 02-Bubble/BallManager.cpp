@@ -83,7 +83,7 @@ void BallManager::launchHeldBall(Ball_Held * heldBall, float angle)
 
 Ball * BallManager::getNewBall()
 {
-	int color = rand()%8;
+	int color = rand()%11;
 
 	Ball *b = new Ball(_ballPixelSize, _ballTexSize, _spritesheet, _shaderProgram);
 	b->init(color, glm::vec2(0.f, 0.f));
@@ -143,7 +143,12 @@ bool BallManager::readLevel(const string & levelFile, glm::vec2 &mapSize)
 		for (int i = 0; i<_matrixTileSize.x - j%2; i++)
 		{
 			fin.get(ballColor);
-			colorMatrix[iterated] = ballColor - int('0');
+			
+			//Parse hex values
+			if (ballColor >= int('A') && ballColor <= int('F')) colorMatrix[iterated] = ballColor - int('A') + 10;
+			else if (ballColor >= int('0') && ballColor <= int('9')) colorMatrix[iterated] = ballColor - int('0');
+			else colorMatrix[iterated] = 0;
+
 			iterated++;
 		}
 		fin.get(ballColor);

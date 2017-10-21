@@ -95,6 +95,7 @@ bool TileMap::loadLevel(const string &levelFile)
 			if(tile == ' ')
 				map[j*mapSize.x+i] = 0;
 			else
+				//Parse hex values
 				if (tile >= int('A') && tile <= int('F')) map[j*mapSize.x + i] = tile - int('A') + 10;
 				else if (tile >= int('0') && tile <= int('9')) map[j*mapSize.x+i] = tile - int('0');
 				else map[j*mapSize.x + i] = 0;

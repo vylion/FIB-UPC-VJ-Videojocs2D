@@ -12,18 +12,13 @@ Ball::Ball(const int &size, const glm::vec2 & sizeInSpritesheet,  Texture *sprit
 
 void Ball::init(int color, const glm::vec2 & position)
 {
-	_color = color;
-	//Set texture according to color code (x = 1.f sheet size / 8 different colors * color code)
-	_sprite->setTexturePosition(glm::vec2(1.f/8 * color, 0.f));
+	setColor(color);
 	setPosition(position);
 }
 
 void Ball::update(int & deltaTime)
 {
-	/*if (_falling) {
-		_position = glm::vec2(_position.x + _speed.x*deltaTime / 200, _position.y + _speed.y*deltaTime / 200);
-		_speed = glm::vec2(_speed.x*0.95f, _speed.y*1.2f);
-	}*/
+	
 }
 
 void Ball::render()
@@ -39,7 +34,13 @@ int Ball::getColor()
 void Ball::setColor(int color)
 {
 	_color = color;
-	_sprite->setTexturePosition(glm::vec2(1.f / 8 * color, 0.f));
+	//Set texture according to color code (x = ball size * color code, y = )
+	_sprite->setTexturePosition(
+		_sizeInSpritesheet *
+		//spritesize * color % 8 to get the column, spritesize * 4 * (color/8) to get the row
+		//Rows [1..3] saved for sprite animations, so row will be either 0 or 4
+		glm::vec2((float)(color % 8), 4.f * (color / 8))
+	);
 }
 
 int Ball::getSize()

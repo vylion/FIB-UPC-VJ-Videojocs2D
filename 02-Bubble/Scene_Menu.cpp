@@ -100,7 +100,9 @@ int Scene_Menu::update(int deltaTime)
 	switch (_state) {
 		case FADE_IN:
 			_fadeTime += deltaTime;
-			//SoundManager::instance().setMusicVolume(_fadeTime / FADE_TIME);
+			//Increase music according to fade level
+			//SoundManager::instance().setMusicVolume(_fadeTime / FADE_IN_TIME);
+			//Fade in has finished. Prepare fade with time for fade_out and update state
 			if (_fadeTime >= FADE_IN_TIME) {
 				_fadeTime = (int)FADE_OUT_TIME;
 				_state = RUNNING;
@@ -108,7 +110,9 @@ int Scene_Menu::update(int deltaTime)
 			break;
 		case FADE_OUT:
 			_fadeTime -= deltaTime;
-			//SoundManager::instance().setMusicVolume(_fadeTime / FADE_TIME);
+			//Decrease music according to fade level
+			//SoundManager::instance().setMusicVolume(_fadeTime / FADE_OUT_TIME);
+			//Fade out has finished. We can safely start the level now
 			if (_fadeTime <= 0) {
 				_fadeTime = 0;
 				_state = OPEN_LEVEL;
@@ -118,7 +122,7 @@ int Scene_Menu::update(int deltaTime)
 			break;
 	}
 
-	//Float effect
+	//Float effect for logo
 	_logo->setPosition(glm::vec2(
 		(SCREEN_WIDTH - LOGO_SIZE.x) / 2.f,
 		(SCREEN_HEIGHT - LOGO_SIZE.y) / 2.f + 2*sin(currentTime/500) - 95.f
