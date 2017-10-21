@@ -79,7 +79,7 @@ void SoundManager::setSoundVolume(float volume)
 		2. Multiply by val, or 0.01 to deafen the sound enough without new factor being 0 as that would result in
 		   a division by 0 on the next volume change
 	*/
-	for (int i = 0; i < _sounds.size(); i++) {
+	for (unsigned int i = 0; i < _sounds.size(); i++) {
 		_sounds[i]->setDefaultVolume(
 			_sounds[i]->getDefaultVolume() / _soundVolumeFactor * max(volume, 0.01f)
 		);

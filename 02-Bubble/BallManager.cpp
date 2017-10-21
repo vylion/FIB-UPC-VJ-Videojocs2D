@@ -1,7 +1,9 @@
-#include <iostream>
-#include <stdlib.h>
-#include <fstream>
-#include <sstream>
+#include <iostream> //read from file
+#include <stdlib.h> //rand
+#include <time.h>	//rand init
+#include <fstream>  //read from file
+#include <sstream>	//read from file
+
 #include "BallManager.h"
 #include "Ball_Launched.h"
 
@@ -17,7 +19,7 @@ BallManager * BallManager::createBallManager(const string & levelFile, glm::vec2
 BallManager::BallManager(const string & levelFile, glm::vec2 & mapSize, ShaderProgram & shaderProgram)
 {
 	_shaderProgram = shaderProgram;
-
+	srand(time(NULL));
 	if (!readLevel(levelFile, mapSize)) printf("BallManager: Failed to read levelFile");
 	
 }
