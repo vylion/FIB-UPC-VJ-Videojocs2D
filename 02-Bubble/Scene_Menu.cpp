@@ -9,7 +9,7 @@
 #define BUTTON_SPRITESHEET_SIZE glm::vec2(0.4f, 0.125f)
 #define LOGO_SIZE glm::vec2(384.f, 256.f)
 #define LOGO_SPRITESHEET_SIZE glm::vec2(0.6f, 1.f)
-#define MOVE_COOLDOWN 200
+#define MOVE_COOLDOWN 100
 
 
 void Scene_Menu::init()
