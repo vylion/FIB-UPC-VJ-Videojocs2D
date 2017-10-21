@@ -12,12 +12,13 @@
 
 #include "02-Bubble/Aimer.h"
 #include "02-Bubble/BallManager.h"
+#include "02-Bubble/SoundManager.h"
 
 class Scene
 {
 
 public:
-	enum state { RUNNING, OPEN_LEVEL, EXIT };
+	enum state { RUNNING, FADE_IN, FADE_OUT, OPEN_LEVEL, EXIT };
 
 	Scene() {}
 

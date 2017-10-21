@@ -6,7 +6,9 @@
 void Game::init()
 {
 	bPlay = true;
-	glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
+	glClearColor(0.f, 0.f, 0.f, 1.f);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	scene = new Scene_Menu();
 	scene->init();
 }
@@ -31,6 +33,10 @@ bool Game::update(int deltaTime)
 			bPlay = false;
 			break;
 	}
+	for (int i = 0; i < 256; i++) {
+		keys_released[i] = false;
+		specialKeys_released[i] = false;
+	}
 	return bPlay;
 }
 
@@ -52,6 +58,7 @@ void Game::keyPressed(int key)
 void Game::keyReleased(int key)
 {
 	keys[key] = false;
+	keys_released[key] = true;
 }
 
 void Game::specialKeyPressed(int key)
@@ -62,6 +69,7 @@ void Game::specialKeyPressed(int key)
 void Game::specialKeyReleased(int key)
 {
 	specialKeys[key] = false;
+	specialKeys_released[key] = true;
 }
 
 void Game::mouseMove(int x, int y)
@@ -81,9 +89,19 @@ bool Game::getKey(int key) const
 	return keys[key];
 }
 
+bool Game::getKeyReleased(int key) const
+{
+	return keys_released[key];
+}
+
 bool Game::getSpecialKey(int key) const
 {
 	return specialKeys[key];
+}
+
+bool Game::getSpecialKeyReleased(int key) const
+{
+	return specialKeys_released[key];
 }
 
 

@@ -7,11 +7,18 @@
 using namespace irrklang;
 using namespace std;
 
+//Singleton
 class SoundManager
 {
 public:
 	SoundManager();
 	~SoundManager();
+	
+	static SoundManager &instance() {
+		static SoundManager sm;
+		return sm;
+	}
+
 	//Needed to update the music!
 	void update();
 

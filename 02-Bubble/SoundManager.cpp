@@ -24,7 +24,9 @@ void SoundManager::update()
 
 void SoundManager::playSound(const char* fileName)
 {
-	_engine->play2D(fileName, false);
+	//Play the sound only if it's not playing already (prevent overlap)
+	if (!_engine->isCurrentlyPlaying(fileName))
+		_engine->play2D(fileName, false);
 }
 
 float SoundManager::getMasterVolume()

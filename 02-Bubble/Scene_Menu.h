@@ -18,6 +18,7 @@ public:
 private:
 	//Selection and change button cooldown
 	int _selectedButton, _moveCooldown;
+	int _fadeTime;
 
 	//Textures
 	Texture *_b_Texture, *_bg_Texture;

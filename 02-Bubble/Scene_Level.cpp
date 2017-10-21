@@ -49,6 +49,7 @@ void Scene_Level::init(int level)
 	glm::vec2 aimerPos = map->getBallOffset();
 	aimer->init(aimerPos + aimerDist, texProgram, bmng);
 
+	//SoundManager::instance().setMusic(MUSIC_FILE);
 	projection = glm::ortho(0.f, float(SCREEN_WIDTH - 1), float(SCREEN_HEIGHT - 1), 0.f);
 	currentTime = 0.0f;
 }
@@ -68,7 +69,7 @@ int Scene_Level::update(int deltaTime)
 		_level = -2;
 	}
 
-	if (Game::instance().getKey(27)) {
+	if (Game::instance().getKeyReleased(27)) {
 		_level = -2;
 		return OPEN_LEVEL;
 	}
