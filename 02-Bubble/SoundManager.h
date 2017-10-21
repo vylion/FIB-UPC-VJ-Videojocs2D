@@ -29,6 +29,9 @@ public:
 	void setMasterVolume(float volume);
 
 	void setMusic(const char* fileName);
+	void startMusic();
+	void pauseMusic(bool pause);
+	void stopMusic();
 	float getMusicVolume();
 	//Sets volume for music (0..1)
 	void setMusicVolume(float volume);

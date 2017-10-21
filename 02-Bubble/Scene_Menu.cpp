@@ -6,7 +6,7 @@
 #include "../Game.h"
 
 
-#define FADE_IN_TIME 450.f
+#define FADE_IN_TIME 7500.f
 #define FADE_OUT_TIME 150.f
 
 #define BUTTON_SIZE glm::vec2(256.f, 32.f)
@@ -15,7 +15,7 @@
 #define LOGO_SPRITESHEET_SIZE glm::vec2(0.6f, 1.f)
 #define BUTTON_MOVE_COOLDOWN 175
 
-#define MUSIC_FILE "../media/audio/music/menu.ogg"
+#define MUSIC_FILE "../media/audio/music/menu_bgm.ogg"
 #define CHANGE_BUTTON_SFX "../media/audio/sounds/menu_button_change.ogg"
 #define CLICK_BUTTON_SFX "../media/audio/sounds/menu_button_click.ogg"
 
@@ -83,6 +83,7 @@ void Scene_Menu::init()
 
 	/*----------------------------------------MUSIC--------------------------------------------------------*/
 	SoundManager::instance().setMusic(MUSIC_FILE);
+	SoundManager::instance().setMusicVolume(0.f);
 	SoundManager::instance().addSound(CHANGE_BUTTON_SFX);
 	SoundManager::instance().addSound(CLICK_BUTTON_SFX);
 
@@ -100,8 +101,9 @@ int Scene_Menu::update(int deltaTime)
 	switch (_state) {
 		case FADE_IN:
 			_fadeTime += deltaTime;
+
 			//Increase music according to fade level
-			//SoundManager::instance().setMusicVolume(_fadeTime / FADE_IN_TIME);
+			SoundManager::instance().setMusicVolume(_fadeTime / FADE_IN_TIME * 0.6f);
 			//Fade in has finished. Prepare fade with time for fade_out and update state
 			if (_fadeTime >= FADE_IN_TIME) {
 				_fadeTime = (int)FADE_OUT_TIME;
@@ -111,7 +113,7 @@ int Scene_Menu::update(int deltaTime)
 		case FADE_OUT:
 			_fadeTime -= deltaTime;
 			//Decrease music according to fade level
-			//SoundManager::instance().setMusicVolume(_fadeTime / FADE_OUT_TIME);
+			SoundManager::instance().setMusicVolume(max(0,_fadeTime) / FADE_OUT_TIME * 0.6f);
 			//Fade out has finished. We can safely start the level now
 			if (_fadeTime <= 0) {
 				_fadeTime = 0;

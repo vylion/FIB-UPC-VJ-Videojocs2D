@@ -41,18 +41,39 @@ void SoundManager::setMasterVolume(float volume)
 
 void SoundManager::setMusic(const char * fileName)
 {
-	_engine->removeSoundSource(_music);
+	//Remove old music
+	if (_music != nullptr) _engine->removeSoundSource(_music);
+	//Read new music from file
 	_music = _engine->addSoundSourceFromFile(fileName);
+	//Start music on a loop
+	_engine->play2D(_music, true);
+}
+
+void SoundManager::startMusic()
+{
 	_engine->play2D(_music);
+}
+
+void SoundManager::pauseMusic(bool pause)
+{
+	_engine->setAllSoundsPaused(pause);
+}
+
+void SoundManager::stopMusic()
+{
+	_engine->stopAllSounds();
 }
 
 float SoundManager::getMusicVolume()
 {
-	return _music->getDefaultVolume();
+	float ret = _music->getDefaultVolume();
+
+	return ret;
 }
 
 void SoundManager::setMusicVolume(float volume)
 {
+	_engine->setSoundVolume(volume);
 	_music->setDefaultVolume(volume);
 }
 
