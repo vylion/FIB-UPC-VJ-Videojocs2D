@@ -11,6 +11,7 @@ public:
 	BallMatrix(	int *_colorMatrix,
 				glm::ivec2 &matrixDimensions,
 				int visibleMatrixHeight,
+				glm::vec2 _minBallCoords,
 				const int &ballSize,
 				const glm::vec2 &ballSizeInSpritesheet,
 				Texture *spritesheet,
@@ -26,9 +27,10 @@ public:
 
 private:
 	vector<vector<Ball_InMatrix*> > _ballMatrix;
+	vector<vector<bool> > _connectedMatrix;
 	int _visibleMatrixHeight;
 
-	glm::vec2  _ballSizeInSpritesheet;
+	glm::vec2  _ballSizeInSpritesheet, _matrixOffset;
 	int _ballSize;
 	Texture *_spritesheet;
 	ShaderProgram _shaderProgram;
@@ -36,7 +38,8 @@ private:
 	Ball_InMatrix * ballFromColor(int &color);
 	void passRowToShown();
 
-	glm::vec2 snapToGrid(Ball *b);
+	Ball_InMatrix::posT snapToGrid(Ball *b);
+	list<Ball_InMatrix::posT> checkNeighbors(const Ball_InMatrix::posT &b);
 };
 
 #pragma once

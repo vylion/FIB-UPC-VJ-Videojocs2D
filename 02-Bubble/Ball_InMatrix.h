@@ -1,14 +1,18 @@
 #pragma once
 #include "Ball.h"
-#include <vector>
+#include <utility>
+#include <list>
 
 class Ball_InMatrix :
 	public Ball
 {
 public:
 	static enum NeighborBalls {
-		TOP_LEFT = 0, TOP_RIGHT, RIGHT, BOT_RIGHT, BOT_LEFT, LEFT
+		TOP_LEFT = 0, TOP_RIGHT, RIGHT, LEFT, BOT_RIGHT, BOT_LEFT, NUM_NEIGHBORS
 	};
+
+	typedef std::pair<int, int> posT;
+	const posT POS_NULL = posT(-1, -1);
 
 	Ball_InMatrix(ShaderProgram & shaderProgram, Ball * b);
 
@@ -18,12 +22,14 @@ public:
 	void setTopRow(const bool &topRow);
 
 	bool checkCollision(Ball * b);
-	bool addNeighbor(Ball_InMatrix *b, int pos);
-	vector<Ball_InMatrix*> getDisconnected();
+	bool addNeighbor(posT b, int pos);
+	list<posT> checkNeighbors();
+	list<Ball_InMatrix*> getDisconnected();
 
 private:
 	bool _oddRow;
 	bool _topRow;
-	std::vector<Ball_InMatrix*> neighbors;
+	posT _posInMatrix;
+	std::vector<posT> neighbors;
 };
 

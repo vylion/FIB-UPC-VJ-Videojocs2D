@@ -6,7 +6,7 @@ Ball_InMatrix::Ball_InMatrix(ShaderProgram & shaderProgram, Ball * b)
 	setColor(b->getColor());
 	//snapToGrid();
 
-	neighbors = std::vector<Ball_InMatrix*>(6, NULL);
+	neighbors = std::vector<posT>(6, POS_NULL);
 }
 
 bool Ball_InMatrix::getOddRow()
@@ -39,7 +39,7 @@ bool Ball_InMatrix::checkCollision(Ball * b)
 	return false;
 }
 
-bool Ball_InMatrix::addNeighbor(Ball_InMatrix * b, int pos)
+bool Ball_InMatrix::addNeighbor(Ball_InMatrix::posT b, int pos)
 {
 	if (pos < 6 && pos >= 0) {
 		neighbors[pos] = b;
@@ -48,9 +48,22 @@ bool Ball_InMatrix::addNeighbor(Ball_InMatrix * b, int pos)
 	return false;
 }
 
-vector<Ball_InMatrix*> Ball_InMatrix::getDisconnected()
+list<Ball_InMatrix::posT> Ball_InMatrix::checkNeighbors()
 {
-	return vector<Ball_InMatrix*>();
+	list<posT> group = list<posT>();
+
+	for (int i = TOP_LEFT; i < NUM_NEIGHBORS; ++i) {
+		if (neighbors[i] != POS_NULL) {
+			//check if same color, among colors, or bomb
+			group.push_back(neighbors[i]);
+		}
+		return group;
+	}
+}
+
+list<Ball_InMatrix*> Ball_InMatrix::getDisconnected()
+{
+	return list<Ball_InMatrix*>();
 }
 
 /*
