@@ -26,8 +26,8 @@ public:
 	int ballsLeft();
 
 private:
-	vector<vector<Ball_InMatrix*> > _ballMatrix;
-	vector<vector<bool> > _connectedMatrix;
+	std::vector< std::vector<Ball_InMatrix*> > _ballMatrix;
+	std::vector< std::vector<bool> > _connectedMatrix;
 	int _visibleMatrixHeight;
 
 	glm::vec2  _ballSizeInSpritesheet, _matrixOffset;
@@ -39,7 +39,9 @@ private:
 	void passRowToShown();
 
 	Ball_InMatrix::posT snapToGrid(Ball *b);
-	list<Ball_InMatrix::posT> checkNeighbors(const Ball_InMatrix::posT &b);
+	std::vector<Ball_InMatrix::posT> checkBallsAround(const Ball_InMatrix::posT &b);
+	std::list<Ball_InMatrix::posT> popNeighbors(const Ball_InMatrix::posT &b);
+	bool inMatrix(const Ball_InMatrix::posT &pos);
 };
 
 #pragma once

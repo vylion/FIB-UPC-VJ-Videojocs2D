@@ -19,6 +19,7 @@ BallManager * BallManager::createBallManager(const string & levelFile, glm::vec2
 BallManager::BallManager(const string & levelFile, glm::vec2 & mapSize, ShaderProgram & shaderProgram)
 {
 	_shaderProgram = shaderProgram;
+
 	srand(time(NULL));
 	if (!readLevel(levelFile, mapSize)) printf("BallManager: Failed to read levelFile");
 	

@@ -36,7 +36,7 @@ void Ball_InMatrix::setTopRow(const bool & topRow)
 
 bool Ball_InMatrix::checkCollision(Ball * b)
 {
-	return false;
+	return abs(b->getPosition().x - getPosition().x) > 15 || abs(b->getPosition().y - getPosition().y) > 15;
 }
 
 bool Ball_InMatrix::addNeighbor(Ball_InMatrix::posT b, int pos)

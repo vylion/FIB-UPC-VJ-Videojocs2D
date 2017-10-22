@@ -23,8 +23,8 @@ public:
 
 	bool checkCollision(Ball * b);
 	bool addNeighbor(posT b, int pos);
-	list<posT> checkNeighbors();
-	list<Ball_InMatrix*> getDisconnected();
+	std::list<posT> checkNeighbors();
+	std::list<Ball_InMatrix*> getDisconnected();
 
 private:
 	bool _oddRow;

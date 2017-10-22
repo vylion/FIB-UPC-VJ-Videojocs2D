@@ -34,7 +34,8 @@ private:
 	//Ball size in spritesheet (0..1) and total spritesheet size
 	glm::vec2 _ballTexSize, _spritesheetSize;
 	//Need these two for new balls
-	Texture *_spritesheet; ShaderProgram _shaderProgram;
+	Texture *_spritesheet;
+	ShaderProgram _shaderProgram;
 	//Flying ball, ball after current shot
 	//Current ball is managed by aimer.cpp as it only needs to be displayed
 	Ball *_nextBall;
@@ -42,6 +43,9 @@ private:
 	bool _thereIsLaunchedBall;
 	//Static balls are managed by BallMatrix
 	BallMatrix * _bmat;
+
+	//Need this for tilemap collisions
+	//TileMap *map;
 
 	//Create ball
 	Ball *getNewBall();
