@@ -8,28 +8,31 @@
 #include "Ball_Launched.h"
 
 
-BallManager * BallManager::createBallManager(const string & levelFile, glm::vec2 & mapSize, ShaderProgram & shaderProgram)
+BallManager * BallManager::createBallManager(const string & levelFile, TileMap *tmap, ShaderProgram & shaderProgram)
 {
-	BallManager *bm = new BallManager(levelFile, mapSize, shaderProgram);
+	BallManager *bm = new BallManager(levelFile, tmap, shaderProgram);
 
 	return bm;
 }
 
 
-BallManager::BallManager(const string & levelFile, glm::vec2 & mapSize, ShaderProgram & shaderProgram)
+BallManager::BallManager(const string & levelFile, TileMap *tmap, ShaderProgram & shaderProgram)
 {
 	_shaderProgram = shaderProgram;
+	_tmap = tmap;
 
 	srand(time(NULL));
-	if (!readLevel(levelFile, mapSize)) printf("BallManager: Failed to read levelFile");
+	if (!readLevel(levelFile)) printf("BallManager: Failed to read levelFile");
 	
 }
 
 
 
-void BallManager::init(glm::ivec2 &minBallCoords)
+//void BallManager::init(glm::ivec2 &minBallCoords)
+void BallManager::init()
 {
-	_minBallCoords = glm::ivec2(minBallCoords);
+	//_minBallCoords = glm::ivec2(minBallCoords);
+	_minBallCoords = _tmap->getMinRenderCoords() + _tmap->getBallOffset();
 	_nextBall = getNewBall();
 	_thereIsLaunchedBall = false;
 }
@@ -94,9 +97,10 @@ Ball * BallManager::getNewBall()
 	return b;
 }
 
-bool BallManager::readLevel(const string & levelFile, glm::vec2 &mapSize)
+bool BallManager::readLevel(const string & levelFile)
 {
-	_matrixSpace = glm::vec2(mapSize.x, mapSize.y);
+	//glm::vec2 mapSize = _tmap->getBallSpace();
+	//_matrixSpace = glm::vec2(mapSize.x, mapSize.y);
 
 	ifstream fin;
 	string line, spritesheetFile;
@@ -116,7 +120,7 @@ bool BallManager::readLevel(const string & levelFile, glm::vec2 &mapSize)
 	sstream >> _matrixTileSize.x >> _matrixTileSize.y >> visibleMatrixHeight;
 	//Check if the balls fit in the hole :^)
 
-	if (_matrixTileSize.x > _matrixSpace.x || visibleMatrixHeight > _matrixSpace.y) return false;
+	if (_matrixTileSize.x > _tmap->getBallSpace().x || visibleMatrixHeight > _tmap->getBallSpace().y) return false;
 	//Tile and block size
 	getline(fin, line);
 	sstream.str(line);

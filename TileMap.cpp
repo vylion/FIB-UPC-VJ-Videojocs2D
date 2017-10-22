@@ -8,19 +8,20 @@
 using namespace std;
 
 
-TileMap *TileMap::createTileMap(const string &levelFile, const glm::vec2 &minCoords, ShaderProgram &program)
+TileMap *TileMap::createTileMap(const string &levelFile, const glm::vec2 &minRenderCoords, ShaderProgram &program)
 {
-	TileMap *map = new TileMap(levelFile, minCoords, program);
+	TileMap *map = new TileMap(levelFile, minRenderCoords, program);
 	
 	return map;
 }
 
 
-TileMap::TileMap(const string &levelFile, const glm::vec2 &minCoords, ShaderProgram &program)
+TileMap::TileMap(const string &levelFile, const glm::vec2 &minRenderCoords, ShaderProgram &program)
 {
 	loadLevel(levelFile);
-
-	prepareArrays(minCoords, program);
+	_minRenderCoords = minRenderCoords;
+	//prepareArrays(minRenderCoords, program);
+	prepareArrays(program);
 }
 
 TileMap::~TileMap()
@@ -110,7 +111,9 @@ bool TileMap::loadLevel(const string &levelFile)
 	return true;
 }
 
-void TileMap::prepareArrays(const glm::vec2 &minCoords, ShaderProgram &program)
+
+//void TileMap::prepareArrays(const glm::vec2 &minCoords, ShaderProgram &program)
+void TileMap::prepareArrays(ShaderProgram &program)
 {
 	int tile, nTiles = 0;
 	glm::vec2 posTile, texCoordTile[2], halfTexel;
@@ -126,7 +129,7 @@ void TileMap::prepareArrays(const glm::vec2 &minCoords, ShaderProgram &program)
 			{
 				// Non-empty tile
 				nTiles++;
-				posTile = glm::vec2(minCoords.x + i * tileSize, minCoords.y + j * tileSize);
+				posTile = glm::vec2(_minRenderCoords.x + i * tileSize, _minRenderCoords.y + j * tileSize);
 				//Fixed to use tilemaps bigger than 2x2
 				texCoordTile[0] = glm::vec2(float((tile-1)%tilesheetSize.x) / tilesheetSize.x, float((tile-1)/tilesheetSize.y) / tilesheetSize.y);
 				texCoordTile[1] = texCoordTile[0] + tileTexSize;
@@ -231,6 +234,11 @@ glm::vec2 TileMap::getBallOffset()
 glm::vec2 TileMap::getBallSpace()
 {
 	return ballSpace;
+}
+
+glm::vec2 TileMap::getMinRenderCoords()
+{
+	return _minRenderCoords;
 }
 
 

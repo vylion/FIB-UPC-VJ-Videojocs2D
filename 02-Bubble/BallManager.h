@@ -4,6 +4,8 @@
 #include <string>
 using namespace std;
 
+#include "../TileMap.h"
+
 #include "Ball.h"
 #include "Ball_Held.h"
 #include "Ball_Launched.h"
@@ -12,11 +14,12 @@ using namespace std;
 class BallManager
 {
 public:
-	static BallManager *createBallManager(const string &levelFile, glm::vec2 &mapSize, ShaderProgram &shaderProgram);
+	static BallManager *createBallManager(const string &levelFile, TileMap *tmap, ShaderProgram &shaderProgram);
 
-	BallManager::BallManager(const string & levelFile, glm::vec2 & mapSize, ShaderProgram & shaderProgram);
+	BallManager::BallManager(const string & levelFile, TileMap *tmap, ShaderProgram & shaderProgram);
 	
-	void init(glm::ivec2 &minCoords);
+	//void init(glm::ivec2 &minRenderCoords);
+	void init();
 	void update(int deltaTime);
 	void render() const;
 
@@ -45,12 +48,12 @@ private:
 	BallMatrix * _bmat;
 
 	//Need this for tilemap collisions
-	//TileMap *map;
+	TileMap *_tmap;
 
 	//Create ball
 	Ball *getNewBall();
 	//Open new level
-	bool readLevel(const string & levelFile, glm::vec2 &mapSize);
+	bool readLevel(const string & levelFile);
 	//Prepare ball matrix
 	void setUpBalls(int *colorMatrix, int visibleMatrixHeight);
 };

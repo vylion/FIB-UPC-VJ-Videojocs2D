@@ -37,10 +37,19 @@ void Scene_Level::init(int level)
 		levelFiller = "0";
 	}
 	string levelLocation = "../levels/level" + levelFiller + std::to_string(_level);
+
+	/*----------------------------------------TILEMAP-------------------------------------------------------*/
+
 	map = TileMap::createTileMap(levelLocation + "_Tile.txt", glm::vec2(MIN_SCREEN_X, MIN_SCREEN_Y), texProgram);
 
-	bmng = BallManager::createBallManager(levelLocation + "_Ball.txt", map->getBallSpace(), texProgram);
-	bmng->init(glm::ivec2(MIN_SCREEN_X + map->getBallOffset().x, MIN_SCREEN_Y + map->getBallOffset().y));
+
+	/*----------------------------------------BALLMANAGER---------------------------------------------------*/
+
+	bmng = BallManager::createBallManager(levelLocation + "_Ball.txt", map, texProgram);
+	bmng->init();
+	//bmng->init(glm::ivec2(MIN_SCREEN_X + map->getBallOffset().x, MIN_SCREEN_Y + map->getBallOffset().y));
+
+	/*----------------------------------------AIMER-------------------------------------------------------*/
 
 	aimer = new Aimer();
 	//Horizontal position is ball starting position + ball space / 2
@@ -48,6 +57,8 @@ void Scene_Level::init(int level)
 	glm::vec2 aimerDist = map->getBallSpace() * glm::vec2(0.5f, 1.f) + glm::vec2(0.5f, -2);
 	glm::vec2 aimerPos = map->getBallOffset();
 	aimer->init(aimerPos + aimerDist, texProgram, bmng);
+
+	/*----------------------------------------END-------------------------------------------------------*/
 
 	//SoundManager::instance().setMusic(MUSIC_FILE);
 	projection = glm::ortho(0.f, float(SCREEN_WIDTH - 1), float(SCREEN_HEIGHT - 1), 0.f);
@@ -66,7 +77,7 @@ int Scene_Level::update(int deltaTime)
 		//Could also be used to display statistics(?)
 			//^ We need a text class for that
 		_state = OPEN_LEVEL;
-		_level = -2;
+		_level = -1; //Menu
 	}
 
 	if (Game::instance().getKeyReleased(27)) {

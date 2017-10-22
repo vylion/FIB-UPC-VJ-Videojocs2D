@@ -18,9 +18,9 @@ class TileMap
 
 public:
 	// Tile maps can only be created inside an OpenGL context
-	static TileMap *createTileMap(const string &levelFile, const glm::vec2 &minCoords, ShaderProgram &program);
+	static TileMap *createTileMap(const string &levelFile, const glm::vec2 &minRenderCoords, ShaderProgram &program);
 
-	TileMap(const string &levelFile, const glm::vec2 &minCoords, ShaderProgram &program);
+	TileMap(const string &levelFile, const glm::vec2 &minRenderCoords, ShaderProgram &program);
 	~TileMap();
 
 	void render() const;
@@ -38,17 +38,20 @@ public:
 	glm::vec2 getBallOffset();
 	//Tile space for balls
 	glm::vec2 getBallSpace();
+	//Minimum coords
+	glm::vec2 getMinRenderCoords();
 
 private:
 	bool loadLevel(const string &levelFile);
-	void prepareArrays(const glm::vec2 &minCoords, ShaderProgram &program);
+	//void prepareArrays(const glm::vec2 &minCoords, ShaderProgram &program);
+	void prepareArrays(ShaderProgram &program);
 
 private:
 	GLuint vao;
 	GLuint vbo;
 	GLint posLocation, texCoordLocation;
 	glm::ivec2 position, mapSize, tilesheetSize;
-	glm::vec2 ballOffset, ballSpace;
+	glm::vec2 ballOffset, ballSpace, _minRenderCoords;
 	int tileSize, blockSize;
 	Texture tilesheet;
 	glm::vec2 tileTexSize;
