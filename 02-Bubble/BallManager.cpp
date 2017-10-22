@@ -32,7 +32,8 @@ BallManager::BallManager(const string & levelFile, TileMap *tmap, ShaderProgram 
 void BallManager::init()
 {
 	//_minBallCoords = glm::ivec2(minBallCoords);
-	_minBallCoords = _tmap->getMinRenderCoords() + _tmap->getBallOffset();
+	//Minimum float pos at which we can render a ball (top left)
+	_minBallCoords = (glm::vec2)_tmap->getMinRenderCoords() + (glm::vec2)_tmap->getBallOffset() * glm::vec2((float)_tmap->getTileSize());
 	_nextBall = getNewBall();
 	_thereIsLaunchedBall = false;
 }
@@ -81,7 +82,9 @@ Ball_Held * BallManager::getNextHeldBall()
 
 void BallManager::launchHeldBall(Ball_Held * heldBall, float angle)
 {
-	_launchedBall = new Ball_Launched(_shaderProgram, heldBall, heldBall->getAngle(), _minBallCoords, _matrixSpace);
+	/*TODO: Update this*/
+	glm::ivec2 tempBallLimits = _tmap->getBallSpace();
+	_launchedBall = new Ball_Launched(_shaderProgram, heldBall, heldBall->getAngle(), _minBallCoords, tempBallLimits);
 	_thereIsLaunchedBall = true;
 	//_launchedBall = new LaunchedBall(heldBall, angle);
 	//_heldBall->launch(angle);

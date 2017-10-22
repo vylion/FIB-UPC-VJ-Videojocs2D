@@ -54,7 +54,7 @@ void Scene_Level::init(int level)
 	aimer = new Aimer();
 	//Horizontal position is ball starting position + ball space / 2
 	//Vertical position is ball starting position + ball space - 2 to compensate for aimer height
-	glm::vec2 aimerDist = map->getBallSpace() * glm::vec2(0.5f, 1.f) + glm::vec2(0.5f, -2);
+	glm::vec2 aimerDist = (glm::vec2)map->getBallSpace() * glm::vec2(0.5f, 1.f) + glm::vec2(1.5f, -2);
 	glm::vec2 aimerPos = map->getBallOffset();
 	aimer->init(aimerPos + aimerDist, texProgram, bmng);
 

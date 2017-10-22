@@ -220,23 +220,23 @@ bool TileMap::collisionMoveDown(const glm::ivec2 &pos, const glm::ivec2 &size, i
 	return false;
 }
 
-glm::vec2 TileMap::getMapSize()
+glm::ivec2 TileMap::getMapSize()
 {
 	return mapSize;
 }
 
 
-glm::vec2 TileMap::getBallOffset()
+glm::ivec2 TileMap::getBallOffset()
 {
 	return ballOffset;
 }
 
-glm::vec2 TileMap::getBallSpace()
+glm::ivec2 TileMap::getBallSpace()
 {
 	return ballSpace;
 }
 
-glm::vec2 TileMap::getMinRenderCoords()
+glm::ivec2 TileMap::getMinRenderCoords()
 {
 	return _minRenderCoords;
 }
