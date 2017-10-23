@@ -35,8 +35,15 @@
 # Previous versions
 .vs\*
 .vs/*
+
 #Logs
 *-logs*
 *tlog\*
 *.log
 *.tlog
+
+#Compiled databases and others
+*.idb
+*.pdb
+*.ilk
+*.res

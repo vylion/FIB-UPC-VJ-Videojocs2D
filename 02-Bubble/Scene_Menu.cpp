@@ -210,7 +210,7 @@ void Scene_Menu::checkButtons(int deltaTime)
 	}
 
 	//Enter key pressed
-	if (Game::instance().getKey(13)) {
+	if (Game::instance().getKeyJustPressed(13)) {
 		SoundManager::instance().playSound(CLICK_BUTTON_SFX);
 		switch (_selectedButton) {
 			case 0: //Play
