@@ -26,17 +26,18 @@ public:
 	//Sets volume for all audio (0..1)
 	void setMasterVolume(float volume);
 
-	//Starts playing the music file
+	//Removes old music and starts playing the new file
 	void setMusic(const char* fileName);
-	//Pauses or unpauses music
+	
 	bool isMusicPaused();
+	//Pauses or unpauses music
 	void pauseMusic(bool pause);
-	void toggleMusic();
+	void toggleMusicPause();
 	float getMusicVolume();
 	//Sets volume for music (0..1)
 	void setMusicVolume(float volume);
 
-	//Play an individual sound
+	//Play an individual sound. Can't be paused or modified
 	void playSound(const char* fileName);
 	//Adds a sound to the array
 	void addSound(const char* fileName);
@@ -50,7 +51,6 @@ public:
 
 private:
 	ISoundEngine *_music_engine, *_sound_engine;
-	ISound *_music;
 	bool _musicIsPaused;
 	vector<ISound*> _sounds;
 

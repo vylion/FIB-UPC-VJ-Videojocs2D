@@ -206,7 +206,7 @@ void Scene_Menu::checkButtons(int deltaTime)
 
 	//M stands for music
 	if (Game::instance().getKeyJustPressed('m')) {
-		SoundManager::instance().toggleMusic();
+		SoundManager::instance().toggleMusicPause();
 	}
 
 	//Enter key pressed

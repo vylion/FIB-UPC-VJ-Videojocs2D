@@ -68,9 +68,8 @@ void SoundManager::setMusic(const char * fileName)
 {
 	//Remove old music
 	_music_engine->removeAllSoundSources();
-	//Read new music from file
-	_music = _music_engine->play2D(fileName, true);
-	//Start music on a loop
+	//Read new music from file and start on loop
+	_music_engine->play2D(fileName, true);
 }
 
 
@@ -84,10 +83,9 @@ void SoundManager::pauseMusic(bool pause)
 {
 	_musicIsPaused = pause;
 	_music_engine->setAllSoundsPaused(pause);
-	//_engine->setAllSoundsPaused(pause);
 }
 
-void SoundManager::toggleMusic()
+void SoundManager::toggleMusicPause()
 {
 	pauseMusic(!isMusicPaused());
 }
@@ -109,23 +107,7 @@ void SoundManager::setMusicVolume(float volume)
 
 void SoundManager::playSound(const char* fileName)
 {
-	//Unpause sound in case it's loaded and paused
-
-	ISound *isoundptr = isoundFromName(fileName);
-	//Sound already loaded and ready to play or playing
-	if (isoundptr != nullptr) {
-		//Ready to play but paused
-		if (isoundptr->getIsPaused())
-			isoundptr->setIsPaused(false);
-	}
-	//Sound not loaded
-	else addSound(fileName);
-
-	_sound_engine->play2D(fileName, false);
-	//Play the sound only if it's not playing already (prevent overlap)
-	//if (!_sound_engine->isCurrentlyPlaying(fileName))
-	//	_sound_engine->play2D(fileName, false);
-
+	_sound_engine->play2D(fileName);
 }
 
 
@@ -137,11 +119,7 @@ void SoundManager::addSound(const char * fileName)
 void SoundManager::addSound(const char * fileName, float volume)
 {
 	ISound *sound = _sound_engine->play2D(fileName, false, true);
-
-	//ISoundSource *sound = _engine->getSoundSource(fileName, true);
-	//sound->setDefaultVolume(volume * _soundVolumeFactor);
 	sound->setVolume(volume);
-	//sound->setIsPaused(false);
 	_sounds.push_back(sound);
 }
 
@@ -152,18 +130,6 @@ float SoundManager::getSoundVolumeFactor()
 
 void SoundManager::setSoundVolumeFactor(float factor)
 {
-	/*	1. Divide by _soundFactorVolume to restore original volume individually
-		2. Multiply by val, or 0.01 to deafen the sound enough without new factor being 0 as that would result in
-		   a division by 0 on the next volume change
-	*/
-	/*
-	for (unsigned int i = 0; i < _sounds.size(); i++) {
-		_sounds[i]->setVolume(
-			//_sounds[i]->getVolume() / _soundVolumeFactor * max(volume, 0.01f)
-			_sounds[i]->getSoundSource()->getDefaultVolume() * max(factor, 0.01f)
-		);
-	}*/
-
 	_soundVolume = max(factor, 0.01f);
 	_sound_engine->setSoundVolume(_soundVolume * _masterVolume);
 }
