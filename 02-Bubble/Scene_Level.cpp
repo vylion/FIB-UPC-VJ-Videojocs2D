@@ -30,7 +30,7 @@ void Scene_Level::init(int level)
 	_state = RUNNING;
 	_level = level;
 	initShaders();
-	
+	//initAudio();
 
 	string levelFiller = "";
 	if (_level < 10) {
@@ -80,11 +80,6 @@ int Scene_Level::update(int deltaTime)
 		_level = -1; //Menu
 	}
 
-	if (Game::instance().getKeyReleased(27)) {
-		_level = -2;
-		return OPEN_LEVEL;
-	}
-
 	return _state;
 }
 
@@ -108,4 +103,26 @@ void Scene_Level::render()
 int Scene_Level::getLevelToOpen()
 {
 	return _level + 1;
+}
+
+void Scene_Level::initAudio()
+{
+	//SoundManager::instance().setMusic(MUSIC_FILE);
+
+	//SoundManager::instance().addSound(CHANGE_BUTTON_SFX);
+	//SoundManager::instance().setSoundVolume(CHANGE_BUTTON_SFX, 0.1f);
+}
+
+void Scene_Level::checkButtons(int deltaTime)
+{
+	//M stands for music
+	if (Game::instance().getKeyJustPressed('m')) {
+		SoundManager::instance().toggleMusicPause();
+	}
+
+	//Escape to menu. Open menu in the future?
+	if (Game::instance().getKeyReleased(27)) {
+		_level = -2;
+		_state = OPEN_LEVEL;
+	}
 }

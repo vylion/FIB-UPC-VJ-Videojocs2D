@@ -31,6 +31,6 @@ private:
 	//Background
 	Sprite *_bg;
 
-
-	void checkButtons(int deltaTime);
+	void initAudio() override;
+	void checkButtons(int deltaTime) override;
 };

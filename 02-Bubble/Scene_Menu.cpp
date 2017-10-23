@@ -82,11 +82,8 @@ void Scene_Menu::init()
 	_bg = Sprite::createSprite(glm::vec2(SCREEN_WIDTH, SCREEN_HEIGHT), glm::vec2(1.f),  _bg_Texture, &texProgram);
 
 	/*----------------------------------------MUSIC--------------------------------------------------------*/
-	SoundManager::instance().setMusic(MUSIC_FILE);
-
-	SoundManager::instance().addSound(CHANGE_BUTTON_SFX);
-	SoundManager::instance().setSoundVolume(CHANGE_BUTTON_SFX, 0.1f);
-	SoundManager::instance().addSound(CLICK_BUTTON_SFX);
+	
+	initAudio();
 
 	/*----------------------------------------END--------------------------------------------------------*/
 
@@ -168,6 +165,16 @@ void Scene_Menu::render()
 int Scene_Menu::getLevelToOpen()
 {
 	return 1;
+}
+
+void Scene_Menu::initAudio()
+{
+	SoundManager::instance().setMusic(MUSIC_FILE);
+
+	SoundManager::instance().addSound(CHANGE_BUTTON_SFX);
+	SoundManager::instance().setSoundVolume(CHANGE_BUTTON_SFX, 0.1f);
+	SoundManager::instance().addSound(CLICK_BUTTON_SFX);
+
 }
 
 void Scene_Menu::checkButtons(int deltaTime)

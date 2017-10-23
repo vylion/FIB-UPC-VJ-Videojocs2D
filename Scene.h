@@ -38,6 +38,8 @@ protected:
 	glm::mat4 projection;
 
 	void initShaders();
+	virtual void initAudio() {};
+	virtual void checkButtons(int deltaTime) {};
 
 };
 #endif // _SCENE_INCLUDE

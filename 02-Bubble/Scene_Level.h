@@ -23,5 +23,8 @@ private:
 	Aimer *aimer;
 	//Ball manager
 	BallManager *bmng;
+
+	void initAudio() override;
+	void checkButtons(int deltaTime) override;
 };
 
