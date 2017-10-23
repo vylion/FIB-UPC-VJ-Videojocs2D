@@ -11,6 +11,7 @@ SoundManager::SoundManager()
 
 	_music_engine = createIrrKlangDevice();
 	_musicVolume = 1.f;
+	_musicIsPaused = false;
 
 	_sound_engine = createIrrKlangDevice();
 	_soundVolume = 1.f;
@@ -68,15 +69,27 @@ void SoundManager::setMusic(const char * fileName)
 	//Remove old music
 	_music_engine->removeAllSoundSources();
 	//Read new music from file
-	_music = _music_engine->play2D(fileName, true, true);
+	_music = _music_engine->play2D(fileName, true);
 	//Start music on a loop
+}
+
+
+
+bool SoundManager::isMusicPaused()
+{
+	return _musicIsPaused;
 }
 
 void SoundManager::pauseMusic(bool pause)
 {
-	//_music->setIsPaused(pause);
+	_musicIsPaused = pause;
 	_music_engine->setAllSoundsPaused(pause);
 	//_engine->setAllSoundsPaused(pause);
+}
+
+void SoundManager::toggleMusic()
+{
+	pauseMusic(!isMusicPaused());
 }
 
 float SoundManager::getMusicVolume()
@@ -86,9 +99,7 @@ float SoundManager::getMusicVolume()
 
 void SoundManager::setMusicVolume(float volume)
 {
-	//_engine->setSoundVolume(volume);
-	if (_music != nullptr)
-		_music->setVolume(volume);
+	_music_engine->setSoundVolume(volume * _masterVolume);
 }
 
 

@@ -29,7 +29,9 @@ public:
 	//Starts playing the music file
 	void setMusic(const char* fileName);
 	//Pauses or unpauses music
+	bool isMusicPaused();
 	void pauseMusic(bool pause);
+	void toggleMusic();
 	float getMusicVolume();
 	//Sets volume for music (0..1)
 	void setMusicVolume(float volume);
@@ -49,6 +51,7 @@ public:
 private:
 	ISoundEngine *_music_engine, *_sound_engine;
 	ISound *_music;
+	bool _musicIsPaused;
 	vector<ISound*> _sounds;
 
 	//Affects all sounds

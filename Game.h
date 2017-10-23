@@ -43,8 +43,10 @@ public:
 	void mouseRelease(int button);
 	
 	bool getKey(int key) const;
+	bool getKeyJustPressed(int key) const;
 	bool getKeyReleased(int key) const;
 	bool getSpecialKey(int key) const;
+	bool getSpecialKeyJustPressed(int key);
 	bool getSpecialKeyReleased(int key) const;
 
 private:
@@ -52,6 +54,7 @@ private:
 	Scene *scene;                      // Scene to render
 	bool keys[256], specialKeys[256]; // Store key states so that 
 	                                  // we can have access at any time
+	bool keys_pressed[256], specialKeys_pressed[256];
 	bool keys_released[256], specialKeys_released[256];
 
 };

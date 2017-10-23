@@ -34,7 +34,9 @@ bool Game::update(int deltaTime)
 			break;
 	}
 	for (int i = 0; i < 256; i++) {
+		keys_pressed[i] = false;
 		keys_released[i] = false;
+		specialKeys_pressed[i] = false;
 		specialKeys_released[i] = false;
 	}
 	return bPlay;
@@ -50,8 +52,8 @@ void Game::render()
 
 void Game::keyPressed(int key)
 {
-	//if(key == 27) // Escape code
-	//	bPlay = false;
+	if (!keys[key]) keys_pressed[key] = true;
+	else keys[key] = false;
 	keys[key] = true;
 }
 
@@ -63,6 +65,8 @@ void Game::keyReleased(int key)
 
 void Game::specialKeyPressed(int key)
 {
+	if (!keys[key]) specialKeys_pressed[key] = true;
+	else specialKeys_pressed[key] = false;
 	specialKeys[key] = true;
 }
 
@@ -89,6 +93,11 @@ bool Game::getKey(int key) const
 	return keys[key];
 }
 
+bool Game::getKeyJustPressed(int key) const
+{
+	return keys_pressed[key];
+}
+
 bool Game::getKeyReleased(int key) const
 {
 	return keys_released[key];
@@ -97,6 +106,11 @@ bool Game::getKeyReleased(int key) const
 bool Game::getSpecialKey(int key) const
 {
 	return specialKeys[key];
+}
+
+bool Game::getSpecialKeyJustPressed(int key)
+{
+	return specialKeys_pressed[key];
 }
 
 bool Game::getSpecialKeyReleased(int key) const

@@ -82,8 +82,7 @@ void Scene_Menu::init()
 	_bg = Sprite::createSprite(glm::vec2(SCREEN_WIDTH, SCREEN_HEIGHT), glm::vec2(1.f),  _bg_Texture, &texProgram);
 
 	/*----------------------------------------MUSIC--------------------------------------------------------*/
-	//SoundManager::instance().setMusic(MUSIC_FILE);
-	//SoundManager::instance().setMusicVolume(0.f);
+	SoundManager::instance().setMusic(MUSIC_FILE);
 
 	SoundManager::instance().addSound(CHANGE_BUTTON_SFX);
 	SoundManager::instance().setSoundVolume(CHANGE_BUTTON_SFX, 0.1f);
@@ -104,7 +103,7 @@ int Scene_Menu::update(int deltaTime)
 		case FADE_IN:
 			_fadeTime += deltaTime;
 			//Increase music according to fade level
-			SoundManager::instance().setMusicVolume(_fadeTime / FADE_IN_TIME * 0.6f);
+			//SoundManager::instance().setMusicVolume(_fadeTime / FADE_IN_TIME);
 			//Fade in has finished. Prepare fade with time for fade_out and update state
 			if (_fadeTime >= FADE_IN_TIME) {
 				_fadeTime = (int)FADE_OUT_TIME;
@@ -117,10 +116,11 @@ int Scene_Menu::update(int deltaTime)
 		case FADE_OUT:
 			_fadeTime -= deltaTime;
 			//Decrease music according to fade level
-			SoundManager::instance().setMusicVolume(max(0,_fadeTime) / FADE_OUT_TIME * 0.6f);
+			SoundManager::instance().setMusicVolume(max(0,_fadeTime) / FADE_OUT_TIME * 0.4);
 			//Fade out has finished. We can safely start the level now
 			if (_fadeTime <= 0) {
 				_fadeTime = 0;
+				SoundManager::instance().pauseMusic(true);
 				_state = OPEN_LEVEL;
 			}
 			break;
@@ -202,6 +202,11 @@ void Scene_Menu::checkButtons(int deltaTime)
 	//Neither is pressed so move cooldown is set 0. Enables swifter changing than holding down
 	else if (Game::instance().getSpecialKeyReleased(GLUT_KEY_UP) || Game::instance().getSpecialKeyReleased(GLUT_KEY_DOWN)) {
 		_moveCooldown = 0;
+	}
+
+	//M stands for music
+	if (Game::instance().getKeyJustPressed('m')) {
+		SoundManager::instance().toggleMusic();
 	}
 
 	//Enter key pressed
