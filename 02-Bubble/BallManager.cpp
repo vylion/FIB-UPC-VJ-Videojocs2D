@@ -42,8 +42,26 @@ void BallManager::update(int deltaTime)
 {
 	_bmat->update(deltaTime);
 	if (_thereIsLaunchedBall) {
-
 		_launchedBall->update(deltaTime);
+
+		vector<glm::vec2> points = _launchedBall->collisionPoints();
+		glm::ivec2 pos = glm::ivec2(round(_launchedBall->getPosition().x), round(_launchedBall->getPosition().y));
+		;
+		
+		if (_launchedBall->movingRight() && _tmap->collisionMoveRight(pos, glm::ivec2(_ballPixelSize)))
+			_launchedBall->bounceHorizontal(deltaTime);
+		
+		else if (_launchedBall->movingLeft() && _tmap->collisionMoveLeft(pos, glm::ivec2(_ballPixelSize)))
+			_launchedBall->bounceHorizontal(deltaTime);
+		/*
+		else if (_launchedBall->movingUp() && _tmap->collisionMoveUp(glm::ivec2(ballPos), glm::ivec2(_launchedBall->getSize()/2)))
+			_launchedBall->bounceVertical(deltaTime+1);
+		
+		else if (_launchedBall->movingDown() && _tmap->collisionMoveDown(glm::ivec2(ballPos), glm::ivec2(_launchedBall->getSize()/2)))
+			_launchedBall->bounceVertical(deltaTime+1);
+		*/
+		
+		
 		if (_bmat->checkCollision(_launchedBall))
 			_bmat->addBallToMat(_launchedBall);
 	}
@@ -175,5 +193,5 @@ bool BallManager::readLevel(const string & levelFile)
 
 void BallManager::setUpBalls(int *colorMatrix, int visibleMatrixHeight)
 {
-	_bmat = new BallMatrix(colorMatrix, _matrixTileSize, visibleMatrixHeight, _minBallCoords, _ballPixelSize, _ballTexSize, _spritesheet, _shaderProgram);
+	_bmat = new BallMatrix(colorMatrix, _matrixTileSize, visibleMatrixHeight, _tmap->getBallOffset(), _ballPixelSize, _ballTexSize, _spritesheet, _shaderProgram);
 }

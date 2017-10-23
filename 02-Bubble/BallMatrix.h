@@ -11,7 +11,7 @@ public:
 	BallMatrix(	int *_colorMatrix,
 				glm::ivec2 &matrixDimensions,
 				int visibleMatrixHeight,
-				glm::vec2 _minBallCoords,
+				glm::vec2 _ballOffset,
 				const int &ballSize,
 				const glm::vec2 &ballSizeInSpritesheet,
 				Texture *spritesheet,

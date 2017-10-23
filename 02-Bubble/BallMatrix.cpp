@@ -3,13 +3,13 @@
 BallMatrix::BallMatrix( int * colorMatrix,
 						glm::ivec2 &matrixDimensions,
 						int visibleMatrixHeight,
-						glm::vec2 _minBallCoords,
+						glm::vec2 _ballOffset,
 						const int &ballSize,
 						const glm::vec2 &ballSizeInSpritesheet,
 						Texture *spritesheet,
 						ShaderProgram &shaderProgram)
 {
-	_matrixOffset = _minBallCoords;
+	_matrixOffset = _ballOffset;
 	_visibleMatrixHeight = visibleMatrixHeight;
 	_ballSize = ballSize;
 	_ballSizeInSpritesheet = ballSizeInSpritesheet;
@@ -18,6 +18,7 @@ BallMatrix::BallMatrix( int * colorMatrix,
 
 	int iterated = 0;
 	int visibleOffset = matrixDimensions.y - visibleMatrixHeight;
+	if (visibleOffset < 0) visibleOffset = 0;
 	_connectedMatrix = std::vector< std::vector<bool> >(int(matrixDimensions.y), std::vector<bool>(int(matrixDimensions.x), false));
 	for (int i = 0; i < matrixDimensions.y; ++i) {
 		std::vector<Ball_InMatrix*> ballRow;
@@ -25,7 +26,7 @@ BallMatrix::BallMatrix( int * colorMatrix,
 		for (int j = 0; j < matrixDimensions.x - i%2; ++j) {
 			Ball_InMatrix *b = ballFromColor(colorMatrix[iterated]);
 			//Change to in-screen limits
-			b->init(colorMatrix[iterated], glm::vec2(ballSize*(j + _matrixOffset.y), _matrixOffset.x + (i - visibleOffset)*ballSize ));
+			b->init(colorMatrix[iterated], glm::vec2(ballSize*(j + 2 + _matrixOffset.x), ballSize*(i + 1 + _matrixOffset.y - visibleOffset) ));
 			b->setOddRow((i % 2 != 0));
 			//To account for displacement
 			ballRow.push_back(b);
@@ -53,15 +54,13 @@ void BallMatrix::render()
 	for (int i = _ballMatrix.size() - 1; i >= int(_ballMatrix.size()) - _visibleMatrixHeight && i >= 0; --i) {
 		//Balls
 		for (int j = 0; j < int(_ballMatrix[i].size()); ++j) {
-			_ballMatrix[i][j]->render();
+			if(_connectedMatrix[i][j]) _ballMatrix[i][j]->render();
 		}
 	}
 }
 
 bool BallMatrix::checkCollision(Ball * b)
 {
-	return false;
-
 	Ball_InMatrix::posT pos = snapToGrid(b);
 	std::vector<Ball_InMatrix::posT> nearby = checkBallsAround(pos);
 	bool collided = false;
@@ -72,7 +71,8 @@ bool BallMatrix::checkCollision(Ball * b)
 		collided = _ballMatrix[pos.first][pos.second]->checkCollision(b);
 	}
 
-	if (collided) return _ballMatrix[99].size();
+	//if (collided) return _ballMatrix[999].size();
+
 	return collided;
 }
 
@@ -110,11 +110,14 @@ void BallMatrix::passRowToShown()
 Ball_InMatrix::posT BallMatrix::snapToGrid(Ball *b)
 {
 	glm::vec2 pos = b->getPosition();
-	Ball_InMatrix::posT posInMatrix;
 
-	pos -= glm::vec2(_matrixOffset.x, _matrixOffset.y);
-	posInMatrix = Ball_InMatrix::posT(int(pos.x / _ballSize), int(pos.y / _ballSize));
+	int i = pos.y / _ballSize;
+	i += -1 - _matrixOffset.y;
+	if (int(_ballMatrix.size()) - _visibleMatrixHeight > 0) i += int(_ballMatrix.size()) - _visibleMatrixHeight;
 
+	int j = pos.x / _ballSize;
+	j += -2 - _matrixOffset.x;
+	Ball_InMatrix::posT posInMatrix(i, j);
 	return posInMatrix;
 }
 
