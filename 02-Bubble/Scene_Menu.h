@@ -31,4 +31,6 @@ private:
 	//Background
 	Sprite *_bg;
 
+
+	void checkButtons(int deltaTime);
 };

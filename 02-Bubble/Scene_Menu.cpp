@@ -6,7 +6,7 @@
 #include "../Game.h"
 
 
-#define FADE_IN_TIME 7500.f
+#define FADE_IN_TIME 750.f
 #define FADE_OUT_TIME 150.f
 
 #define BUTTON_SIZE glm::vec2(256.f, 32.f)
@@ -82,9 +82,11 @@ void Scene_Menu::init()
 	_bg = Sprite::createSprite(glm::vec2(SCREEN_WIDTH, SCREEN_HEIGHT), glm::vec2(1.f),  _bg_Texture, &texProgram);
 
 	/*----------------------------------------MUSIC--------------------------------------------------------*/
-	SoundManager::instance().setMusic(MUSIC_FILE);
-	SoundManager::instance().setMusicVolume(0.f);
+	//SoundManager::instance().setMusic(MUSIC_FILE);
+	//SoundManager::instance().setMusicVolume(0.f);
+
 	SoundManager::instance().addSound(CHANGE_BUTTON_SFX);
+	SoundManager::instance().setSoundVolume(CHANGE_BUTTON_SFX, 0.1f);
 	SoundManager::instance().addSound(CLICK_BUTTON_SFX);
 
 	/*----------------------------------------END--------------------------------------------------------*/
@@ -101,7 +103,6 @@ int Scene_Menu::update(int deltaTime)
 	switch (_state) {
 		case FADE_IN:
 			_fadeTime += deltaTime;
-
 			//Increase music according to fade level
 			SoundManager::instance().setMusicVolume(_fadeTime / FADE_IN_TIME * 0.6f);
 			//Fade in has finished. Prepare fade with time for fade_out and update state
@@ -109,6 +110,9 @@ int Scene_Menu::update(int deltaTime)
 				_fadeTime = (int)FADE_OUT_TIME;
 				_state = RUNNING;
 			}
+			//No break because we want to check buttons aswell
+		case RUNNING:
+			checkButtons(deltaTime);
 			break;
 		case FADE_OUT:
 			_fadeTime -= deltaTime;
@@ -129,57 +133,6 @@ int Scene_Menu::update(int deltaTime)
 		(SCREEN_WIDTH - LOGO_SIZE.x) / 2.f,
 		(SCREEN_HEIGHT - LOGO_SIZE.y) / 2.f + 2*sin(currentTime/500) - 95.f
 	));
-	
-	//Up key pressed
-	if (Game::instance().getSpecialKey(GLUT_KEY_UP) && _moveCooldown == 0) {
-		//Unselect current button. Texture update
-		_buttons[_selectedButton]->setTexturePosition(glm::vec2(0.6f, BUTTON_SPRITESHEET_SIZE.y * (2 * _selectedButton)));
-		//Increase x-1 mod x to loop around and move -1. -1 mod x crashes badly
-		_selectedButton = (_selectedButton + (_buttons.size() - 1)) % _buttons.size();
-		//Increase move cooldown
-		_moveCooldown = BUTTON_MOVE_COOLDOWN;
-		//Select new button. Texture update
-		_buttons[_selectedButton]->setTexturePosition(glm::vec2(0.6f, BUTTON_SPRITESHEET_SIZE.y * (2 * _selectedButton + 1)));
-
-		//Play button move sound
-		SoundManager::instance().playSound(CHANGE_BUTTON_SFX);
-	}
-	//Down key pressed
-	else if (Game::instance().getSpecialKey(GLUT_KEY_DOWN) && _moveCooldown == 0) {
-		_buttons[_selectedButton]->setTexturePosition(glm::vec2(0.6f, BUTTON_SPRITESHEET_SIZE.y * (2 * _selectedButton)));
-		_selectedButton = (_selectedButton + 1) % _buttons.size();
-		_moveCooldown = BUTTON_MOVE_COOLDOWN;
-		_buttons[_selectedButton]->setTexturePosition(glm::vec2(0.6f, BUTTON_SPRITESHEET_SIZE.y * (2 * _selectedButton + 1)));
-		
-		SoundManager::instance().playSound(CHANGE_BUTTON_SFX);
-	}
-	//Neither is pressed so move cooldown is set 0. Enables swifter changing than holding down
-	else if (Game::instance().getSpecialKeyReleased(GLUT_KEY_UP) || Game::instance().getSpecialKeyReleased(GLUT_KEY_DOWN)) {
-		_moveCooldown = 0;
-	}
-	//Reduce moveCooldown regardless of situation
-	_moveCooldown = std::max(_moveCooldown - deltaTime, 0);
-
-
-	if (Game::instance().getKey(13)) { /*Enter key pressed*/
-		SoundManager::instance().playSound(CLICK_BUTTON_SFX);
-		switch (_selectedButton) {
-		case 0: //Play
-			_state = FADE_OUT;
-			break;
-		case 1: //Options
-			_state = RUNNING;
-			//#include <shenanigans>
-			break;
-		case 2: //Exit
-			_state = EXIT;
-			break;
-		}
-	}
-	//Escape from game
-	else if (Game::instance().getKeyReleased(27)) {
-		return EXIT;
-	}
 
 	return _state;
 }
@@ -215,4 +168,60 @@ void Scene_Menu::render()
 int Scene_Menu::getLevelToOpen()
 {
 	return 1;
+}
+
+void Scene_Menu::checkButtons(int deltaTime)
+{
+	//Reduce moveCooldown regardless of situation
+	_moveCooldown = std::max(_moveCooldown - deltaTime, 0);
+
+
+	//Up key pressed
+	if (Game::instance().getSpecialKey(GLUT_KEY_UP) && _moveCooldown == 0) {
+		//Unselect current button. Texture update
+		_buttons[_selectedButton]->setTexturePosition(glm::vec2(0.6f, BUTTON_SPRITESHEET_SIZE.y * (2 * _selectedButton)));
+		//Increase x-1 mod x to loop around and move -1. -1 mod x crashes badly
+		_selectedButton = (_selectedButton + (_buttons.size() - 1)) % _buttons.size();
+		//Increase move cooldown
+		_moveCooldown = BUTTON_MOVE_COOLDOWN;
+		//Select new button. Texture update
+		_buttons[_selectedButton]->setTexturePosition(glm::vec2(0.6f, BUTTON_SPRITESHEET_SIZE.y * (2 * _selectedButton + 1)));
+
+		//Play button move sound
+		SoundManager::instance().playSound(CHANGE_BUTTON_SFX);
+	}
+	//Down key pressed
+	else if (Game::instance().getSpecialKey(GLUT_KEY_DOWN) && _moveCooldown == 0) {
+		_buttons[_selectedButton]->setTexturePosition(glm::vec2(0.6f, BUTTON_SPRITESHEET_SIZE.y * (2 * _selectedButton)));
+		_selectedButton = (_selectedButton + 1) % _buttons.size();
+		_moveCooldown = BUTTON_MOVE_COOLDOWN;
+		_buttons[_selectedButton]->setTexturePosition(glm::vec2(0.6f, BUTTON_SPRITESHEET_SIZE.y * (2 * _selectedButton + 1)));
+
+		SoundManager::instance().playSound(CHANGE_BUTTON_SFX);
+	}
+	//Neither is pressed so move cooldown is set 0. Enables swifter changing than holding down
+	else if (Game::instance().getSpecialKeyReleased(GLUT_KEY_UP) || Game::instance().getSpecialKeyReleased(GLUT_KEY_DOWN)) {
+		_moveCooldown = 0;
+	}
+
+	//Enter key pressed
+	if (Game::instance().getKey(13)) {
+		SoundManager::instance().playSound(CLICK_BUTTON_SFX);
+		switch (_selectedButton) {
+			case 0: //Play
+				_state = FADE_OUT;
+				break;
+			case 1: //Options
+					//_state = RUNNING;
+					//#include <shenanigans>
+				break;
+			case 2: //Exit
+				_state = EXIT;
+				break;
+		}
+	}
+	//Escape from game
+	else if (Game::instance().getKeyReleased(27)) {
+		_state = EXIT;
+	}
 }

@@ -22,34 +22,40 @@ public:
 	//Needed to update the music!
 	void update();
 
-	void playSound(const char* fileName);
-
 	float getMasterVolume();
 	//Sets volume for all audio (0..1)
 	void setMasterVolume(float volume);
 
+	//Starts playing the music file
 	void setMusic(const char* fileName);
-	void startMusic();
+	//Pauses or unpauses music
 	void pauseMusic(bool pause);
-	void stopMusic();
 	float getMusicVolume();
 	//Sets volume for music (0..1)
 	void setMusicVolume(float volume);
 
+	//Play an individual sound
+	void playSound(const char* fileName);
 	//Adds a sound to the array
 	void addSound(const char* fileName);
 	//Adds a sound to the array with a default volume
 	void addSound(const char* fileName, float volume);
-	float getSoundVolume();
+	float getSoundVolumeFactor();
 	//Sets volume for all sounds (0..1)
-	void setSoundVolume(float volume);
+	void setSoundVolumeFactor(float volume);
 	//Sets volume for specified sound (0..1)
 	void setSoundVolume(const char* fileName, float volume);
 
 private:
-	ISoundEngine *_engine;
-	ISoundSource *_music;
-	vector<ISoundSource*> _sounds;
-	float _soundVolumeFactor;
+	ISoundEngine *_music_engine, *_sound_engine;
+	ISound *_music;
+	vector<ISound*> _sounds;
+
+	//Affects all sounds
+	float _masterVolume;
+	//Preserve individual sound values
+	float _musicVolume, _soundVolume;
+
+	ISound * isoundFromName(const char* fileName);
 };
 
