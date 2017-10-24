@@ -10,10 +10,11 @@
 #define MAX_ANGLE 1.f							//Angle will be 75 degrees -> radians
 #define PIXEL_SIZE glm::vec2(16.f,64.f)			//Pixel size in spritesheet
 
-void Aimer::init(const glm::vec2 & tileMapPos, ShaderProgram & shaderProgram, BallManager *bmng)
+void Aimer::init(const glm::vec2 & pos, glm::vec2 &minRenderCoords, ShaderProgram & shaderProgram, BallManager *bmng)
 {
 
-	_position = tileMapPos * 16.f;
+	_position = pos;
+	_minRenderCoords = minRenderCoords;
 	_bmng = bmng;
 	_size = PIXEL_SIZE;
 	_canShoot = true;
@@ -27,10 +28,10 @@ void Aimer::init(const glm::vec2 & tileMapPos, ShaderProgram & shaderProgram, Ba
 	//Quad size, Texture size, Texture position, Texture sheet, program
 	glm::vec2 sizeInSpriteSheet = glm::vec2(PIXEL_SIZE.x / _spritesheet->width(), PIXEL_SIZE.y / _spritesheet->height());
 	_sprite = Sprite::createSprite(PIXEL_SIZE, sizeInSpriteSheet, _spritesheet, &shaderProgram);
-	_sprite->setPosition(_position);
+	_sprite->setPosition(_position + _minRenderCoords);
 	//heldball from manager
-	_heldBall = new Ball_Held(shaderProgram, _bmng->getNextHeldBall());
-	_heldBall->init(_position, _size);
+	_heldBall = _bmng->getNextHeldBall();
+	_heldBall->initHeldPosition(_position, _size);
 
 }
 
@@ -53,7 +54,7 @@ void Aimer::update(int deltaTime)
 
 			//heldball from manager
 			_heldBall = _bmng->getNextHeldBall();
-			_heldBall->init(_position, _size);
+			_heldBall->initHeldPosition(_position, _size);
 			_shootTime = SHOOT_COOLDOWN;
 			_canShoot = false;
 			

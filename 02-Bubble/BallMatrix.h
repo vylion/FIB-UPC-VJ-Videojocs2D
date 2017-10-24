@@ -11,7 +11,8 @@ public:
 	BallMatrix(	int *_colorMatrix,
 				glm::ivec2 &matrixDimensions,
 				int visibleMatrixHeight,
-				glm::vec2 _ballOffset,
+				glm::vec2 minBallCoords,
+				glm::vec2 minRenderCoords,
 				const int &ballSize,
 				const glm::vec2 &ballSizeInSpritesheet,
 				Texture *spritesheet,
@@ -30,7 +31,7 @@ private:
 	std::vector< std::vector<bool> > _connectedMatrix;
 	int _visibleMatrixHeight;
 
-	glm::vec2  _ballSizeInSpritesheet, _matrixOffset;
+	glm::vec2  _ballSizeInSpritesheet, _minBallCoords, _minRenderCoords;
 	int _ballSize;
 	Texture *_spritesheet;
 	ShaderProgram _shaderProgram;

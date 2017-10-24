@@ -14,7 +14,7 @@ Ball_Held::Ball_Held(ShaderProgram & shaderProgram, Ball * b)
 
 }
 
-void Ball_Held::init(const glm::vec2 &aimerPos, const glm::vec2 &aimerSize) {
+void Ball_Held::initHeldPosition(const glm::vec2 &aimerPos, const glm::vec2 &aimerSize) {
 	_aimerPos = aimerPos;
 	_aimerSize = aimerSize;
 }

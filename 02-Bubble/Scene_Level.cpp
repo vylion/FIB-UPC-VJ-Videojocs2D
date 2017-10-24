@@ -2,8 +2,7 @@
 
 #include "../Game.h"
 
-#define MIN_SCREEN_X 32
-#define MIN_SCREEN_Y 16
+#define MIN_SCREEN_COORDS glm::vec2(32.f, 16.f)
 
 #define INIT_PLAYER_X_TILES 9
 #define INIT_PLAYER_Y_TILES 26
@@ -40,23 +39,24 @@ void Scene_Level::init(int level)
 
 	/*----------------------------------------TILEMAP-------------------------------------------------------*/
 
-	map = TileMap::createTileMap(levelLocation + "_Tile.txt", glm::vec2(MIN_SCREEN_X, MIN_SCREEN_Y), texProgram);
+	map = TileMap::createTileMap(levelLocation + "_Tile.txt", MIN_SCREEN_COORDS, texProgram);
 
 
 	/*----------------------------------------BALLMANAGER---------------------------------------------------*/
 
-	bmng = BallManager::createBallManager(levelLocation + "_Ball.txt", map, texProgram);
-	bmng->init();
+	bmng = BallManager::createBallManager(map, texProgram);
+	bmng->init(levelLocation + "_Ball.txt");
 	//bmng->init(glm::ivec2(MIN_SCREEN_X + map->getBallOffset().x, MIN_SCREEN_Y + map->getBallOffset().y));
 
 	/*----------------------------------------AIMER-------------------------------------------------------*/
 
 	aimer = new Aimer();
-	//Horizontal position is ball starting position + ball space / 2
-	//Vertical position is ball starting position + ball space - 2 to compensate for aimer height
-	glm::vec2 aimerDist = (glm::vec2)map->getBallSpace() * glm::vec2(0.5f, 1.f) + glm::vec2(1.5f, -2);
-	glm::vec2 aimerPos = map->getBallOffset();
-	aimer->init(aimerPos + aimerDist, texProgram, bmng);
+	//Horizontal position is ball starting position + ball space
+	//Vertical position is ball starting position + ball space
+	glm::vec2 aimerDist = (glm::vec2)map->getBallSpace() * glm::vec2(0.5f, 1.f);
+	glm::vec2 aimerPos = (glm::vec2)map->getBallOffset();
+	glm::vec2 pos = (aimerPos + aimerDist) * 16.f;
+	aimer->init(pos, MIN_SCREEN_COORDS, texProgram, bmng);
 
 	/*----------------------------------------END-------------------------------------------------------*/
 
@@ -79,6 +79,8 @@ int Scene_Level::update(int deltaTime)
 		_state = OPEN_LEVEL;
 		_level = -1; //Menu
 	}
+
+	checkButtons(deltaTime);
 
 	return _state;
 }

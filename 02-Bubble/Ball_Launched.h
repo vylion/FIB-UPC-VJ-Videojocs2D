@@ -1,12 +1,13 @@
 #pragma once
 #include "Ball.h"
 #include "Ball_Held.h"
+#include "../TileMap.h"
 
 class Ball_Launched :
 	public Ball
 {
 public:
-	Ball_Launched(ShaderProgram & shaderProgram, Ball_Held * b, float angle, glm::ivec2 &minCoords, glm::ivec2 &fieldLimit);
+	Ball_Launched(ShaderProgram & shaderProgram, Ball_Held * b, float angle, TileMap *tmap);
 	void update(int deltaTime);
 
 	glm::vec2 getSpeed();
@@ -18,6 +19,7 @@ public:
 	bool movingDown();
 
 private:
-	glm::vec2 _speed, _minCoords, _fieldLimits;
+	glm::vec2 _speed;
+	TileMap *_tmap;
 };
 

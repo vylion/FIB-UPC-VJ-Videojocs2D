@@ -6,15 +6,13 @@
 Ball_Launched::Ball_Launched(	ShaderProgram & shaderProgram,
 								Ball_Held * b,
 								float angle,
-								glm::ivec2 &minCoords,
-								glm::ivec2 &fieldLimits)
+								TileMap *tmap)
 	: Ball(b->getSize(), b->getSpritesheetSize(), b->getTexture(), shaderProgram)
 {
 	setColor(b->getColor());
 	setPosition(b->getPosition());
 
-	_fieldLimits = glm::vec2(float((fieldLimits.x-1)*16.f), float(fieldLimits.y*16.f));
-	_minCoords = glm::vec2(float(minCoords.x), float(minCoords.y));
+	_tmap = tmap;
 
 	float spd_angle = angle;// -float(M_PI);
 	float spdx = 0.2 * std::cos(spd_angle);
@@ -27,6 +25,16 @@ void Ball_Launched::update(int deltaTime)
 	glm::vec2 traveledDistance = glm::vec2(_speed.x*deltaTime, _speed.y*deltaTime);
 
 	glm::vec2 finalPosition = glm::vec2(getPosition().x + traveledDistance.x, getPosition().y + traveledDistance.y);
+
+	setPosition(finalPosition);
+
+	glm::ivec2 pos = glm::ivec2(round(getPosition().x), round(getPosition().y));
+
+	if (movingRight() && _tmap->collisionMoveRight(pos, glm::ivec2(getSize())))
+		bounceHorizontal(deltaTime);
+
+	else if (movingLeft() && _tmap->collisionMoveLeft(pos, glm::ivec2(getSize())))
+		bounceHorizontal(deltaTime);
 	/*
 	If ball is out of horizontal bounds we will recalculate position with traveled
 	total distance and reverse X speed.
@@ -48,7 +56,7 @@ void Ball_Launched::update(int deltaTime)
 	setPosition(finalPosition);
 	*/
 
-	setPosition(finalPosition);
+	
 }
 
 glm::vec2 Ball_Launched::getSpeed()

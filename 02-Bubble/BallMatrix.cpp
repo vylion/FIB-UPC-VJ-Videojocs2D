@@ -3,13 +3,15 @@
 BallMatrix::BallMatrix( int * colorMatrix,
 						glm::ivec2 &matrixDimensions,
 						int visibleMatrixHeight,
-						glm::vec2 _ballOffset,
+						glm::vec2 minBallCoords,
+						glm::vec2 minRenderCoords,
 						const int &ballSize,
 						const glm::vec2 &ballSizeInSpritesheet,
 						Texture *spritesheet,
 						ShaderProgram &shaderProgram)
 {
-	_matrixOffset = _ballOffset;
+	_minBallCoords = minBallCoords;
+	_minRenderCoords = minRenderCoords;
 	_visibleMatrixHeight = visibleMatrixHeight;
 	_ballSize = ballSize;
 	_ballSizeInSpritesheet = ballSizeInSpritesheet;
@@ -26,7 +28,7 @@ BallMatrix::BallMatrix( int * colorMatrix,
 		for (int j = 0; j < matrixDimensions.x - i%2; ++j) {
 			Ball_InMatrix *b = ballFromColor(colorMatrix[iterated]);
 			//Change to in-screen limits
-			b->init(colorMatrix[iterated], glm::vec2(ballSize*(j + 2 + _matrixOffset.x), ballSize*(i + 1 + _matrixOffset.y - visibleOffset) ));
+			b->init(colorMatrix[iterated], _minBallCoords + (float)ballSize * (glm::vec2(j, i - visibleOffset)), _minRenderCoords);
 			b->setOddRow((i % 2 != 0));
 			//To account for displacement
 			ballRow.push_back(b);
@@ -90,7 +92,7 @@ Ball_InMatrix * BallMatrix::ballFromColor(int & color)
 {
 	//Create ball at 0,0 with the set color
 	Ball *b = new Ball(_ballSize, _ballSizeInSpritesheet, _spritesheet, _shaderProgram);
-	b->init(color, glm::vec2(0.f, 0.f));
+	b->init(color, glm::vec2(0.f, 0.f), _minRenderCoords);
 	//Create ball_inmatrix using the stablished ball
 	Ball_InMatrix * bim = new Ball_InMatrix(_shaderProgram, b);
 	return bim;
@@ -111,12 +113,12 @@ Ball_InMatrix::posT BallMatrix::snapToGrid(Ball *b)
 {
 	glm::vec2 pos = b->getPosition();
 
-	int i = pos.y / _ballSize;
-	i += -1 - _matrixOffset.y;
+	int i = (pos.y - _minBallCoords.y )/ _ballSize;
+	//i += -1 - _matrixOffset.y;
 	if (int(_ballMatrix.size()) - _visibleMatrixHeight > 0) i += int(_ballMatrix.size()) - _visibleMatrixHeight;
 
-	int j = pos.x / _ballSize;
-	j += -2 - _matrixOffset.x;
+	int j = (pos.x - _minBallCoords.x )/ _ballSize;
+	//j += -2 - _matrixOffset.x;
 	Ball_InMatrix::posT posInMatrix(i, j);
 	return posInMatrix;
 }

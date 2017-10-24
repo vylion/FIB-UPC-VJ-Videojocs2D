@@ -8,32 +8,34 @@
 #include "Ball_Launched.h"
 
 
-BallManager * BallManager::createBallManager(const string & levelFile, TileMap *tmap, ShaderProgram & shaderProgram)
+BallManager * BallManager::createBallManager(TileMap *tmap, ShaderProgram & shaderProgram)
 {
-	BallManager *bm = new BallManager(levelFile, tmap, shaderProgram);
+	BallManager *bm = new BallManager(tmap, shaderProgram);
 
 	return bm;
 }
 
 
-BallManager::BallManager(const string & levelFile, TileMap *tmap, ShaderProgram & shaderProgram)
+BallManager::BallManager(TileMap *tmap, ShaderProgram & shaderProgram)
 {
 	_shaderProgram = shaderProgram;
 	_tmap = tmap;
 
 	srand(time(NULL));
-	if (!readLevel(levelFile)) printf("BallManager: Failed to read levelFile");
+	
 	
 }
 
 
 
 //void BallManager::init(glm::ivec2 &minBallCoords)
-void BallManager::init()
+void BallManager::init(const string & levelFile)
 {
 	//_minBallCoords = glm::ivec2(minBallCoords);
 	//Minimum float pos at which we can render a ball (top left)
-	_minBallCoords = (glm::vec2)_tmap->getMinRenderCoords() + (glm::vec2)_tmap->getBallOffset() * glm::vec2((float)_tmap->getTileSize());
+	_minBallCoords = /*(glm::vec2)_tmap->getMinRenderCoords() + */(glm::vec2)_tmap->getBallOffset() * (float)_tmap->getTileSize();
+	if (!readLevel(levelFile)) printf("BallManager: Failed to read levelFile");
+
 	_nextBall = getNewBall();
 	_thereIsLaunchedBall = false;
 }
@@ -45,14 +47,7 @@ void BallManager::update(int deltaTime)
 		_launchedBall->update(deltaTime);
 
 		vector<glm::vec2> points = _launchedBall->collisionPoints();
-		glm::ivec2 pos = glm::ivec2(round(_launchedBall->getPosition().x), round(_launchedBall->getPosition().y));
-		;
-		
-		if (_launchedBall->movingRight() && _tmap->collisionMoveRight(pos, glm::ivec2(_ballPixelSize)))
-			_launchedBall->bounceHorizontal(deltaTime);
-		
-		else if (_launchedBall->movingLeft() && _tmap->collisionMoveLeft(pos, glm::ivec2(_ballPixelSize)))
-			_launchedBall->bounceHorizontal(deltaTime);
+
 		/*
 		else if (_launchedBall->movingUp() && _tmap->collisionMoveUp(glm::ivec2(ballPos), glm::ivec2(_launchedBall->getSize()/2)))
 			_launchedBall->bounceVertical(deltaTime+1);
@@ -91,21 +86,20 @@ Ball_Held * BallManager::getNextHeldBall()
 	
 	//Store next held ball for the return
 	Ball_Held *ret = new Ball_Held(_shaderProgram, _nextBall);
+	ret->init(_nextBall->getColor(), glm::vec2(0.f), _tmap->getMinRenderCoords());
 
 	//Generate a new ball for display
 	_nextBall = getNewBall();
-	_nextBall->setPosition(glm::vec2(400.f, 400.f));
+
+	_nextBall->setPosition(_minBallCoords + _tmap->getBallSpace() * _ballPixelSize);
 	return ret;
 }
 
 void BallManager::launchHeldBall(Ball_Held * heldBall, float angle)
 {
-	/*TODO: Update this*/
-	glm::ivec2 tempBallLimits = _tmap->getBallSpace();
-	_launchedBall = new Ball_Launched(_shaderProgram, heldBall, heldBall->getAngle(), _minBallCoords, tempBallLimits);
+	_launchedBall = new Ball_Launched(_shaderProgram, heldBall, heldBall->getAngle(), _tmap);
+	_launchedBall->init(heldBall->getColor(), heldBall->getPosition(), _tmap->getMinRenderCoords());
 	_thereIsLaunchedBall = true;
-	//_launchedBall = new LaunchedBall(heldBall, angle);
-	//_heldBall->launch(angle);
 }
 
 Ball * BallManager::getNewBall()
@@ -113,7 +107,7 @@ Ball * BallManager::getNewBall()
 	int color = rand()%11;
 
 	Ball *b = new Ball(_ballPixelSize, _ballTexSize, _spritesheet, _shaderProgram);
-	b->init(color, glm::vec2(0.f, 0.f));
+	b->init(color, glm::vec2(0.f, 0.f), _tmap->getMinRenderCoords());
 
 	return b;
 }
@@ -141,7 +135,9 @@ bool BallManager::readLevel(const string & levelFile)
 	sstream >> _matrixTileSize.x >> _matrixTileSize.y >> visibleMatrixHeight;
 	//Check if the balls fit in the hole :^)
 
-	if (_matrixTileSize.x > _tmap->getBallSpace().x || visibleMatrixHeight > _tmap->getBallSpace().y) return false;
+	if (_matrixTileSize.x-1 > _tmap->getBallSpace().x ||
+		visibleMatrixHeight >= _tmap->getBallSpace().y)
+		return false;
 	//Tile and block size
 	getline(fin, line);
 	sstream.str(line);
@@ -151,8 +147,11 @@ bool BallManager::readLevel(const string & levelFile)
 	getline(fin, line);
 	sstream.str(line);
 	sstream >> spritesheetFile;
+
 	_spritesheet = new Texture();
+
 	_spritesheet->loadFromFile(spritesheetFile, TEXTURE_PIXEL_FORMAT_RGBA);
+
 	_spritesheet->setWrapS(GL_CLAMP_TO_EDGE);
 	_spritesheet->setWrapT(GL_CLAMP_TO_EDGE);
 	_spritesheet->setMinFilter(GL_NEAREST);
@@ -193,5 +192,5 @@ bool BallManager::readLevel(const string & levelFile)
 
 void BallManager::setUpBalls(int *colorMatrix, int visibleMatrixHeight)
 {
-	_bmat = new BallMatrix(colorMatrix, _matrixTileSize, visibleMatrixHeight, _tmap->getBallOffset(), _ballPixelSize, _ballTexSize, _spritesheet, _shaderProgram);
+	_bmat = new BallMatrix(colorMatrix, _matrixTileSize, visibleMatrixHeight, _minBallCoords, _tmap->getMinRenderCoords(), _ballPixelSize, _ballTexSize, _spritesheet, _shaderProgram);
 }

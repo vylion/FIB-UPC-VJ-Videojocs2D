@@ -14,12 +14,12 @@ using namespace std;
 class BallManager
 {
 public:
-	static BallManager *createBallManager(const string &levelFile, TileMap *tmap, ShaderProgram &shaderProgram);
+	static BallManager *createBallManager(TileMap *tmap, ShaderProgram &shaderProgram);
 
-	BallManager::BallManager(const string & levelFile, TileMap *tmap, ShaderProgram & shaderProgram);
+	BallManager::BallManager(TileMap *tmap, ShaderProgram & shaderProgram);
 	
 	//void init(glm::ivec2 &minRenderCoords);
-	void init();
+	void init(const string &levelFile);
 	void update(int deltaTime);
 	void render() const;
 

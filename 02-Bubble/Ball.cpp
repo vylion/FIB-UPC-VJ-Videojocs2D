@@ -7,12 +7,15 @@ Ball::Ball(const int &size, const glm::vec2 & sizeInSpritesheet,  Texture *sprit
 	_size = size;
 	_sizeInSpritesheet = sizeInSpritesheet;
 	_texture = spritesheet;
+
 	_sprite = Sprite::createSprite(glm::vec2(size, size), sizeInSpritesheet, spritesheet, &shaderProgram);
 }
 
-void Ball::init(int color, const glm::vec2 & position)
+void Ball::init(int color, const glm::vec2 & position, glm::vec2 minRenderCoords)
 {
 	setColor(color);
+
+	_minRenderCoords = minRenderCoords;
 	setPosition(position);
 }
 
@@ -73,7 +76,7 @@ glm::vec2 Ball::getPosition()
 void Ball::setPosition(const glm::vec2 & pos)
 {
 	_position = pos;
-	_sprite->setPosition(_position);
+	_sprite->setPosition(_position + _minRenderCoords);
 }
 
 vector<glm::vec2> Ball::collisionPoints()

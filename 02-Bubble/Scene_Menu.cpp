@@ -113,7 +113,7 @@ int Scene_Menu::update(int deltaTime)
 		case FADE_OUT:
 			_fadeTime -= deltaTime;
 			//Decrease music according to fade level
-			SoundManager::instance().setMusicVolume(max(0,_fadeTime) / FADE_OUT_TIME * 0.4);
+			SoundManager::instance().setMusicVolume(max(0,_fadeTime) / FADE_OUT_TIME * 0.4f);
 			//Fade out has finished. We can safely start the level now
 			if (_fadeTime <= 0) {
 				_fadeTime = 0;
