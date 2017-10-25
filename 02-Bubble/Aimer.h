@@ -11,20 +11,21 @@ class Aimer
 public:
 	Aimer() {}
 	void init(const glm::vec2 &pos, glm::vec2 &minRenderCoords, ShaderProgram &shaderProgram, BallManager *bmng);
+	//Updates aimer rotation and ball position. Asks for new ball if needed
 	void update(int deltaTime);
 	void render();
 
 private:
-
-	bool _canShoot;
-	int _shootTime;
 	float _angle;
-	glm::vec2 _position, _size, _minRenderCoords;
+	glm::vec2 _position, _minRenderCoords;
 	Texture *_spritesheet;
 	Sprite *_sprite;
 	Ball_Held *_heldBall;
 	BallManager *_bmng;
 
-	void ballToHeldball(Ball *b);
+	//Asks for new ball to ballManager
+	void getNewHeldBall();
+	//Check key presses
+	void checkButtons(int deltaTime);
 };
 

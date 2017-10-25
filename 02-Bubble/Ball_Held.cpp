@@ -10,7 +10,6 @@ Ball_Held::Ball_Held(ShaderProgram & shaderProgram, Ball * b)
 	setColor(b->getColor());
 	int size = b->getSize();
 	setSize(size);
-	//setSize(glm::vec2(b->getSize().x,b->getSize().y));
 
 }
 
@@ -20,12 +19,17 @@ void Ball_Held::initHeldPosition(const glm::vec2 &aimerPos, const glm::vec2 &aim
 }
 
 void Ball_Held::update(int deltaTime, float &angle) {
-	_angle = angle + float(3*M_PI/2);
-	glm::vec2 position = glm::vec2(_aimerPos.x, _aimerPos.y + _aimerSize.y/2);
+	//Angle rotated 1/4 of circumference clockwise to calculate position correctly
+	_angle = angle - float(M_PI/2);
+	//Initial position at the middle of aimer
+	glm::vec2 position = _aimerPos + glm::vec2(0.f, _aimerSize.y / 2);
+	//Add position relative to angle
 	position.x += _aimerSize.x * cos(_angle);
 	position.y += _aimerSize.y / 4 * sin(_angle);
+	//Update position and skype
 	setPosition(position);
-	Ball::update(deltaTime);
+	//Animations (soon(tm(?)))
+	//Ball::update(deltaTime);
 }
 
 float Ball_Held::getAngle()

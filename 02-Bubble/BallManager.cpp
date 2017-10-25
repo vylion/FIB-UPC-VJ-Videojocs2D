@@ -44,21 +44,15 @@ void BallManager::update(int deltaTime)
 {
 	_bmat->update(deltaTime);
 	if (_thereIsLaunchedBall) {
-		_launchedBall->update(deltaTime);
+		_launchedBall->update(deltaTime);		
 
-		vector<glm::vec2> points = _launchedBall->collisionPoints();
-
-		/*
-		else if (_launchedBall->movingUp() && _tmap->collisionMoveUp(glm::ivec2(ballPos), glm::ivec2(_launchedBall->getSize()/2)))
-			_launchedBall->bounceVertical(deltaTime+1);
-		
-		else if (_launchedBall->movingDown() && _tmap->collisionMoveDown(glm::ivec2(ballPos), glm::ivec2(_launchedBall->getSize()/2)))
-			_launchedBall->bounceVertical(deltaTime+1);
-		*/
-		
-		
-		if (_bmat->checkCollision(_launchedBall))
+				
+		if (_bmat->checkCollision(_launchedBall)) {
 			_bmat->addBallToMat(_launchedBall);
+			_thereIsLaunchedBall = false;
+		}
+		if (_launchedBall->getPosition().y <= -_ballPixelSize)
+			_thereIsLaunchedBall = false;
 	}
 }
 
@@ -71,9 +65,15 @@ void BallManager::render() const
 
 bool BallManager::ballUpdatesLeft()
 {
-	//if (_launchedBall != NULL) return _launchedBall->updatesLeft();
-	//else return false;
-	return false;
+	return _thereIsLaunchedBall;
+	/*
+	if (_launchedBall != nullptr) {
+		if (_launchedBall->getPosition().y < 0.f || _launchedBall->getPosition().y > 600.f) return true;
+		else return false;
+	}*/
+	//return true;
+	//return (_launchedBall != nullptr || _launchedBall->getPosition().y < -_ballPixelSize);
+	//return false;
 }
 
 bool BallManager::ballsLeft()
@@ -86,12 +86,11 @@ Ball_Held * BallManager::getNextHeldBall()
 	
 	//Store next held ball for the return
 	Ball_Held *ret = new Ball_Held(_shaderProgram, _nextBall);
-	ret->init(_nextBall->getColor(), glm::vec2(0.f), _tmap->getMinRenderCoords());
+	ret->init(_nextBall->getColor(), _nextBall->getPosition(), _tmap->getMinRenderCoords());
 
 	//Generate a new ball for display
 	_nextBall = getNewBall();
 
-	_nextBall->setPosition(_minBallCoords + _tmap->getBallSpace() * _ballPixelSize);
 	return ret;
 }
 
@@ -99,6 +98,7 @@ void BallManager::launchHeldBall(Ball_Held * heldBall, float angle)
 {
 	_launchedBall = new Ball_Launched(_shaderProgram, heldBall, heldBall->getAngle(), _tmap);
 	_launchedBall->init(heldBall->getColor(), heldBall->getPosition(), _tmap->getMinRenderCoords());
+
 	_thereIsLaunchedBall = true;
 }
 
@@ -107,7 +107,7 @@ Ball * BallManager::getNewBall()
 	int color = rand()%11;
 
 	Ball *b = new Ball(_ballPixelSize, _ballTexSize, _spritesheet, _shaderProgram);
-	b->init(color, glm::vec2(0.f, 0.f), _tmap->getMinRenderCoords());
+	b->init(color, _minBallCoords + _tmap->getBallSpace() * _ballPixelSize, _tmap->getMinRenderCoords());
 
 	return b;
 }
