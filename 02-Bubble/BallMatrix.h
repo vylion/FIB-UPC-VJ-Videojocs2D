@@ -11,6 +11,7 @@ public:
 	BallMatrix(	int *_colorMatrix,
 				glm::ivec2 &matrixDimensions,
 				int visibleMatrixHeight,
+				int levelHeight,
 				glm::vec2 minBallCoords,
 				glm::vec2 minRenderCoords,
 				const int &ballSize,
@@ -22,7 +23,7 @@ public:
 	void render();
 
 	bool checkCollision(Ball * b);
-	void addBallToMat(Ball * b);
+	void addBallToMat(Ball * b, Ball_InMatrix::NeighborBalls pos);
 
 	int ballsLeft();
 

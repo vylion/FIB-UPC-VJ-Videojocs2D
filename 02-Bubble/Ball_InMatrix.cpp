@@ -34,9 +34,19 @@ void Ball_InMatrix::setTopRow(const bool & topRow)
 	_topRow = topRow;
 }
 
-bool Ball_InMatrix::checkCollision(Ball * b)
+Ball_InMatrix::NeighborBalls Ball_InMatrix::checkCollision(Ball * b)
 {
-	return abs(b->getPosition().x - getPosition().x) > getSize() || abs(b->getPosition().y - getPosition().y) > getSize();
+	std::vector<glm::vec2> ownPoints = collisionPoints();
+	std::vector<glm::vec2> ballPoints = b->collisionPoints();
+
+	if (abs(b->getPosition().x - getPosition().x) > getSize() || abs(b->getPosition().y - getPosition().y) > getSize()) {
+		if (b->getPosition().x < getPosition().x) {
+			return BOT_LEFT;
+		}
+		return BOT_LEFT;
+	}
+	
+	return OUTSIDE;
 }
 
 bool Ball_InMatrix::addNeighbor(Ball_InMatrix::posT b, int pos)
@@ -52,7 +62,7 @@ list<Ball_InMatrix::posT> Ball_InMatrix::checkNeighbors()
 {
 	list<posT> group = list<posT>();
 
-	for (int i = TOP_LEFT; i < NUM_NEIGHBORS; ++i) {
+	for (int i = TOP_LEFT; i < OUTSIDE; ++i) {
 		if (neighbors[i] != POS_NULL) {
 			//check if same color, among colors, or bomb
 			group.push_back(neighbors[i]);
