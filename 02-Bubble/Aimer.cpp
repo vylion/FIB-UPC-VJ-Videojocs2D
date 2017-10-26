@@ -27,13 +27,12 @@ void Aimer::init(const glm::vec2 & pos, glm::vec2 &minRenderCoords, ShaderProgra
 	
 	glm::vec2 sizeInSpriteSheet = glm::vec2(PIXEL_SIZE.x / _spritesheet->width(), PIXEL_SIZE.y / _spritesheet->height());
 	//Quad size, Texture size, Texture position, Texture sheet, program
-	_sprite = Sprite::createSprite(PIXEL_SIZE, sizeInSpriteSheet, _spritesheet, &shaderProgram);
+	_sprite = Sprite::createSprite(PIXEL_SIZE, PIXEL_SIZE, _spritesheet, &shaderProgram);
 	//We don't need to update the aimer position at all so we pass minRendercoords to the sprite
 	_sprite->setPosition(_position + _minRenderCoords);
 	//Ball_Held from BallManager
 	getNewHeldBall();
 	
-
 }
 
 void Aimer::update(int deltaTime)

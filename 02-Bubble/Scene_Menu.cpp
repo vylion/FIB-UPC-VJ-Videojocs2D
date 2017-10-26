@@ -43,21 +43,21 @@ void Scene_Menu::init()
 	_selectedButton = 0; //Play
 
 	//Play button
-	_b_play = Sprite::createSprite(BUTTON_SIZE, BUTTON_SPRITESHEET_SIZE, _b_Texture, &texProgram);
+	_b_play = Sprite::createSprite(BUTTON_SIZE, BUTTON_SIZE, _b_Texture, &texProgram);
 		_b_play->setPosition(glm::vec2((
 			SCREEN_WIDTH-BUTTON_SIZE.x)/2,
 			(SCREEN_HEIGHT-BUTTON_SIZE.y)/2 + BUTTON_SIZE.y * 1 + 50.f
 		));
 		_b_play->setTexturePosition(glm::vec2(0.6f, BUTTON_SPRITESHEET_SIZE.y * (2 * 0)));
 	//Options button
-	_b_options = Sprite::createSprite(BUTTON_SIZE, BUTTON_SPRITESHEET_SIZE, _b_Texture, &texProgram);
+	_b_options = Sprite::createSprite(BUTTON_SIZE, BUTTON_SIZE, _b_Texture, &texProgram);
 		_b_options->setPosition(glm::vec2(
 			(SCREEN_WIDTH - BUTTON_SIZE.x) / 2,
 			(SCREEN_HEIGHT - BUTTON_SIZE.y) / 2 + BUTTON_SIZE.y * 2.5 + 50.f
 		));
 		_b_options->setTexturePosition(glm::vec2(0.6f, BUTTON_SPRITESHEET_SIZE.y * (2 * 1)));
 	//Exit button
-	_b_exit = Sprite::createSprite(BUTTON_SIZE, BUTTON_SPRITESHEET_SIZE, _b_Texture, &texProgram);
+	_b_exit = Sprite::createSprite(BUTTON_SIZE, BUTTON_SIZE, _b_Texture, &texProgram);
 		_b_exit->setPosition(glm::vec2(
 			(SCREEN_WIDTH - BUTTON_SIZE.x) / 2.f,
 			(SCREEN_HEIGHT - BUTTON_SIZE.y) / 2.f + BUTTON_SIZE.y * 4 + 50.f
@@ -72,7 +72,7 @@ void Scene_Menu::init()
 
 	/*----------------------------------------LOGO-------------------------------------------------------*/
 
-	_logo = Sprite::createSprite(LOGO_SIZE, LOGO_SPRITESHEET_SIZE, _b_Texture, &texProgram);
+	_logo = Sprite::createSprite(LOGO_SIZE, LOGO_SIZE, _b_Texture, &texProgram);
 		_logo->setPosition(glm::vec2((SCREEN_WIDTH - LOGO_SIZE.x) / 2.f, (SCREEN_HEIGHT - LOGO_SIZE.y) / 2.f + 5.f));
 		//_b_exit->setTexturePosition(glm::vec2(0.125f, 0.f + BUTTON_SPRITESHEET_SIZE.y * 3));
 		_logo->setTexturePosition(glm::vec2(0.f));

@@ -190,5 +190,5 @@ bool BallManager::readLevel(const string & levelFile)
 
 void BallManager::setUpBalls(int *colorMatrix, int visibleMatrixHeight)
 {
-	_bmat = new BallMatrix(colorMatrix, _matrixTileSize, visibleMatrixHeight, _tmap->getBallSpace().y, _minBallCoords, _tmap->getMinRenderCoords(), _ballPixelSize, _ballTexSize, _spritesheet, _shaderProgram);
+	_bmat = new BallMatrix(colorMatrix, _matrixTileSize, visibleMatrixHeight, _tmap->getBallSpace().y, _minBallCoords, _tmap->getMinRenderCoords(), _ballPixelSize, glm::vec2((float)_spritePixelSize), _spritesheet, _shaderProgram);
 }
