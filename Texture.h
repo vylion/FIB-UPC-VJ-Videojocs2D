@@ -4,6 +4,7 @@
 
 #include <string>
 #include <GL/glew.h>
+#include <glm/glm.hpp>
 
 
 using namespace std;
@@ -38,6 +39,7 @@ public:
 	
 	int width() const { return widthTex; }
 	int height() const { return heightTex; }
+	glm::vec2 getSize() { return glm::vec2((float)widthTex, (float)heightTex); }
 
 private:
 	int widthTex, heightTex;

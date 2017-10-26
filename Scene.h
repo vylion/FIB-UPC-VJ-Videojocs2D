@@ -18,7 +18,7 @@ class Scene
 {
 
 public:
-	enum state { RUNNING, FADE_IN, FADE_OUT, OPEN_LEVEL, EXIT };
+	enum state { RUNNING, FADE_IN, FADE_OUT, OPEN_LEVEL, PAUSED, EXIT };
 
 	Scene() {}
 
@@ -34,12 +34,14 @@ protected:
 	int _state;
 
 	ShaderProgram texProgram;
-	float currentTime;
+	float currentTime, pauseTime;
 	glm::mat4 projection;
 
 	void initShaders();
+	void initPause();
 	virtual void initAudio() {};
 	virtual void checkButtons(int deltaTime) {};
+	void renderPause();
 
 };
 #endif // _SCENE_INCLUDE

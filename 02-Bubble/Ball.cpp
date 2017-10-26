@@ -81,7 +81,7 @@ void Ball::setPosition(const glm::vec2 & pos)
 
 vector<glm::vec2> Ball::collisionPoints()
 {
-	float r = _size / 2;
+	float r = (float)_size / 2.f;
 	glm::vec2 p;
 	vector<glm::vec2> points = vector<glm::vec2>();
 
