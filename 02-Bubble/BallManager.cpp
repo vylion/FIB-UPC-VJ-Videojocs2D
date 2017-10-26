@@ -44,9 +44,10 @@ void BallManager::update(int deltaTime)
 	if (_thereIsLaunchedBall) {
 		_launchedBall->update(deltaTime);		
 
-				
-		if (_bmat->checkCollision(_launchedBall)) {
-			_bmat->addBallToMat(_launchedBall);
+		bool collision = _bmat->checkCollision(_launchedBall);
+		if (collision) {
+			//!= Ball_InMatrix::OUTSIDE) {
+			//_bmat->addBallToMat(_launchedBall);
 			_thereIsLaunchedBall = false;
 		}
 		if (_launchedBall->getPosition().y <= -_ballPixelSize)
@@ -170,7 +171,8 @@ bool BallManager::readLevel(const string & levelFile)
 			//Parse hex values
 			if (ballColor >= int('A') && ballColor <= int('F')) colorMatrix[iterated] = ballColor - int('A') + 10;
 			else if (ballColor >= int('0') && ballColor <= int('9')) colorMatrix[iterated] = ballColor - int('0');
-			else colorMatrix[iterated] = 0;
+			//else colorMatrix[iterated] = 0;
+			else colorMatrix[iterated] = ballColor - int('F') + 10;
 
 			iterated++;
 		}
@@ -188,5 +190,5 @@ bool BallManager::readLevel(const string & levelFile)
 
 void BallManager::setUpBalls(int *colorMatrix, int visibleMatrixHeight)
 {
-	_bmat = new BallMatrix(colorMatrix, _matrixTileSize, visibleMatrixHeight, _minBallCoords, _tmap->getMinRenderCoords(), _ballPixelSize, _ballTexSize, _spritesheet, _shaderProgram);
+	_bmat = new BallMatrix(colorMatrix, _matrixTileSize, visibleMatrixHeight, _tmap->getBallSpace().y, _minBallCoords, _tmap->getMinRenderCoords(), _ballPixelSize, _ballTexSize, _spritesheet, _shaderProgram);
 }

@@ -25,6 +25,10 @@ class Collider
         const int PARTIAL_OVERLAP = 4;  //Lines overlap
         const int CLOCKHAND_OVERLAP = 5;//Lines share endpoint and partially overlap
         const int FULL_OVERLAP = 6;     //Lines fully overlap
+
+		Collider() {};
+		Collider(Collider const&);
+		void operator=(Collider const&);
 };
 
 #endif // _COLLIDER_INCLUDE
