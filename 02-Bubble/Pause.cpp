@@ -39,6 +39,8 @@ void Pause::init(bool inMenu, ShaderProgram &shaderProgram)
 	_soundOffset = _soundVol;
 
 	/*----------------------------------------BUTTONS-------------------------------------------------------*/
+	
+	
 	_selectedRow = 3;
 	_selectedCol = 1 + inMenu; 
 

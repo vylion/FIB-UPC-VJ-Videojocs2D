@@ -1,4 +1,5 @@
 #pragma once
+#include <functional>
 #include "..\Sprite.h"
 
 class Button :
@@ -7,15 +8,19 @@ class Button :
 public:
 	Button(const glm::vec2 &quadSize, const glm::vec2 &sizeInSpritesheet, Texture *spritesheet, ShaderProgram *program);
 	
-	void setCallback(void (*callback)(void));
-	void init(glm::vec2 spriteStartingPos);
+	//Position in screen, position in spritesheet, callback function
+	void init(glm::vec2 buttonPos, glm::vec2 spriteStartingPos);
 
-	void select();
-	void unselect();
+	void setCallback(std::function<void(void)> callback);
 
+	//Change displayed texture
+	void select(); 	void unselect();
+
+	//Trigger callback
 	void use();
+
 private:
-	void *_callback;
+	std::function<void(void)> _callback;
 	glm::vec2 _spritesheet_pos, _spritesheet_size;
 };
 

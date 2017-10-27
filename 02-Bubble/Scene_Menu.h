@@ -1,6 +1,7 @@
 #pragma once
 
 #include "..\Scene.h"
+#include "Button.h"
 
 class Scene_Menu :
 	public Scene
@@ -24,8 +25,8 @@ private:
 	Texture *_b_Texture, *_bg_Texture;
 
 	//Buttons
-	Sprite *_b_play, *_b_options, *_b_exit;
-	vector<Sprite*> _buttons;
+	Button *_b_play, *_b_options, *_b_exit;
+	vector<Button*> _buttons;
 	//Logo
 	Sprite *_logo;
 	//Background
@@ -33,4 +34,8 @@ private:
 
 	void initAudio() override;
 	void checkButtons(int deltaTime) override;
+
+	void play();
+	void options();
+	void quit();
 };

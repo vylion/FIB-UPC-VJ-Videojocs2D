@@ -11,8 +11,10 @@
 
 #define BUTTON_SIZE glm::vec2(256.f, 32.f)
 #define BUTTON_SPRITESHEET_SIZE glm::vec2(0.4f, 0.125f)
+
 #define LOGO_SIZE glm::vec2(384.f, 256.f)
 #define LOGO_SPRITESHEET_SIZE glm::vec2(0.6f, 1.f)
+
 #define BUTTON_MOVE_COOLDOWN 175
 
 #define MUSIC_FILE "../media/audio/music/menu_bgm.ogg"
@@ -43,32 +45,38 @@ void Scene_Menu::init()
 	_selectedButton = 0; //Play
 
 	//Play button
-	_b_play = Sprite::createSprite(BUTTON_SIZE, BUTTON_SIZE, _b_Texture, &texProgram);
-		_b_play->setPosition(glm::vec2((
-			SCREEN_WIDTH-BUTTON_SIZE.x)/2,
-			(SCREEN_HEIGHT-BUTTON_SIZE.y)/2 + BUTTON_SIZE.y * 1 + 50.f
-		));
-		_b_play->setTexturePosition(glm::vec2(0.6f, BUTTON_SPRITESHEET_SIZE.y * (2 * 0)));
-	//Options button
-	_b_options = Sprite::createSprite(BUTTON_SIZE, BUTTON_SIZE, _b_Texture, &texProgram);
-		_b_options->setPosition(glm::vec2(
-			(SCREEN_WIDTH - BUTTON_SIZE.x) / 2,
-			(SCREEN_HEIGHT - BUTTON_SIZE.y) / 2 + BUTTON_SIZE.y * 2.5 + 50.f
-		));
-		_b_options->setTexturePosition(glm::vec2(0.6f, BUTTON_SPRITESHEET_SIZE.y * (2 * 1)));
-	//Exit button
-	_b_exit = Sprite::createSprite(BUTTON_SIZE, BUTTON_SIZE, _b_Texture, &texProgram);
-		_b_exit->setPosition(glm::vec2(
-			(SCREEN_WIDTH - BUTTON_SIZE.x) / 2.f,
-			(SCREEN_HEIGHT - BUTTON_SIZE.y) / 2.f + BUTTON_SIZE.y * 4 + 50.f
-		));
-		_b_exit->setTexturePosition(glm::vec2(0.6f, BUTTON_SPRITESHEET_SIZE.y * (2 * 2)));
+	_b_play = new Button(BUTTON_SIZE, BUTTON_SIZE, _b_Texture, &texProgram);
+	_b_play->init(glm::vec2((
+		SCREEN_WIDTH - BUTTON_SIZE.x) / 2,
+		(SCREEN_HEIGHT - BUTTON_SIZE.y) / 2 + BUTTON_SIZE.y * 1 + 50.f
+	),
+		glm::vec2(0.6f, BUTTON_SPRITESHEET_SIZE.y * (2 * 0)));
+	_b_play->setCallback([this](void) { play(); });
 
-		
+
+	//Options button
+	_b_options = new Button(BUTTON_SIZE, BUTTON_SIZE, _b_Texture, &texProgram);
+	_b_options->init(glm::vec2(
+		(SCREEN_WIDTH - BUTTON_SIZE.x) / 2,
+		(SCREEN_HEIGHT - BUTTON_SIZE.y) / 2 + BUTTON_SIZE.y * 2.5 + 50.f
+	), glm::vec2(0.6f, BUTTON_SPRITESHEET_SIZE.y * (2 * 1)));
+	_b_options->setCallback([this](void) { options(); });
+
+
+	//Exit button
+	_b_exit = new Button(BUTTON_SIZE, BUTTON_SIZE, _b_Texture, &texProgram);
+	_b_exit->init(glm::vec2(
+		(SCREEN_WIDTH - BUTTON_SIZE.x) / 2.f,
+		(SCREEN_HEIGHT - BUTTON_SIZE.y) / 2.f + BUTTON_SIZE.y * 4 + 50.f
+	), glm::vec2(0.6f, BUTTON_SPRITESHEET_SIZE.y * (2 * 2)));
+	_b_exit->setCallback([this](void) {quit(); });
+
+
+
 	_buttons.push_back(_b_play);
 	_buttons.push_back(_b_options);
 	_buttons.push_back(_b_exit);
-	_buttons[_selectedButton]->setTexturePosition(glm::vec2(0.6f, BUTTON_SPRITESHEET_SIZE.y));
+	_buttons[_selectedButton]->select();//setTexturePosition(glm::vec2(0.6f, BUTTON_SPRITESHEET_SIZE.y));
 
 	/*----------------------------------------LOGO-------------------------------------------------------*/
 
@@ -100,7 +108,7 @@ int Scene_Menu::update(int deltaTime)
 		case FADE_IN:
 			_fadeTime += deltaTime;
 			//Increase music according to fade level
-			//SoundManager::instance().setMusicVolume(_fadeTime / FADE_IN_TIME);
+			SoundManager::instance().setMusicVolume(_fadeTime / FADE_IN_TIME);
 			//Fade in has finished. Prepare fade with time for fade_out and update state
 			if (_fadeTime >= FADE_IN_TIME) {
 				_fadeTime = (int)FADE_OUT_TIME;
@@ -185,24 +193,22 @@ void Scene_Menu::checkButtons(int deltaTime)
 
 	//Up key pressed
 	if (Game::instance().getSpecialKey(GLUT_KEY_UP) && _moveCooldown == 0) {
-		//Unselect current button. Texture update
-		_buttons[_selectedButton]->setTexturePosition(glm::vec2(0.6f, BUTTON_SPRITESHEET_SIZE.y * (2 * _selectedButton)));
+		_buttons[_selectedButton]->unselect();
 		//Increase x-1 mod x to loop around and move -1. -1 mod x crashes badly
 		_selectedButton = (_selectedButton + (_buttons.size() - 1)) % _buttons.size();
 		//Increase move cooldown
 		_moveCooldown = BUTTON_MOVE_COOLDOWN;
-		//Select new button. Texture update
-		_buttons[_selectedButton]->setTexturePosition(glm::vec2(0.6f, BUTTON_SPRITESHEET_SIZE.y * (2 * _selectedButton + 1)));
+		_buttons[_selectedButton]->select();
 
 		//Play button move sound
-		SoundManager::instance().playSound(CHANGE_BUTTON_SFX);
+		
 	}
 	//Down key pressed
 	else if (Game::instance().getSpecialKey(GLUT_KEY_DOWN) && _moveCooldown == 0) {
-		_buttons[_selectedButton]->setTexturePosition(glm::vec2(0.6f, BUTTON_SPRITESHEET_SIZE.y * (2 * _selectedButton)));
+		_buttons[_selectedButton]->unselect();
 		_selectedButton = (_selectedButton + 1) % _buttons.size();
 		_moveCooldown = BUTTON_MOVE_COOLDOWN;
-		_buttons[_selectedButton]->setTexturePosition(glm::vec2(0.6f, BUTTON_SPRITESHEET_SIZE.y * (2 * _selectedButton + 1)));
+		_buttons[_selectedButton]->select();
 
 		SoundManager::instance().playSound(CHANGE_BUTTON_SFX);
 	}
@@ -219,21 +225,24 @@ void Scene_Menu::checkButtons(int deltaTime)
 	//Enter key pressed
 	if (Game::instance().getKeyJustPressed(13)) {
 		SoundManager::instance().playSound(CLICK_BUTTON_SFX);
-		switch (_selectedButton) {
-			case 0: //Play
-				_state = FADE_OUT;
-				break;
-			case 1: //Options
-					//_state = RUNNING;
-					//#include <shenanigans>
-				break;
-			case 2: //Exit
-				_state = EXIT;
-				break;
-		}
+		_buttons[_selectedButton]->use();
 	}
 	//Escape from game
 	else if (Game::instance().getKeyReleased(27)) {
 		_state = EXIT;
 	}
+}
+
+void Scene_Menu::play()
+{
+	_state = FADE_OUT;
+}
+
+void Scene_Menu::options()
+{
+}
+
+void Scene_Menu::quit()
+{
+	_state = EXIT;
 }

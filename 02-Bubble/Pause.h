@@ -3,6 +3,7 @@
 #include <vector>
 
 #include "../Sprite.h"
+#include "Button.h"
 
 class Pause
 {
@@ -35,8 +36,8 @@ private:
 	//Slider marker
 	Sprite *_masterVolumeMarker, *_musicVolumeMarker, *_soundVolumeMarker;
 	//Buttons
-	Sprite *_b_quit, *_b_cancel, *_b_confirm;
-	vector<Sprite*> _buttons;
+	Button *_b_quit, *_b_cancel, *_b_confirm;
+	vector<Button*> _buttons;
 	//Background
 	Sprite *_bg, *_alphaSprite;
 
@@ -51,4 +52,3 @@ private:
 	void confirm();
 	void cancel();
 };
-
