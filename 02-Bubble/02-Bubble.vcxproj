@@ -34,8 +34,10 @@
     <ClCompile Include="BallMatrix.cpp" />
     <ClCompile Include="Ball_Launched.cpp" />
     <ClCompile Include="Ball_InMatrix.cpp" />
+    <ClCompile Include="Button.cpp" />
     <ClCompile Include="Collider.cpp" />
     <ClCompile Include="Ball_Held.cpp" />
+    <ClCompile Include="Pause.cpp" />
     <ClCompile Include="Scene_Menu.cpp" />
     <ClCompile Include="Scene_Level.cpp" />
     <ClCompile Include="SoundManager.cpp" />
@@ -55,8 +57,10 @@
     <ClInclude Include="BallMatrix.h" />
     <ClInclude Include="Ball_Launched.h" />
     <ClInclude Include="Ball_InMatrix.h" />
+    <ClInclude Include="Button.h" />
     <ClInclude Include="Collider.h" />
     <ClInclude Include="Ball_Held.h" />
+    <ClInclude Include="Pause.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Scene_Level.h" />
     <ClInclude Include="Scene_Menu.h" />

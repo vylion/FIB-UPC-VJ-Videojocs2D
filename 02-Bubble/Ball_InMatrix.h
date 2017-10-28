@@ -33,6 +33,6 @@ private:
 	bool _topRow;
 	posT _posInMatrix;
 	std::vector<posT> neighbors;
-	Collider collider;
+	//Collider collider;
 };
 

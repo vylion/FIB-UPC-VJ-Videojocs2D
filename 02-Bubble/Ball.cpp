@@ -39,7 +39,7 @@ void Ball::setColor(int color)
 	_color = color;
 	//Set texture according to color code (x = ball size * color code, y = )
 	_sprite->setTexturePosition(
-		_sizeInSpritesheet *
+		_sizeInSpritesheet / _texture->getSize() *
 		//spritesize * color % 8 to get the column, spritesize * 4 * (color/8) to get the row
 		//Rows [1..3] saved for sprite animations, so row will be either 0 or 4
 		glm::vec2((float)(color % 8), 4.f * (color / 8))
@@ -81,7 +81,7 @@ void Ball::setPosition(const glm::vec2 & pos)
 
 vector<glm::vec2> Ball::collisionPoints()
 {
-	float r = _size / 2;
+	float r = (float)_size / 2.f;
 	glm::vec2 p;
 	vector<glm::vec2> points = vector<glm::vec2>();
 

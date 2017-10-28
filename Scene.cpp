@@ -31,3 +31,8 @@ void Scene::initShaders()
 	vShader.free();
 	fShader.free();
 }
+
+void Scene::renderPause()
+{
+
+}

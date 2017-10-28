@@ -21,9 +21,7 @@ BallManager::BallManager(TileMap *tmap, ShaderProgram & shaderProgram)
 	_shaderProgram = shaderProgram;
 	_tmap = tmap;
 
-	srand(time(NULL));
-	
-	
+	srand((unsigned int)time(NULL));	
 }
 
 
@@ -107,7 +105,7 @@ Ball * BallManager::getNewBall()
 {
 	int color = rand()%11;
 
-	Ball *b = new Ball(_ballPixelSize, _ballTexSize, _spritesheet, _shaderProgram);
+	Ball *b = new Ball(_ballPixelSize, glm::vec2((float)_spritePixelSize), _spritesheet, _shaderProgram);
 	b->init(color, _minBallCoords + _tmap->getBallSpace() * _ballPixelSize, _tmap->getMinRenderCoords());
 
 	return b;
@@ -157,11 +155,9 @@ bool BallManager::readLevel(const string & levelFile)
 	_spritesheet->setWrapT(GL_CLAMP_TO_EDGE);
 	_spritesheet->setMinFilter(GL_NEAREST);
 	_spritesheet->setMagFilter(GL_NEAREST);
-	//Number of tiles in _spritesheet
-	getline(fin, line);
-	sstream.str(line);
-	sstream >> _spritesheetSize.x >> _spritesheetSize.y;
-	_ballTexSize = glm::vec2(1.f / _spritesheetSize.x, 1.f / _spritesheetSize.y);
+	//Individual sprite (ball) size
+	_ballTexSize = glm::vec2((float)_spritePixelSize) / _spritesheet->getSize();
+	//_ballTexSize = glm::vec2((float)_spritePixelSize / _spritesheetSize.x, (float)_spritePixelSize / _spritesheetSize.y);
 
 	int *colorMatrix = new int[_matrixTileSize.x * _matrixTileSize.y];
 	int iterated = 0;
@@ -194,5 +190,5 @@ bool BallManager::readLevel(const string & levelFile)
 
 void BallManager::setUpBalls(int *colorMatrix, int visibleMatrixHeight)
 {
-	_bmat = new BallMatrix(colorMatrix, _matrixTileSize, visibleMatrixHeight, _tmap->getBallSpace().y, _minBallCoords, _tmap->getMinRenderCoords(), _ballPixelSize, _ballTexSize, _spritesheet, _shaderProgram);
+	_bmat = new BallMatrix(colorMatrix, _matrixTileSize, visibleMatrixHeight, _tmap->getBallSpace().y, _minBallCoords, _tmap->getMinRenderCoords(), _ballPixelSize, glm::vec2((float)_spritePixelSize), _spritesheet, _shaderProgram);
 }
