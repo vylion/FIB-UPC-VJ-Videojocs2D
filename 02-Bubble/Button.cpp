@@ -9,7 +9,8 @@
 Button::Button(const glm::vec2 &quadSize, const glm::vec2 &sizeInSpritesheet, Texture *spritesheet, ShaderProgram *program)
 	: Sprite(quadSize, sizeInSpritesheet, spritesheet, program)
 {
-	_spritesheet_size = sizeInSpritesheet / spritesheet->getSize();
+	_spritesheet = spritesheet;
+	_spritesheet_size = sizeInSpritesheet / _spritesheet->getSize();
 }
 
 

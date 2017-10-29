@@ -4,16 +4,17 @@
 
 #include "Scene_Menu.h"
 #include "../Game.h"
+#include "Pause.h"
 
 
 #define FADE_IN_TIME 750.f
 #define FADE_OUT_TIME 150.f
 
-#define BUTTON_SIZE glm::vec2(256.f, 32.f)
-#define BUTTON_SPRITESHEET_SIZE glm::vec2(0.4f, 0.125f)
-
 #define LOGO_SIZE glm::vec2(384.f, 256.f)
 #define LOGO_SPRITESHEET_SIZE glm::vec2(0.6f, 1.f)
+
+#define BUTTON_SIZE glm::vec2(256.f, 32.f)
+#define BUTTON_SPRITESHEET_SIZE glm::vec2(0.4f, 0.125f)
 
 #define BUTTON_MOVE_COOLDOWN 175
 
@@ -25,6 +26,7 @@
 void Scene_Menu::init()
 {
 	initShaders();
+	Pause::instance().init(&texProgram);
 
 	_state = FADE_IN;
 	_fadeTime = 0;
@@ -76,7 +78,8 @@ void Scene_Menu::init()
 	_buttons.push_back(_b_play);
 	_buttons.push_back(_b_options);
 	_buttons.push_back(_b_exit);
-	_buttons[_selectedButton]->select();//setTexturePosition(glm::vec2(0.6f, BUTTON_SPRITESHEET_SIZE.y));
+	bool playSound = false;
+	_buttons[_selectedButton]->select(playSound);
 
 	/*----------------------------------------LOGO-------------------------------------------------------*/
 
@@ -129,6 +132,17 @@ int Scene_Menu::update(int deltaTime)
 				_state = OPEN_LEVEL;
 			}
 			break;
+		case PAUSED:
+			//Give control to pause menu
+			switch (Pause::instance().update(deltaTime)) {
+				case Pause::CONTINUE:
+					_state = RUNNING;
+					break;
+				case Pause::QUIT:
+					_state = RUNNING;
+					break;
+			}
+			break;
 		default:
 			break;
 	}
@@ -156,6 +170,9 @@ void Scene_Menu::render()
 		case FADE_OUT:
 			alpha = (float)_fadeTime / FADE_OUT_TIME;
 			break;
+		case PAUSED:
+			alpha = 0.5f;
+			break;
 	}
 	texProgram.setUniform4f("color", 1.0f, 1.0f, 1.0f, alpha);
 	texProgram.setUniformMatrix4f("modelview", modelview);
@@ -168,6 +185,8 @@ void Scene_Menu::render()
 	_b_play->render();
 	_b_options->render();
 	_b_exit->render();
+
+	if (_state == PAUSED) Pause::instance().render();
 }
 
 int Scene_Menu::getLevelToOpen()
@@ -240,6 +259,8 @@ void Scene_Menu::play()
 
 void Scene_Menu::options()
 {
+	Pause::instance().init(&texProgram);
+	_state = PAUSED;
 }
 
 void Scene_Menu::quit()

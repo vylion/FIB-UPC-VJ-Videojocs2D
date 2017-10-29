@@ -22,5 +22,7 @@ public:
 private:
 	std::function<void(void)> _callback;
 	glm::vec2 _spritesheet_pos, _spritesheet_size;
+
+	Texture *_spritesheet;
 };
 
