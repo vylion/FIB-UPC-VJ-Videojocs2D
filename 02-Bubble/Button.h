@@ -8,13 +8,13 @@ class Button :
 public:
 	Button(const glm::vec2 &quadSize, const glm::vec2 &sizeInSpritesheet, Texture *spritesheet, ShaderProgram *program);
 	
-	//Position in screen, position in spritesheet, callback function
+	//Position in screen, position in spritesheet
 	void init(glm::vec2 buttonPos, glm::vec2 spriteStartingPos);
 
 	void setCallback(std::function<void(void)> callback);
 
 	//Change displayed texture
-	void select(); 	void unselect();
+	void select(bool playSound=true); 	void unselect();
 
 	//Trigger callback
 	void use();
