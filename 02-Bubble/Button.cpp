@@ -26,9 +26,9 @@ void Button::setCallback(std::function<void(void)> callback)
 	_callback = callback;
 }
 
-void Button::select()
+void Button::select(bool playSound)
 {
-	SoundManager::instance().playSound(CHANGE_BUTTON_SFX);
+	if (playSound) SoundManager::instance().playSound(CHANGE_BUTTON_SFX);
 	setTexturePosition(_spritesheet_pos + glm::vec2(0, _spritesheet_size.y));
 }
 
