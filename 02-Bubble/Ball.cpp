@@ -86,7 +86,7 @@ vector<glm::vec2> Ball::collisionPoints()
 	vector<glm::vec2> points = vector<glm::vec2>();
 
 	for (int i = 0; i < 6; ++i) {
-		p = glm::vec2(r*sin(i*(30 * M_PI / 180)), r*cos(i*(30 * M_PI / 180)));
+		p = glm::vec2(r*sin(i * 60 * M_PI / 180), r*cos(i * 60 * M_PI / 180));
 
 		points.push_back(p + _position);
 	}

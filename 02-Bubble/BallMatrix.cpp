@@ -121,8 +121,12 @@ bool BallMatrix::checkCollision(Ball * b)
 		Ball_InMatrix * bm = new Ball_InMatrix(_shaderProgram, b);
 
 		int visibleOffset = _ballMatrix.size() - _visibleMatrixHeight;
+		//if (visibleOffset < 0) visibleOffset = 0;
 		bm->init(b->getColor(), _minBallCoords + float(_ballSize) * glm::vec2(ballPos.second, ballPos.first - visibleOffset), _minRenderCoords);
-		_ballMatrix[pos.first][pos.second] = bm;
+		bm->setOddRow(ballPos.first % 2 != 0);
+
+		_ballMatrix[ballPos.first][ballPos.second] = bm;
+		_connectedMatrix[ballPos.first][ballPos.second] = true;
 		return true;
 	}
 
@@ -173,7 +177,10 @@ Ball_InMatrix::posT BallMatrix::snapToGrid(Ball *b)
 
 	int j = (pos.x - _minBallCoords.x) / _ballSize;
 	//j += -2 - _matrixOffset.x;
-	Ball_InMatrix::posT posInMatrix(i, j);
+
+	int visibleOffset = _ballMatrix.size() - _visibleMatrixHeight;
+	//if (visibleOffset < 0) visibleOffset = 0;
+	Ball_InMatrix::posT posInMatrix(i + visibleOffset - 1, j);
 	return posInMatrix;
 }
 
@@ -183,27 +190,27 @@ std::vector<Ball_InMatrix::posT> BallMatrix::checkBallsAround(const Ball_InMatri
 	std::vector<Ball_InMatrix::posT> group = std::vector<Ball_InMatrix::posT>();
 
 	//TOP LEFT
-	Ball_InMatrix::posT pos = Ball_InMatrix::posT(b.first - 1 + (b.first % 2), b.second - 1);
+	Ball_InMatrix::posT pos = Ball_InMatrix::posT(b.first - 1, b.second - 1 + (b.second % 2));
 	if (inMatrix(pos)) group.push_back(pos);
 
 	//TOP RIGHT
-	pos = Ball_InMatrix::posT(b.first + (b.first % 2), b.second - 1);
+	pos = Ball_InMatrix::posT(b.first - 1, b.second + (b.second % 2));
 	if(inMatrix(pos)) group.push_back(pos);
 
 	//LEFT
-	pos = Ball_InMatrix::posT(b.first - 1, b.second);
+	pos = Ball_InMatrix::posT(b.first, b.second - 1);
 	if (inMatrix(pos)) group.push_back(pos);
 
 	//RIGHT
-	pos = Ball_InMatrix::posT(b.first + 1, b.second);
+	pos = Ball_InMatrix::posT(b.first, b.second + 1);
 	if (inMatrix(pos)) group.push_back(pos);
 
 	//BOTTOM LEFT
-	pos = Ball_InMatrix::posT(b.first - 1 + (b.first % 2), b.second + 1);
+	pos = Ball_InMatrix::posT(b.first + 1, b.second - 1 + (b.second % 2));
 	if (inMatrix(pos)) group.push_back(pos);
 
 	//BOTTOM RIGHT
-	pos = Ball_InMatrix::posT(b.first + (b.first % 2), b.second + 1);
+	pos = Ball_InMatrix::posT(b.first + 1, b.second + (b.second % 2));
 	if (inMatrix(pos)) group.push_back(pos);
 
 	return group;

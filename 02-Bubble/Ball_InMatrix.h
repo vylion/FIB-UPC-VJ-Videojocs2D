@@ -14,7 +14,7 @@ public:
 	};
 
 	typedef std::pair<int, int> posT;
-	
+	typedef Collider::lineSegment lineSegment;
 
 	Ball_InMatrix(ShaderProgram & shaderProgram, Ball * b);
 
@@ -33,6 +33,6 @@ private:
 	bool _topRow;
 	posT _posInMatrix;
 	std::vector<posT> neighbors;
-	//Collider collider;
+	Collider collider;
 };
 

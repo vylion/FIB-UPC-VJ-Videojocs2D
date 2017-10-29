@@ -6,9 +6,9 @@
 
 class Collider
 {
-    typedef std::pair<glm::vec2, glm::vec2> lineSegment;
-
     public:
+		typedef std::pair<glm::vec2, glm::vec2> lineSegment;
+
         bool lineCollision(const lineSegment& s, const lineSegment& t);
 
     private:
