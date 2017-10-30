@@ -32,6 +32,10 @@ public:
 
 protected:
 	int _state;
+	
+	Texture *_bg_tex;
+	Sprite *_bg;
+
 
 	ShaderProgram texProgram;
 	float currentTime, pauseTime;

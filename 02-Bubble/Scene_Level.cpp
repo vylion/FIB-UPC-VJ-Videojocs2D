@@ -7,6 +7,8 @@
 #define INIT_PLAYER_X_TILES 9
 #define INIT_PLAYER_Y_TILES 26
 
+#define BACKGROUND_TEXTURE "../media/images/level_bg.png"
+
 Scene_Level::Scene_Level() : Scene()
 {
 	map = NULL;
@@ -48,7 +50,7 @@ void Scene_Level::init(int level)
 	bmng->init(levelLocation + "_Ball.txt");
 	//bmng->init(glm::ivec2(MIN_SCREEN_X + map->getBallOffset().x, MIN_SCREEN_Y + map->getBallOffset().y));
 
-	/*----------------------------------------AIMER-------------------------------------------------------*/
+	/*----------------------------------------AIMER---------------------------------------------------------*/
 
 	aimer = new Aimer();
 	//Horizontal position is ball starting position + ball space
@@ -58,7 +60,14 @@ void Scene_Level::init(int level)
 	glm::vec2 pos = (aimerPos + aimerDist) * 16.f;
 	aimer->init(pos, MIN_SCREEN_COORDS, texProgram, bmng);
 
-	/*----------------------------------------END-------------------------------------------------------*/
+	/*----------------------------------------BACKGROUND---------------------------------------------------*/
+
+	_bg_tex = new Texture();
+	if (!_bg_tex->loadFromFile(BACKGROUND_TEXTURE, TEXTURE_PIXEL_FORMAT_RGBA)) printf("Failed to load");
+	_bg = Sprite::createSprite(glm::vec2(SCREEN_WIDTH, SCREEN_HEIGHT), glm::vec2(SCREEN_WIDTH, SCREEN_HEIGHT), _bg_tex, &texProgram);
+
+
+	/*----------------------------------------END----------------------------------------------------------*/
 
 	//SoundManager::instance().setMusic(MUSIC_FILE);
 	projection = glm::ortho(0.f, float(SCREEN_WIDTH - 1), float(SCREEN_HEIGHT - 1), 0.f);
@@ -97,6 +106,7 @@ void Scene_Level::render()
 	texProgram.setUniformMatrix4f("modelview", modelview);
 	texProgram.setUniform2f("texCoordDispl", 0.f, 0.f);
 
+	_bg->render();
 	map->render();
 	aimer->render();
 	bmng->render();

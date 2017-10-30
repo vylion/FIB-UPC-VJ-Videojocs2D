@@ -18,6 +18,8 @@
 
 #define BUTTON_MOVE_COOLDOWN 175
 
+#define MENU_SPRITES "../media/images/menu_sprites.png"
+#define MENU_BACKGROUND "../media/images/menu_bg.png"
 #define MUSIC_FILE "../media/audio/music/menu_bgm.ogg"
 #define CHANGE_BUTTON_SFX "../media/audio/sounds/menu_button_change.ogg"
 #define CLICK_BUTTON_SFX "../media/audio/sounds/menu_button_click.ogg"
@@ -34,11 +36,11 @@ void Scene_Menu::init()
 	/*----------------------------------------TEXTURES--------------------------------------------------*/
 
 	_b_Texture = new Texture();
-	if (!_b_Texture->loadFromFile("../media/images/menu_sprites.png", TEXTURE_PIXEL_FORMAT_RGBA)) {
+	if (!_b_Texture->loadFromFile(MENU_SPRITES, TEXTURE_PIXEL_FORMAT_RGBA)) {
 		printf("Couldn't load menu_sprites.png");
 	}
-	_bg_Texture = new Texture();
-	if (!_bg_Texture->loadFromFile("../media/images/menu_bg.png", TEXTURE_PIXEL_FORMAT_RGBA)) {
+	_bg_tex = new Texture();
+	if (!_bg_tex->loadFromFile(MENU_BACKGROUND, TEXTURE_PIXEL_FORMAT_RGBA)) {
 		printf("Couldn't load menu_bg.png");
 	}
 
@@ -90,7 +92,7 @@ void Scene_Menu::init()
 
 	/*----------------------------------------BACKGROUND-------------------------------------------------*/
 
-	_bg = Sprite::createSprite(glm::vec2(SCREEN_WIDTH, SCREEN_HEIGHT), glm::vec2(1.f),  _bg_Texture, &texProgram);
+	_bg = Sprite::createSprite(glm::vec2(SCREEN_WIDTH, SCREEN_HEIGHT), glm::vec2(SCREEN_WIDTH, SCREEN_HEIGHT), _bg_tex, &texProgram);
 
 	/*----------------------------------------MUSIC--------------------------------------------------------*/
 	

@@ -11,7 +11,7 @@
 void Aimer::init(const glm::vec2 & pos, glm::vec2 &minRenderCoords, ShaderProgram & shaderProgram, BallManager *bmng)
 {
 	//Aimer position
-	_position = pos;
+	_position = pos - glm::vec2(0.f,16.f);
 	//Minimum screen
 	_minRenderCoords = minRenderCoords;
 	//Ball manager

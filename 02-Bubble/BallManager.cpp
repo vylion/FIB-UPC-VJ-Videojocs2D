@@ -6,7 +6,7 @@
 
 #include "BallManager.h"
 #include "Ball_Launched.h"
-
+#include "../Game.h"
 
 BallManager * BallManager::createBallManager(TileMap *tmap, ShaderProgram & shaderProgram)
 {
@@ -42,15 +42,13 @@ void BallManager::update(int deltaTime)
 {
 	_bmat->update(deltaTime);
 	if (_thereIsLaunchedBall) {
-		_launchedBall->update(deltaTime);		
+		_launchedBall->update(deltaTime);
 
 		bool collision = _bmat->checkCollision(_launchedBall);
 		if (collision) {
-			//!= Ball_InMatrix::OUTSIDE) {
-			//_bmat->addBallToMat(_launchedBall);
 			_thereIsLaunchedBall = false;
 		}
-		if (_launchedBall->getPosition().y <= -_ballPixelSize)
+		if (_launchedBall->getPosition().y <= -_ballPixelSize || _launchedBall->getPosition().y > SCREEN_HEIGHT)
 			_thereIsLaunchedBall = false;
 	}
 }

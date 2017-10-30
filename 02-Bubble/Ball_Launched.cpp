@@ -15,8 +15,8 @@ Ball_Launched::Ball_Launched(	ShaderProgram & shaderProgram,
 	_tmap = tmap;
 
 	float spd_angle = angle;// -float(M_PI);
-	float spdx = 0.2 * std::cos(spd_angle);
-	float spdy = 0.2 * std::sin(spd_angle);
+	float spdx = 0.2f * std::cos(spd_angle);
+	float spdy = 0.2f * std::sin(spd_angle);
 	_speed = glm::vec2(spdx, spdy);
 }
 

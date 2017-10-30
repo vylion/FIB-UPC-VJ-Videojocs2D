@@ -22,15 +22,13 @@ private:
 	int _fadeTime;
 
 	//Textures
-	Texture *_b_Texture, *_bg_Texture;
+	Texture *_b_Texture;
 
 	//Buttons
 	Button *_b_play, *_b_options, *_b_exit;
 	vector<Button*> _buttons;
 	//Logo
 	Sprite *_logo;
-	//Background
-	Sprite *_bg;
 
 	void initAudio() override;
 	void checkButtons(int deltaTime) override;
