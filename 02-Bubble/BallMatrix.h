@@ -28,6 +28,8 @@ public:
 	int ballsLeft();
 
 private:
+	typedef Ball_InMatrix::posT posT;
+
 	std::vector< std::vector<Ball_InMatrix*> > _ballMatrix;
 	std::vector< std::vector<bool> > _connectedMatrix;
 	int _visibleMatrixHeight;
@@ -37,12 +39,13 @@ private:
 	Texture *_spritesheet;
 	ShaderProgram _shaderProgram;
 
+	bool comparePosT(const Ball_InMatrix::posT& a, const Ball_InMatrix::posT& b);
 	Ball_InMatrix * ballFromColor(int &color);
 	void passRowToShown();
 
 	Ball_InMatrix::posT snapToGrid(Ball *b);
-	std::vector<Ball_InMatrix::posT> checkBallsAround(const Ball_InMatrix::posT &b);
-	std::list<Ball_InMatrix::posT> popNeighbors(const Ball_InMatrix::posT &b);
+	std::vector<posT> checkBallsAround(const Ball_InMatrix::posT &b);
+	std::list<posT> popNeighbors(const Ball_InMatrix::posT &b);
 	bool inMatrix(const Ball_InMatrix::posT &pos);
 };
 

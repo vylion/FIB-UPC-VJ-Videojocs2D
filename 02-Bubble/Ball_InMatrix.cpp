@@ -37,60 +37,36 @@ void Ball_InMatrix::setTopRow(const bool & topRow)
 
 Ball_InMatrix::NeighborBalls Ball_InMatrix::checkCollision(Ball * b)
 {
-	std::vector<glm::vec2> ownPoints = collisionPoints();
-	std::vector<glm::vec2> ballPoints = b->collisionPoints();
+	float distance = sqrt(pow(abs(getPosition().x - b->getPosition().x),2) + pow(abs(getPosition().y - b->getPosition().y),2));
 
-	lineSegment backslash = lineSegment(ballPoints[5], ballPoints[2]);	// Diagonal "\" 
-	lineSegment slash = lineSegment(ballPoints[4], ballPoints[1]);		// Diagonal "/"
-	lineSegment dash = lineSegment(ballPoints[3], ballPoints[0]);		// Diagonal "-"
-
-	lineSegment sideBR = lineSegment(ownPoints[5], ownPoints[0]);
-	lineSegment sideBot = lineSegment(ownPoints[4], ownPoints[5]);
-	lineSegment sideBL = lineSegment(ownPoints[3], ownPoints[4]);
-
-	lineSegment sideTR = lineSegment(ownPoints[1], ownPoints[0]);
-	lineSegment sideTop = lineSegment(ownPoints[2], ownPoints[1]);
-	lineSegment sideTL = lineSegment(ownPoints[3], ownPoints[2]);
-
-	if (collider.lineCollision(sideBR, backslash)) {
-		return BOT_RIGHT;
-	}
-	else if (collider.lineCollision(sideBot, backslash)) {
-		return BOT_RIGHT;
-	}
-	else if (collider.lineCollision(sideBot, slash)) {
-		return BOT_LEFT;
-	}
-	else if (collider.lineCollision(sideBL, slash)) {
-		return BOT_LEFT;
-	}
-	else if (collider.lineCollision(sideBR, dash)) {
-		return BOT_RIGHT;
-	}
-	else if (collider.lineCollision(sideTR, dash)) {
-		return RIGHT;
-	}
-	else if (collider.lineCollision(sideBL, dash)) {
-		return BOT_LEFT;
-	}
-	else if (collider.lineCollision(sideTL, dash)) {
-		return LEFT;
-	}
-	else if (collider.lineCollision(sideTL, backslash)) {
-		return TOP_LEFT;
-	}
-	else if (collider.lineCollision(sideTop, backslash)) {
-		return TOP_LEFT;
-	}
-	else if (collider.lineCollision(sideTR, slash)) {
-		return TOP_RIGHT;
-	}
-	else if (collider.lineCollision(sideTop, slash)) {
-		return TOP_RIGHT;
+	if (distance < getSize()) {
+		if (b->getPosition().y - getPosition().y > getSize()*cos(30)) {
+			//BOT
+			if (b->getPosition().x - getPosition().x > 0) {
+				//RIGHT
+				return BOT_RIGHT;
+			}
+			else return BOT_LEFT;
+		}
+		else if (b->getPosition().y - getPosition().y < -getSize()*cos(30)) {
+			//TOP
+			if (b->getPosition().x - getPosition().x > 0) {
+				//RIGHT
+				return TOP_RIGHT;
+			}
+			else return TOP_LEFT;
+		}
+		else {
+			//LATERAL
+			if (b->getPosition().x - getPosition().x > 0) {
+				//RIGHT
+				return RIGHT;
+			}
+			else return LEFT;
+		}
 	}
 
-	else
-		return OUTSIDE;
+	return OUTSIDE;
 }
 
 bool Ball_InMatrix::addNeighbor(Ball_InMatrix::posT b, int pos)

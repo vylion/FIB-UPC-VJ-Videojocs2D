@@ -40,24 +40,24 @@ BallMatrix::BallMatrix( int * colorMatrix,
 				_connectedMatrix[i][j] = true;
 
 				//Check if there's a valid neighbor on the left. Add each other as neighbors
-				Ball_InMatrix::posT neighbor = Ball_InMatrix::posT(i, j - 1);
+				posT neighbor = posT(i, j - 1);
 				if (inMatrix(neighbor)) {
 					b->addNeighbor(neighbor, Ball_InMatrix::LEFT);
-					_ballMatrix[i][j - 1]->addNeighbor(Ball_InMatrix::posT(i, j), Ball_InMatrix::RIGHT);
+					_ballMatrix[i][j - 1]->addNeighbor(posT(i, j), Ball_InMatrix::RIGHT);
 				}
 
 				//Check if there's a valid neighbor on the upper row, to the left. Add each other as neighbors
-				neighbor = Ball_InMatrix::posT(i - 1 + (i % 2), j - 1);
+				neighbor = posT(i - 1 + (i % 2), j - 1);
 				if (inMatrix(neighbor)) {
 					b->addNeighbor(neighbor, Ball_InMatrix::TOP_LEFT);
-					_ballMatrix[neighbor.first][neighbor.second]->addNeighbor(Ball_InMatrix::posT(i, j), Ball_InMatrix::BOT_RIGHT);
+					_ballMatrix[neighbor.first][neighbor.second]->addNeighbor(posT(i, j), Ball_InMatrix::BOT_RIGHT);
 				}
 
 				//Check if there's a valid neighbor on the upper row, to the right. Add each other as neighbors
-				neighbor = Ball_InMatrix::posT(i + (i % 2), j - 1);
+				neighbor = posT(i + (i % 2), j - 1);
 				if (inMatrix(neighbor)) {
 					b->addNeighbor(neighbor, Ball_InMatrix::TOP_RIGHT);
-					_ballMatrix[neighbor.first][neighbor.second]->addNeighbor(Ball_InMatrix::posT(i, j), Ball_InMatrix::BOT_LEFT);
+					_ballMatrix[neighbor.first][neighbor.second]->addNeighbor(posT(i, j), Ball_InMatrix::BOT_LEFT);
 				}
 			}
 
@@ -108,10 +108,10 @@ void BallMatrix::render()
 
 bool BallMatrix::checkCollision(Ball * b)
 {
-	Ball_InMatrix::posT ballPos = snapToGrid(b);
-	std::vector<Ball_InMatrix::posT> nearby = checkBallsAround(ballPos);
+	posT ballPos = snapToGrid(b);
+	std::vector<posT> nearby = checkBallsAround(ballPos);
 	Ball_InMatrix::NeighborBalls collided = Ball_InMatrix::OUTSIDE;
-	Ball_InMatrix::posT pos;
+	posT pos;
 
 	for (int i = 0; i < nearby.size() && collided == Ball_InMatrix::OUTSIDE; ++i) {
 		pos = nearby[i];
@@ -122,6 +122,23 @@ bool BallMatrix::checkCollision(Ball * b)
 
 		int visibleOffset = _ballMatrix.size() - _visibleMatrixHeight;
 		//if (visibleOffset < 0) visibleOffset = 0;
+		ballPos = posT(pos);
+		if (collided == Ball_InMatrix::BOT_LEFT || collided == Ball_InMatrix::TOP_LEFT) {
+			ballPos.second--;
+		}
+		if (collided == Ball_InMatrix::BOT_RIGHT || collided == Ball_InMatrix::BOT_LEFT) {
+			ballPos.first++;
+			ballPos.second += (pos.first % 2);
+		}
+		else if (collided == Ball_InMatrix::TOP_RIGHT || collided == Ball_InMatrix::TOP_LEFT) {
+			ballPos.first--;
+			ballPos.second += (pos.first % 2);
+		}
+		else {
+			if (collided == Ball_InMatrix::LEFT) ballPos.second--;
+			else ballPos.second++;
+		}
+		
 		bm->init(b->getColor(), _minBallCoords + float(_ballSize) * glm::vec2(ballPos.second, ballPos.first - visibleOffset), _minRenderCoords);
 		bm->setOddRow(ballPos.first % 2 != 0);
 
@@ -175,64 +192,74 @@ Ball_InMatrix::posT BallMatrix::snapToGrid(Ball *b)
 	//i += -1 - _matrixOffset.y;
 	if (int(_ballMatrix.size()) - _visibleMatrixHeight > 0) i += int(_ballMatrix.size()) - _visibleMatrixHeight;
 
-	int j = (pos.x - _minBallCoords.x) / _ballSize;
+	int j;
+	if (i % 2 == 0) {
+		j = (pos.x - _minBallCoords.x) / _ballSize;
+	}
+	else {
+		j = (pos.x - _minBallCoords.x) / _ballSize;
+	}
 	//j += -2 - _matrixOffset.x;
-
+	
 	int visibleOffset = _ballMatrix.size() - _visibleMatrixHeight;
 	//if (visibleOffset < 0) visibleOffset = 0;
-	Ball_InMatrix::posT posInMatrix(i + visibleOffset - 1, j);
+	posT posInMatrix(i + visibleOffset - _minRenderCoords.y/_ballSize, j);
 	return posInMatrix;
 }
 
 //Gives the possible neighbours around an assumed empty position
-std::vector<Ball_InMatrix::posT> BallMatrix::checkBallsAround(const Ball_InMatrix::posT &b)
+std::vector<Ball_InMatrix::posT> BallMatrix::checkBallsAround(const posT &b)
 {
-	std::vector<Ball_InMatrix::posT> group = std::vector<Ball_InMatrix::posT>();
+	std::vector<posT> group = std::vector<posT>();
 
 	//TOP LEFT
-	Ball_InMatrix::posT pos = Ball_InMatrix::posT(b.first - 1, b.second - 1 + (b.second % 2));
+	posT pos = posT(b.first - 1, b.second - 1 + (b.first % 2));
 	if (inMatrix(pos)) group.push_back(pos);
 
 	//TOP RIGHT
-	pos = Ball_InMatrix::posT(b.first - 1, b.second + (b.second % 2));
+	pos = posT(b.first - 1, b.second + (b.first % 2));
 	if(inMatrix(pos)) group.push_back(pos);
 
 	//LEFT
-	pos = Ball_InMatrix::posT(b.first, b.second - 1);
+	pos = posT(b.first, b.second - 1);
+	if (inMatrix(pos)) group.push_back(pos);
+
+	//MIDDLE
+	pos = posT(b.first, b.second);
 	if (inMatrix(pos)) group.push_back(pos);
 
 	//RIGHT
-	pos = Ball_InMatrix::posT(b.first, b.second + 1);
+	pos = posT(b.first, b.second + 1);
 	if (inMatrix(pos)) group.push_back(pos);
 
 	//BOTTOM LEFT
-	pos = Ball_InMatrix::posT(b.first + 1, b.second - 1 + (b.second % 2));
+	pos = posT(b.first + 1, b.second - 1 + (b.first % 2));
 	if (inMatrix(pos)) group.push_back(pos);
 
 	//BOTTOM RIGHT
-	pos = Ball_InMatrix::posT(b.first + 1, b.second + (b.second % 2));
+	pos = posT(b.first + 1, b.second + (b.first % 2));
 	if (inMatrix(pos)) group.push_back(pos);
 
 	return group;
 }
 
 //DESTROY
-list<Ball_InMatrix::posT> BallMatrix::popNeighbors(const Ball_InMatrix::posT & b)
+list<Ball_InMatrix::posT> BallMatrix::popNeighbors(const posT & b)
 {
-	list<Ball_InMatrix::posT> group = list<Ball_InMatrix::posT>(); //checkNeighbors(b);
+	list<posT> group = list<posT>(); //checkNeighbors(b);
 
 	while (group.size() > 0) {
-		Ball_InMatrix::posT nextBall = group.front();
+		posT nextBall = group.front();
 		group.pop_front();
 
 		group.merge(_ballMatrix[nextBall.first][nextBall.second]->checkNeighbors());
 	}
 
-	return list<Ball_InMatrix::posT>();
+	return list<posT>();
 }
 
 //Returns true if the position is inside the matrix dimensions and that position contains a valid ball
-bool BallMatrix::inMatrix(const Ball_InMatrix::posT & pos)
+bool BallMatrix::inMatrix(const posT & pos)
 {
 	return (pos.first >= 0 && pos.first < _ballMatrix.size()) && (pos.second >= 0 && pos.second < _ballMatrix[pos.first].size()) && _connectedMatrix[pos.first][pos.second];
 }

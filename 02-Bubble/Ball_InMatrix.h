@@ -9,12 +9,11 @@ class Ball_InMatrix :
 	public Ball
 {
 public:
+	typedef std::pair<int, int> posT;
+
 	static enum NeighborBalls {
 		TOP_LEFT = 0, TOP_RIGHT, RIGHT, LEFT, BOT_RIGHT, BOT_LEFT, OUTSIDE
 	};
-
-	typedef std::pair<int, int> posT;
-	typedef Collider::lineSegment lineSegment;
 
 	Ball_InMatrix(ShaderProgram & shaderProgram, Ball * b);
 
@@ -29,6 +28,8 @@ public:
 	std::list<Ball_InMatrix*> getDisconnected();
 
 private:
+	typedef Collider::lineSegment lineSegment;
+
 	bool _oddRow;
 	bool _topRow;
 	posT _posInMatrix;
