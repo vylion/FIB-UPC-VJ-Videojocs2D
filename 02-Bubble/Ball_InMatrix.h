@@ -11,7 +11,7 @@ class Ball_InMatrix :
 public:
 	typedef std::pair<int, int> posT;
 
-	static enum NeighborBalls {
+	enum NeighborBalls {
 		TOP_LEFT = 0, TOP_RIGHT, RIGHT, LEFT, BOT_RIGHT, BOT_LEFT, OUTSIDE
 	};
 
