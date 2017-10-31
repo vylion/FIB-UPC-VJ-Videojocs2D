@@ -1,6 +1,6 @@
 TILEMAP
 36 28 							-- Size of tile map in tiles
-11 1 13 25						-- Position offset and size for BallMatrix (r.x r.y s.x s.y)
+11 1 13 23						-- Position offset and size for BallMatrix (r.x r.y s.x s.y)
 16 16 							-- Tile size & block size
 ../media/images/blocks_custom.png	 		-- Tilesheet
 4 4 							-- Number of tiles in tilesheet
@@ -28,7 +28,7 @@ _-_-_-_-_-1              1_-_-_-_-_-
 5-_-_-_-_51              15-_-_-_-_5
 5-_-_-_-_51              15-_-_-_-_5
 5-_-_-_-_51              15-_-_-_-_5
-5-_-_-_-_51              15-_-_-_-_5
-5-_-_-_-_51              15-_-_-_-_5
 5-_-_-_-_51             s15-_-_-_-_5
+5-_-_-_-_51              15-_-_-_-_5
+5-_-_-_-_51              15-_-_-_-_5
 55555555551              15555555555

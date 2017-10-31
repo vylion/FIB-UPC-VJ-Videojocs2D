@@ -3,9 +3,10 @@
 
 
 #include "Scene.h"
-#include "02-Bubble\Scene_Menu.h"
-#include "02-Bubble\Scene_Level.h"
-
+#include "02-Bubble/Scene_Menu.h"
+#include "02-Bubble/Scene_Level.h"
+#include "02-Bubble/Scene_HowToPlay.h"
+#include "02-Bubble/Scene_Credits.h"
 
 
 #define SCREEN_WIDTH 640

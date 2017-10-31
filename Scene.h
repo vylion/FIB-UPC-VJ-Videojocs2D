@@ -18,7 +18,7 @@ class Scene
 {
 
 public:
-	enum state { RUNNING, FADE_IN, FADE_OUT, OPEN_LEVEL, PAUSED, EXIT };
+	enum state { RUNNING, FADE_IN, FADE_OUT, OPEN_LEVEL, HOW_TO_PLAY, OPEN_CREDITS, PAUSED, EXIT };
 
 	Scene() {}
 

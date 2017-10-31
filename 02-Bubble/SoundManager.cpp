@@ -43,6 +43,12 @@ void SoundManager::update()
 	_sound_engine->update();
 }
 
+void SoundManager::dropAll()
+{
+	_music_engine->removeAllSoundSources();
+	_sound_engine->removeAllSoundSources();
+}
+
 
 /*********************************************MASTER*****************************************************/
 

@@ -21,6 +21,7 @@ public:
 
 	//Needed to update the music!
 	void update();
+	void dropAll();
 
 	float getMasterVolume();
 	//Sets volume for all audio (0..1)

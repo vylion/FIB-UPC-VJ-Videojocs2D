@@ -28,7 +28,14 @@ bool Game::update(int deltaTime)
 			}
 
 			break;
-
+		case Scene::HOW_TO_PLAY:
+			scene = new Scene_HowToPlay();
+			scene->init();
+			break;
+		case Scene::OPEN_CREDITS:
+			scene = new Scene_Credits();
+			scene->init();
+			break;
 		case Scene::EXIT:
 			bPlay = false;
 			break;

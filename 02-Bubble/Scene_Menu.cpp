@@ -16,6 +16,9 @@
 #define BUTTON_SIZE glm::vec2(256.f, 32.f)
 #define BUTTON_SPRITESHEET_SIZE glm::vec2(0.4f, 0.125f)
 
+#define SHORT_BUTTON_SIZE glm::vec2(128.f, 32.f)
+#define SHORT_BUTTON_SPRITESHEET_SIZE glm::vec2(0.2f, 0.125f)
+
 #define BUTTON_MOVE_COOLDOWN 175
 
 #define MENU_SPRITES "../media/images/menu_sprites.png"
@@ -47,6 +50,8 @@ void Scene_Menu::init()
 
 	/*----------------------------------------BUTTONS----------------------------------------------------*/
 	_selectedButton = 0; //Play
+	_halfButtonSide = 0; //Left
+	_moveCooldown = 0;
 
 	//Play button
 	_b_play = new Button(BUTTON_SIZE, BUTTON_SIZE, _b_Texture, &texProgram);
@@ -57,13 +62,28 @@ void Scene_Menu::init()
 		glm::vec2(0.6f, BUTTON_SPRITESHEET_SIZE.y * (2 * 0)));
 	_b_play->setCallback([this](void) { play(); });
 
+	//How to play button
+	_b_howtoplay = new Button(SHORT_BUTTON_SIZE, SHORT_BUTTON_SIZE, _b_Texture, &texProgram);
+	_b_howtoplay->init(glm::vec2(
+		SCREEN_WIDTH/2 - SHORT_BUTTON_SIZE.x,
+		(SCREEN_HEIGHT - SHORT_BUTTON_SIZE.y) / 2 + SHORT_BUTTON_SIZE.y * 2.2f + 50.f
+	), glm::vec2(0.6f, SHORT_BUTTON_SPRITESHEET_SIZE.y * (2 * 1)));
+	_b_howtoplay->setCallback([this](void) { howtoplay(); });
+
+	//Credits button
+	_b_credits = new Button(SHORT_BUTTON_SIZE, SHORT_BUTTON_SIZE, _b_Texture, &texProgram);
+	_b_credits->init(glm::vec2(
+		SCREEN_WIDTH/2,
+		(SCREEN_HEIGHT - SHORT_BUTTON_SIZE.y) / 2 + SHORT_BUTTON_SIZE.y * 2.2f + 50.f
+	), glm::vec2(0.8f, SHORT_BUTTON_SPRITESHEET_SIZE.y * (2 * 1)));
+	_b_credits->setCallback([this](void) { credits(); });
 
 	//Options button
 	_b_options = new Button(BUTTON_SIZE, BUTTON_SIZE, _b_Texture, &texProgram);
 	_b_options->init(glm::vec2(
 		(SCREEN_WIDTH - BUTTON_SIZE.x) / 2,
-		(SCREEN_HEIGHT - BUTTON_SIZE.y) / 2 + BUTTON_SIZE.y * 2.5 + 50.f
-	), glm::vec2(0.6f, BUTTON_SPRITESHEET_SIZE.y * (2 * 1)));
+		(SCREEN_HEIGHT - BUTTON_SIZE.y) / 2 + BUTTON_SIZE.y * 3.4f + 50.f
+	), glm::vec2(0.6f, BUTTON_SPRITESHEET_SIZE.y * (2 * 2)));
 	_b_options->setCallback([this](void) { options(); });
 
 
@@ -71,13 +91,15 @@ void Scene_Menu::init()
 	_b_exit = new Button(BUTTON_SIZE, BUTTON_SIZE, _b_Texture, &texProgram);
 	_b_exit->init(glm::vec2(
 		(SCREEN_WIDTH - BUTTON_SIZE.x) / 2.f,
-		(SCREEN_HEIGHT - BUTTON_SIZE.y) / 2.f + BUTTON_SIZE.y * 4 + 50.f
-	), glm::vec2(0.6f, BUTTON_SPRITESHEET_SIZE.y * (2 * 2)));
+		(SCREEN_HEIGHT - BUTTON_SIZE.y) / 2.f + BUTTON_SIZE.y * 4.6f + 50.f
+	), glm::vec2(0.6f, BUTTON_SPRITESHEET_SIZE.y * (2 * 3)));
 	_b_exit->setCallback([this](void) {quit(); });
 
 
 
 	_buttons.push_back(_b_play);
+	_buttons.push_back(_b_howtoplay);
+	_buttons.push_back(_b_credits);
 	_buttons.push_back(_b_options);
 	_buttons.push_back(_b_exit);
 	bool playSound = false;
@@ -183,10 +205,7 @@ void Scene_Menu::render()
 	_bg->render();
 
 	_logo->render();
-
-	_b_play->render();
-	_b_options->render();
-	_b_exit->render();
+	for (unsigned int i = 0; i < _buttons.size(); ++i) _buttons[i]->render();
 
 	if (_state == PAUSED) Pause::instance().render();
 }
@@ -217,25 +236,32 @@ void Scene_Menu::checkButtons(int deltaTime)
 		_buttons[_selectedButton]->unselect();
 		//Increase x-1 mod x to loop around and move -1. -1 mod x crashes badly
 		_selectedButton = (_selectedButton + (_buttons.size() - 1)) % _buttons.size();
+		if (_selectedButton == 2) _selectedButton = 1 + _halfButtonSide;
+		else if (_selectedButton == 1) _selectedButton--;
 		//Increase move cooldown
 		_moveCooldown = BUTTON_MOVE_COOLDOWN;
 		_buttons[_selectedButton]->select();
-
-		//Play button move sound
-		
 	}
 	//Down key pressed
 	else if (Game::instance().getSpecialKey(GLUT_KEY_DOWN) && _moveCooldown == 0) {
 		_buttons[_selectedButton]->unselect();
 		_selectedButton = (_selectedButton + 1) % _buttons.size();
+		if (_selectedButton == 1) _selectedButton = 1 + _halfButtonSide;
+		else if (_selectedButton == 2) _selectedButton++;
 		_moveCooldown = BUTTON_MOVE_COOLDOWN;
 		_buttons[_selectedButton]->select();
-
-		SoundManager::instance().playSound(CHANGE_BUTTON_SFX);
 	}
 	//Neither is pressed so move cooldown is set 0. Enables swifter changing than holding down
 	else if (Game::instance().getSpecialKeyReleased(GLUT_KEY_UP) || Game::instance().getSpecialKeyReleased(GLUT_KEY_DOWN)) {
 		_moveCooldown = 0;
+	}
+
+	if (_moveCooldown == 0 && (Game::instance().getSpecialKeyJustPressed(GLUT_KEY_LEFT) || Game::instance().getSpecialKeyJustPressed(GLUT_KEY_RIGHT)) && (_selectedButton == 1 || _selectedButton == 2)) {
+		_buttons[_selectedButton]->unselect();
+		_halfButtonSide = (_halfButtonSide + 1) % 2;
+		_selectedButton = 1 + _halfButtonSide;
+		_moveCooldown = BUTTON_MOVE_COOLDOWN;
+		_buttons[_selectedButton]->select();
 	}
 
 	//M stands for music
@@ -250,22 +276,35 @@ void Scene_Menu::checkButtons(int deltaTime)
 	}
 	//Escape from game
 	else if (Game::instance().getKeyReleased(27)) {
-		_state = EXIT;
+		_state = state::EXIT;
 	}
 }
 
 void Scene_Menu::play()
 {
-	_state = FADE_OUT;
+	_state = state::FADE_OUT;
+}
+
+void Scene_Menu::howtoplay()
+{
+	_state = state::HOW_TO_PLAY;
+	SoundManager::instance().dropAll();
+}
+
+void Scene_Menu::credits()
+{
+	_state = state::OPEN_CREDITS;
+	SoundManager::instance().dropAll();
 }
 
 void Scene_Menu::options()
 {
 	Pause::instance().init(&texProgram);
-	_state = PAUSED;
+	_state = state::PAUSED;
+	SoundManager::instance().pauseMusic(true);
 }
 
 void Scene_Menu::quit()
 {
-	_state = EXIT;
+	_state = state::EXIT;
 }

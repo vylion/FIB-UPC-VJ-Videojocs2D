@@ -38,6 +38,8 @@
     <ClCompile Include="Collider.cpp" />
     <ClCompile Include="Ball_Held.cpp" />
     <ClCompile Include="Pause.cpp" />
+    <ClCompile Include="Scene_Credits.cpp" />
+    <ClCompile Include="Scene_HowToPlay.cpp" />
     <ClCompile Include="Scene_Menu.cpp" />
     <ClCompile Include="Scene_Level.cpp" />
     <ClCompile Include="SoundManager.cpp" />
@@ -62,6 +64,8 @@
     <ClInclude Include="Ball_Held.h" />
     <ClInclude Include="Pause.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="Scene_Credits.h" />
+    <ClInclude Include="Scene_HowToPlay.h" />
     <ClInclude Include="Scene_Level.h" />
     <ClInclude Include="Scene_Menu.h" />
     <ClInclude Include="SoundManager.h" />
