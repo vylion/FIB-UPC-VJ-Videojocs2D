@@ -8,6 +8,12 @@
 #define INIT_PLAYER_Y_TILES 26
 
 #define BACKGROUND_TEXTURE "../media/images/level_bg.png"
+#define SPRITE_TEXTURE "../media/images/level_sprites.png"
+
+#define LEVEL_NUMBER_SIZE glm::vec2(24.f,24.f)
+#define LEVEL_NUMBER_POSITION glm::vec2(552.f, 52.f)
+#define LEVEL_NUMBER_SPRITESHEET_SIZE glm::vec2(16.f,16.f)
+#define LEVEL_NUMBER_SPRITESHEET_POSITION glm::vec2(208.f, 0.f)
 
 Scene_Level::Scene_Level() : Scene()
 {
@@ -28,7 +34,8 @@ Scene_Level::~Scene_Level()
 
 void Scene_Level::init(int level)
 {
-	_state = RUNNING;
+	_state = state::RUNNING;
+	_levelStatus = levelStatus::RUNNING;
 	_level = level;
 	initShaders();
 	//initAudio();
@@ -38,6 +45,15 @@ void Scene_Level::init(int level)
 		levelFiller = "0";
 	}
 	string levelLocation = "../levels/level" + levelFiller + std::to_string(_level);
+
+	/*----------------------------------------TEXTURES-------------------------------------------------------*/
+
+	_bg_tex = new Texture();
+	if (!_bg_tex->loadFromFile(BACKGROUND_TEXTURE, TEXTURE_PIXEL_FORMAT_RGBA)) printf("Failed to load level BG");
+
+	_spriteTexture = new Texture();
+	if (!_spriteTexture->loadFromFile(SPRITE_TEXTURE, TEXTURE_PIXEL_FORMAT_RGBA)) printf("Failed to load level sprites");
+
 
 	/*----------------------------------------TILEMAP-------------------------------------------------------*/
 
@@ -58,15 +74,14 @@ void Scene_Level::init(int level)
 	glm::vec2 aimerDist = (glm::vec2)map->getBallSpace() * glm::vec2(0.5f, 1.f);
 	glm::vec2 aimerPos = (glm::vec2)map->getBallOffset();
 	glm::vec2 pos = (aimerPos + aimerDist) * 16.f;
-	aimer->init(pos, MIN_SCREEN_COORDS, texProgram, bmng);
+	aimer->init(pos, MIN_SCREEN_COORDS, _spriteTexture, texProgram, bmng);
 
 	/*----------------------------------------BACKGROUND---------------------------------------------------*/
-
-	_bg_tex = new Texture();
-	if (!_bg_tex->loadFromFile(BACKGROUND_TEXTURE, TEXTURE_PIXEL_FORMAT_RGBA)) printf("Failed to load");
+	_levelNumber = Sprite::createSprite(LEVEL_NUMBER_SIZE, LEVEL_NUMBER_SPRITESHEET_SIZE, _spriteTexture, &texProgram);
+		_levelNumber->setPosition(LEVEL_NUMBER_POSITION);
+		_levelNumber->setTexturePosition((LEVEL_NUMBER_SPRITESHEET_POSITION + glm::vec2(_level%3,_level/3)*16.f) / _spriteTexture->getSize());
 	_bg = Sprite::createSprite(glm::vec2(SCREEN_WIDTH, SCREEN_HEIGHT), glm::vec2(SCREEN_WIDTH, SCREEN_HEIGHT), _bg_tex, &texProgram);
-
-
+	
 	/*----------------------------------------END----------------------------------------------------------*/
 
 	//SoundManager::instance().setMusic(MUSIC_FILE);
@@ -77,20 +92,20 @@ void Scene_Level::init(int level)
 int Scene_Level::update(int deltaTime)
 {
 	currentTime += deltaTime;
+	switch (_state) {
+		case state::RUNNING:
+			aimer->update(deltaTime);
+			bmng->update(deltaTime);
 
-	aimer->update(deltaTime);
-	bmng->update(deltaTime);
-
-	if (!bmng->ballsLeft()) {
-		//Overlay to ask if next level or straight to menu(?)
-		//Could also be used to display statistics(?)
-			//^ We need a text class for that
-		_state = OPEN_LEVEL;
-		_level = -1; //Menu
+			if (!bmng->ballsLeft()) {
+				_state = state::PAUSED;
+				_levelStatus = levelStatus::WON;
+			}
+			break;
+		case state::PAUSED:
+			break;
 	}
-
 	checkButtons(deltaTime);
-
 	return _state;
 }
 
@@ -99,9 +114,12 @@ void Scene_Level::render()
 
 	glm::mat4 modelview;
 
+	float alpha = 1.0f;
+	if (_levelStatus != levelStatus::RUNNING) alpha = 0.6f;
+
 	texProgram.use();
 	texProgram.setUniformMatrix4f("projection", projection);
-	texProgram.setUniform4f("color", 1.0f, 1.0f, 1.0f, 1.0f);
+	texProgram.setUniform4f("color", 1.0f, 1.0f, 1.0f, alpha);
 	modelview = glm::mat4(1.0f);
 	texProgram.setUniformMatrix4f("modelview", modelview);
 	texProgram.setUniform2f("texCoordDispl", 0.f, 0.f);
@@ -109,7 +127,20 @@ void Scene_Level::render()
 	_bg->render();
 	map->render();
 	aimer->render();
+	_levelNumber->render();
 	bmng->render();
+
+	switch (_levelStatus) {
+		case levelStatus::WON:
+			//Render win panel
+			break;
+		case levelStatus::LOST:
+			//Render loss panel
+			break;
+		case levelStatus::PAUSED:
+			Pause::instance().render();
+			break;
+	}
 }
 
 int Scene_Level::getLevelToOpen()

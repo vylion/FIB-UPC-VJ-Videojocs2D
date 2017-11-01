@@ -8,7 +8,7 @@
 #define MAX_ANGLE 1.f							//In rads, or 1*180/pi degrees
 #define PIXEL_SIZE glm::vec2(16.f,64.f)			//Pixel size in spritesheet and in game
 
-void Aimer::init(const glm::vec2 & pos, glm::vec2 &minRenderCoords, ShaderProgram & shaderProgram, BallManager *bmng)
+void Aimer::init(const glm::vec2 & pos, glm::vec2 &minRenderCoords, Texture *tex, ShaderProgram & shaderProgram, BallManager *bmng)
 {
 	//Aimer position
 	_position = pos - glm::vec2(0.f,16.f);
@@ -19,11 +19,7 @@ void Aimer::init(const glm::vec2 & pos, glm::vec2 &minRenderCoords, ShaderProgra
 	//Aimer rotation
 	_angle = 0;
 
-	_spritesheet = new Texture();
-
-	if (!_spritesheet->loadFromFile("../media/images/spritesheet.png", TEXTURE_PIXEL_FORMAT_RGBA)) {
-		printf("Couldn't load spritesheet.png");
-	}
+	_spritesheet = tex;
 	
 	glm::vec2 sizeInSpriteSheet = glm::vec2(PIXEL_SIZE.x / _spritesheet->width(), PIXEL_SIZE.y / _spritesheet->height());
 	//Quad size, Texture size, Texture position, Texture sheet, program

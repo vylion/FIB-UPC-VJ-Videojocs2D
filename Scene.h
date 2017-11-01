@@ -13,6 +13,7 @@
 #include "02-Bubble/Aimer.h"
 #include "02-Bubble/BallManager.h"
 #include "02-Bubble/SoundManager.h"
+#include "02-Bubble/Pause.h"
 
 class Scene
 {

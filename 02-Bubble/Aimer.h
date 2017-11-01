@@ -10,7 +10,7 @@ class Aimer
 
 public:
 	Aimer() {}
-	void init(const glm::vec2 &pos, glm::vec2 &minRenderCoords, ShaderProgram &shaderProgram, BallManager *bmng);
+	void init(const glm::vec2 &pos, glm::vec2 &minRenderCoords, Texture *tex,  ShaderProgram &shaderProgram, BallManager *bmng);
 	//Updates aimer rotation and ball position. Asks for new ball if needed
 	void update(int deltaTime);
 	void render();
