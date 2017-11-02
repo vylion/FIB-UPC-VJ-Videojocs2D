@@ -147,6 +147,8 @@ void Scene_Level::init(int level)
 int Scene_Level::update(int deltaTime)
 {
 	currentTime += deltaTime;
+	checkButtons(deltaTime);
+
 	switch (_levelStatus) {
 		//Not won or lost, keep updating sprites
 		case levelStatus::RUNNING:
@@ -164,12 +166,19 @@ int Scene_Level::update(int deltaTime)
 					break;
 				//Paused, stop updating game elements and update pause panel
 				case state::PAUSED:
-					Pause::instance().update(deltaTime);
+					//Give control to pause menu
+					switch (Pause::instance().update(deltaTime)) {
+						case Pause::CONTINUE:
+							_state = RUNNING;
+							break;
+						case Pause::QUIT:
+							quit();
+							break;
+					}
 					break;
 			}
 			break;
 	}
-	checkButtons(deltaTime);
 	return _state;
 }
 
@@ -279,7 +288,6 @@ void Scene_Level::checkButtons(int deltaTime)
 		}
 	}
 
-	//Escape to menu. Open menu in the future?
 	if (Game::instance().getKeyReleased(27)) {
 		_state = state::PAUSED;
 	}
