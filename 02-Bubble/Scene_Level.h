@@ -18,7 +18,7 @@ public:
 private:
 	enum levelStatus {RUNNING, WON, LOST};
 	//Current level
-	int _level, _levelStatus, _moveCooldown, _selectedButton;
+	int _level, _levelStatus, _scoreVal, _moveCooldown, _selectedButton;
 	//Tile map
 	TileMap *map;
 	//Aimer arrow
@@ -29,6 +29,9 @@ private:
 	Texture *_spriteTexture;
 	//Current level to be displayed on top right area
 	Sprite *_levelNumber;
+	//Score sprites
+	Sprite *_score1000, *_score100, *_score10, *_score1;
+	vector<Sprite*> _score;
 	//Result panel buttons
 	Button *_b_quit, *_b_retry, *_b_nextLevel;
 	vector<Button*> _buttons;
@@ -37,6 +40,8 @@ private:
 
 	void initAudio() override;
 	void checkButtons(int deltaTime) override;
+
+	void updateScoreSprites();
 
 	void win();
 	void lose();

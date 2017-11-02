@@ -15,6 +15,11 @@
 #define LEVEL_NUMBER_SPRITESHEET_SIZE glm::vec2(16.f, 16.f)
 #define LEVEL_NUMBER_SPRITESHEET_POSITION glm::vec2(208.f, 0.f)
 
+#define SCORE_SIZE glm::vec2(96.f, 24.f)
+#define SCORE_POSITION glm::vec2(480.f, 144.f)
+#define SCORE_SPRITESHEET_POSITION  LEVEL_NUMBER_SPRITESHEET_POSITION
+
+
 #define PANEL_SIZE glm::vec2(256.f,128.f)
 #define PANEL_POSITION (glm::vec2(SCREEN_WIDTH, SCREEN_HEIGHT) - PANEL_SIZE)/2.f
 #define PANEL_SPRITESHEET_POSITION glm::vec2(0.f, 128.f)
@@ -103,6 +108,23 @@ void Scene_Level::init(int level)
 	_levelNumber = Sprite::createSprite(LEVEL_NUMBER_SIZE, LEVEL_NUMBER_SPRITESHEET_SIZE, _spriteTexture, &texProgram);
 		_levelNumber->setPosition(LEVEL_NUMBER_POSITION);
 		_levelNumber->setTexturePosition((LEVEL_NUMBER_SPRITESHEET_POSITION + glm::vec2(_level%3,_level/3)*16.f) / _spriteTexture->getSize());
+
+	_scoreVal = 9999;
+
+	_score1 = Sprite::createSprite(LEVEL_NUMBER_SIZE, LEVEL_NUMBER_SPRITESHEET_SIZE, _spriteTexture, &texProgram);
+	_score10 = Sprite::createSprite(LEVEL_NUMBER_SIZE, LEVEL_NUMBER_SPRITESHEET_SIZE, _spriteTexture, &texProgram);
+	_score100 = Sprite::createSprite(LEVEL_NUMBER_SIZE, LEVEL_NUMBER_SPRITESHEET_SIZE, _spriteTexture, &texProgram);
+	_score1000 = Sprite::createSprite(LEVEL_NUMBER_SIZE, LEVEL_NUMBER_SPRITESHEET_SIZE, _spriteTexture, &texProgram);
+
+	_score.push_back(_score1);
+	_score.push_back(_score10);
+	_score.push_back(_score100);
+	_score.push_back(_score1000);
+
+	for (unsigned int i = 0; i < _score.size(); i++)
+		_score[i]->setPosition(SCORE_POSITION + glm::vec2(_score.size()-i-1, 0.f)*SCORE_SIZE/(float)_score.size());
+	updateScoreSprites();
+
 	_bg = Sprite::createSprite(glm::vec2(SCREEN_WIDTH, SCREEN_HEIGHT), glm::vec2(SCREEN_WIDTH, SCREEN_HEIGHT), _bg_tex, &texProgram);
 	
 	/*----------------------------------------PANEL--------------------------------------------------------*/
@@ -204,6 +226,7 @@ void Scene_Level::render()
 	aimer->render();
 	//Level number on top right area
 	_levelNumber->render();
+	for (unsigned int i = 0; i < _score.size(); i++) _score[i]->render();
 	//Different balls
 	bmng->render();
 
@@ -290,6 +313,21 @@ void Scene_Level::checkButtons(int deltaTime)
 
 	if (Game::instance().getKeyReleased(27)) {
 		_state = state::PAUSED;
+	}
+}
+
+void Scene_Level::updateScoreSprites()
+{
+	for (unsigned int i = 0; i < _score.size(); ++i) {
+		//1, 10, 100, 1000 respectively
+		int this_pow = int(pow(10, i));
+		//10, 100, 1000, 10000 respectively
+		int next_pow = int(pow(10, i + 1));
+		//Get the number until the i-th digit, then select the i-th digit
+		int digitNum = (_scoreVal % next_pow) / this_pow;
+
+		//Select texture position based on digit
+		_score[i]->setTexturePosition((SCORE_SPRITESHEET_POSITION + glm::vec2(digitNum%3,digitNum/3)*16.f) / _spriteTexture->getSize());
 	}
 }
 
