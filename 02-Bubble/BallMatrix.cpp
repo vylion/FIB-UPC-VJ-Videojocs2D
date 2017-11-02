@@ -82,17 +82,34 @@ BallMatrix::BallMatrix( int * colorMatrix,
 	}
 
 	_visibleMatrixHeight = levelHeight + 1;
+	descendAnimLeft = 0;
 }
 
-void BallMatrix::update(int &deltaTime)
+BallMatrix::State BallMatrix::update(int &deltaTime)
 {
-	//Rows
-	for (int i = 0; i < int(_ballMatrix.size()); ++i) {
-		//Balls
-		for (int j = 0; j < int(_ballMatrix[i].size()); ++j) {
-			//_ballMatrix[i][j]->update(deltaTime);
+	if (descendAnimLeft > 0) {
+		descendAnimLeft -= deltaTime;
+		if (descendAnimLeft < 0) {
+			descendAnimLeft = 0;
+			passRowToShown();
 		}
+		return UPDATING;
 	}
+
+	//Last row has at least 1 ball -> lose
+	int last = _ballMatrix.size() - 1;
+	for (int j = 0; j < int(_ballMatrix[last].size()); ++j) {
+		//_ballMatrix[i][j]->update(deltaTime);
+		if (_connectedMatrix[last][j]) return LOST;
+	}
+	
+	//First row has at least 1 ball -> game keeps running
+	for (int j = 0; j < int(_ballMatrix[0].size()); ++j) {
+		//_ballMatrix[i][j]->update(deltaTime);
+		if (_connectedMatrix[0][j]) return RUNNING;
+	}
+
+	return WON;
 }
 
 void BallMatrix::render()

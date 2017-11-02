@@ -12,6 +12,7 @@ public:
 	void init(int color, const glm::vec2 &position, glm::vec2 minRenderCoords);
 	void update(int &deltaTime);
 	void render();
+	void render(glm::vec2 displacement);
 
 	unsigned int getColor();
 	void setColor(int color);

@@ -7,6 +7,10 @@
 class BallMatrix
 {
 public:
+	enum State {
+		RUNNING, UPDATING, WON, LOST
+	};
+
 	BallMatrix() {}
 	BallMatrix(	int *_colorMatrix,
 				glm::ivec2 &matrixDimensions,
@@ -19,7 +23,8 @@ public:
 				Texture *spritesheet,
 				ShaderProgram &shaderProgram);
 
-	void update(int &deltaTime);
+	State update(int &deltaTime);
+	int descendAnimLeft;
 	void render();
 
 	bool checkCollision(Ball * b);
@@ -30,6 +35,7 @@ public:
 
 private:
 	typedef Ball_InMatrix::posT posT;
+	const static int DESCEND_ANIM_TIME = 100;
 
 	std::vector< std::vector<Ball_InMatrix*> > _ballMatrix;
 	std::vector< std::vector<bool> > _connectedMatrix;

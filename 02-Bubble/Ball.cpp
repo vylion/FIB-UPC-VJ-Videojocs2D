@@ -29,6 +29,10 @@ void Ball::render()
 	_sprite->render();
 }
 
+void Ball::render(glm::vec2 displacement) {
+	_sprite->render(displacement);
+}
+
 unsigned int Ball::getColor()
 {
 	return _color;
