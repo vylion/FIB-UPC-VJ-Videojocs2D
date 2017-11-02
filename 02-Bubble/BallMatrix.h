@@ -23,7 +23,7 @@ public:
 	void render();
 
 	bool checkCollision(Ball * b);
-	void addBallToMat(Ball * b, Ball_InMatrix::NeighborBalls pos);
+	bool addBallToMat(Ball_InMatrix::posT ballPos, Ball_InMatrix::NeighborBalls collided, unsigned int color);
 
 	int ballsLeft();
 	unsigned int colorsLeftInMatrix();
@@ -40,13 +40,13 @@ private:
 	Texture *_spritesheet;
 	ShaderProgram _shaderProgram;
 
-	bool comparePosT(const Ball_InMatrix::posT& a, const Ball_InMatrix::posT& b);
 	Ball_InMatrix * ballFromColor(int &color);
 	void passRowToShown();
 
 	Ball_InMatrix::posT snapToGrid(Ball *b);
 	std::vector<posT> checkBallsAround(const Ball_InMatrix::posT &b);
-	std::list<posT> popNeighbors(const Ball_InMatrix::posT &b);
+	void checkPopping(const posT & b, const unsigned int & color, std::vector<posT>& pop);
+	bool popBall(posT & p);
 	bool inMatrix(const Ball_InMatrix::posT &pos);
 };
 

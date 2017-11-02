@@ -78,17 +78,18 @@ bool Ball_InMatrix::addNeighbor(Ball_InMatrix::posT b, int pos)
 	return false;
 }
 
-list<Ball_InMatrix::posT> Ball_InMatrix::checkNeighbors()
+std::vector<Ball_InMatrix::posT> Ball_InMatrix::getNeighbors()
 {
-	list<posT> group = list<posT>();
+	vector<posT> group = vector<posT>();
 
 	for (int i = TOP_LEFT; i < OUTSIDE; ++i) {
 		if (neighbors[i] != POS_NULL) {
 			//check if same color, among colors, or bomb
 			group.push_back(neighbors[i]);
 		}
-		return group;
 	}
+
+	return group;
 }
 
 list<Ball_InMatrix*> Ball_InMatrix::getDisconnected()
