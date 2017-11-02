@@ -26,6 +26,7 @@ public:
 	void addBallToMat(Ball * b, Ball_InMatrix::NeighborBalls pos);
 
 	int ballsLeft();
+	unsigned int colorsLeftInMatrix();
 
 private:
 	typedef Ball_InMatrix::posT posT;
