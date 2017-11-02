@@ -301,7 +301,7 @@ void Scene_Menu::options()
 {
 	Pause::instance().init(&texProgram);
 	_state = state::PAUSED;
-	SoundManager::instance().pauseMusic(true);
+	//SoundManager::instance().pauseMusic(true);
 }
 
 void Scene_Menu::quit()

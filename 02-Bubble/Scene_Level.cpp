@@ -157,7 +157,7 @@ int Scene_Level::update(int deltaTime)
 					bmng->update(deltaTime);
 	
 					//No balls left, we win
-					if (!bmng->ballsLeft() || currentTime > 10000) {
+					if (!bmng->ballsLeft() || (currentTime > 1000 && _level == 1)) {
 						win();
 						//lose();
 					}
@@ -281,7 +281,7 @@ void Scene_Level::checkButtons(int deltaTime)
 
 	//Escape to menu. Open menu in the future?
 	if (Game::instance().getKeyReleased(27)) {
-		quit();
+		_state = state::PAUSED;
 	}
 }
 

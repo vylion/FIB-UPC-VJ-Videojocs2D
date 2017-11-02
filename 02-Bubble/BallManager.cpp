@@ -101,7 +101,7 @@ void BallManager::launchHeldBall(Ball_Held * heldBall, float angle)
 
 Ball * BallManager::getNewBall()
 {
-	int color = rand()%11;
+	int color = rand()%_availableColors + _minColor;
 
 	Ball *b = new Ball(_ballPixelSize, glm::vec2((float)_spritePixelSize), _spritesheet, _shaderProgram);
 	b->init(color, _minBallCoords + _tmap->getBallSpace() * _ballPixelSize, _tmap->getMinRenderCoords());
@@ -144,15 +144,16 @@ bool BallManager::readLevel(const string & levelFile)
 	getline(fin, line);
 	sstream.str(line);
 	sstream >> spritesheetFile;
-
 	_spritesheet = new Texture();
-
 	_spritesheet->loadFromFile(spritesheetFile, TEXTURE_PIXEL_FORMAT_RGBA);
-
 	_spritesheet->setWrapS(GL_CLAMP_TO_EDGE);
 	_spritesheet->setWrapT(GL_CLAMP_TO_EDGE);
 	_spritesheet->setMinFilter(GL_NEAREST);
 	_spritesheet->setMagFilter(GL_NEAREST);
+	//Available colors and minimum color
+	getline(fin, line);
+	sstream.str(line);
+	sstream >> _availableColors >> _minColor;
 	//Individual sprite (ball) size
 	_ballTexSize = glm::vec2((float)_spritePixelSize) / _spritesheet->getSize();
 	//_ballTexSize = glm::vec2((float)_spritePixelSize / _spritesheetSize.x, (float)_spritePixelSize / _spritesheetSize.y);

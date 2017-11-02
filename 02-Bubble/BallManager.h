@@ -32,6 +32,8 @@ public:
 private:
 	//Size in spritesheet (Pixels) and size in screen (Pixels)
 	int _spritePixelSize, _ballPixelSize;
+	//Available spawned ball color and min color
+	int _availableColors, _minColor;
 	//Starting coords for balls (tilemap), Space available for balls (tilemap), Space used for balls (read from file)
 	glm::ivec2 _minBallCoords, _matrixSpace, _matrixTileSize;
 	//Ball size in spritesheet (0..1) and total spritesheet size
