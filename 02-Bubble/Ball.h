@@ -13,7 +13,7 @@ public:
 	void update(int &deltaTime);
 	void render();
 
-	int getColor();
+	unsigned int getColor();
 	void setColor(int color);
 
 	int getSize();
@@ -29,7 +29,8 @@ public:
 
 private:
 	glm::vec2 _position, _sizeInSpritesheet, _minRenderCoords;
-	int _size, _color;
+	int _size;
+	unsigned int _color;
 	Sprite *_sprite;
 	Texture *_texture;
 };

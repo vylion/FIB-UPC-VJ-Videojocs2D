@@ -29,7 +29,7 @@ void Ball::render()
 	_sprite->render();
 }
 
-int Ball::getColor()
+unsigned int Ball::getColor()
 {
 	return _color;
 }
