@@ -118,10 +118,7 @@ bool BallMatrix::checkCollision(Ball * b)
 		collided = _ballMatrix[pos.first][pos.second]->checkCollision(b);
 	}
 	if (collided != Ball_InMatrix::OUTSIDE) {
-		Ball_InMatrix * bm = new Ball_InMatrix(_shaderProgram, b);
-
-		int visibleOffset = _ballMatrix.size() - _visibleMatrixHeight;
-		//if (visibleOffset < 0) visibleOffset = 0;
+		
 		ballPos = posT(pos);
 		if (collided == Ball_InMatrix::BOT_LEFT || collided == Ball_InMatrix::TOP_LEFT) {
 			ballPos.second--;
@@ -138,27 +135,99 @@ bool BallMatrix::checkCollision(Ball * b)
 			if (collided == Ball_InMatrix::LEFT) ballPos.second--;
 			else ballPos.second++;
 		}
-		
-		bm->init(b->getColor(), _minBallCoords + float(_ballSize) * glm::vec2(ballPos.second, ballPos.first - visibleOffset), _minRenderCoords);
-		bm->setOddRow(ballPos.first % 2 != 0);
 
-		_ballMatrix[ballPos.first][ballPos.second] = bm;
-		_connectedMatrix[ballPos.first][ballPos.second] = true;
-		return true;
+		bool success = addBallToMat(ballPos, collided, b->getColor());
+		vector<posT> pop = vector<posT>();
+		checkPopping(ballPos, b->getColor(), pop);
+
+		if (pop.size() >= 3) {
+			for (int i = 0; i < pop.size(); ++i) {
+				pos = pop[i];
+				success = success && popBall(pos); // Animation and control
+			}
+		}
+
+		return success;
 	}
 
 	return false;
 }
 
 //Adds a collided ball into the matrix
-void BallMatrix::addBallToMat(Ball * b, Ball_InMatrix::NeighborBalls pos)
+bool BallMatrix::addBallToMat(posT ballPos, Ball_InMatrix::NeighborBalls collided, unsigned int color)
 {
+	int visibleOffset = _ballMatrix.size() - _visibleMatrixHeight;
+	//if (visibleOffset < 0) visibleOffset = 0;
+
+	_ballMatrix[ballPos.first][ballPos.second]->init(color, _minBallCoords + float(_ballSize) * glm::vec2(ballPos.second, ballPos.first - visibleOffset), _minRenderCoords);
+	_ballMatrix[ballPos.first][ballPos.second]->setOddRow(ballPos.first % 2 != 0);
+
+	posT pos;
 	
+	//TOP LEFT
+	pos = posT(ballPos.first - 1, ballPos.second - 1 + (ballPos.first % 2));
+	if (inMatrix(pos)) {
+		_ballMatrix[ballPos.first][ballPos.second]->addNeighbor(pos, Ball_InMatrix::TOP_LEFT);
+		_ballMatrix[pos.first][pos.second]->addNeighbor(ballPos, Ball_InMatrix::BOT_RIGHT);
+	}
+
+	//TOP RIGHT
+	pos = posT(ballPos.first - 1, ballPos.second + (ballPos.first % 2));
+	if (inMatrix(pos)) {
+		_ballMatrix[ballPos.first][ballPos.second]->addNeighbor(pos, Ball_InMatrix::TOP_RIGHT);
+		_ballMatrix[pos.first][pos.second]->addNeighbor(ballPos, Ball_InMatrix::BOT_LEFT);
+	}
+
+	//LEFT
+	pos = posT(ballPos.first, ballPos.second - 1);
+	if (inMatrix(pos)) {
+		_ballMatrix[ballPos.first][ballPos.second]->addNeighbor(pos, Ball_InMatrix::LEFT);
+		_ballMatrix[pos.first][pos.second]->addNeighbor(ballPos, Ball_InMatrix::RIGHT);
+	}
+
+	//RIGHT
+	pos = posT(ballPos.first, ballPos.second + 1);
+	if (inMatrix(pos)) {
+		_ballMatrix[ballPos.first][ballPos.second]->addNeighbor(pos, Ball_InMatrix::RIGHT);
+		_ballMatrix[pos.first][pos.second]->addNeighbor(ballPos, Ball_InMatrix::LEFT);
+	}
+
+	//BOTTOM LEFT
+	pos = posT(ballPos.first + 1, ballPos.second - 1 + (ballPos.first % 2));
+	if (inMatrix(pos)) {
+		_ballMatrix[ballPos.first][ballPos.second]->addNeighbor(pos, Ball_InMatrix::BOT_LEFT);
+		_ballMatrix[pos.first][pos.second]->addNeighbor(ballPos, Ball_InMatrix::TOP_RIGHT);
+	}
+
+	//BOTTOM RIGHT
+	pos = posT(ballPos.first + 1, ballPos.second + (ballPos.first % 2));
+	if (inMatrix(pos)) {
+		_ballMatrix[ballPos.first][ballPos.second]->addNeighbor(pos, Ball_InMatrix::BOT_RIGHT);
+		_ballMatrix[pos.first][pos.second]->addNeighbor(ballPos, Ball_InMatrix::TOP_LEFT);
+	}
+
+	_connectedMatrix[ballPos.first][ballPos.second] = true;
+
+	return _connectedMatrix[ballPos.first][ballPos.second];
 }
 
 int BallMatrix::ballsLeft()
 {
 	return _ballMatrix.size();
+}
+
+unsigned int BallMatrix::colorsLeftInMatrix()
+{
+	unsigned int res = 0;
+
+	for (int i = 0; i < int(_ballMatrix.size()); ++i) {
+		//Balls
+		for (int j = 0; j < int(_ballMatrix[i].size()); ++j) {
+			if (_connectedMatrix[i][j]) res = res | _ballMatrix[i][j]->getColor();
+		}
+	}
+
+	return res;
 }
 
 Ball_InMatrix * BallMatrix::ballFromColor(int & color)
@@ -244,18 +313,29 @@ std::vector<Ball_InMatrix::posT> BallMatrix::checkBallsAround(const posT &b)
 }
 
 //DESTROY
-list<Ball_InMatrix::posT> BallMatrix::popNeighbors(const posT & b)
+void BallMatrix::checkPopping(const posT & b, const unsigned int & color, std::vector<posT>& pop)
 {
-	list<posT> group = list<posT>(); //checkNeighbors(b);
-
-	while (group.size() > 0) {
-		posT nextBall = group.front();
-		group.pop_front();
-
-		group.merge(_ballMatrix[nextBall.first][nextBall.second]->checkNeighbors());
+	vector<posT> group = _ballMatrix[b.first][b.second]->getNeighbors();
+	
+	for (int i = 0; i < group.size(); ++i) {
+		posT next = group[i];
+		
+		if (_ballMatrix[next.first][next.second]->getColor() & color != 0) {
+			if (std::find(pop.begin(), pop.end(), next) == pop.end()) {
+				//It has not been popped
+				pop.push_back(next);
+				checkPopping(next, _ballMatrix[next.first][next.second]->getColor(), pop);
+			}
+		}
 	}
+}
 
-	return list<posT>();
+bool BallMatrix::popBall(posT & p)
+{
+	_connectedMatrix[p.first][p.second] = false;
+	// Do animations
+
+	return !_connectedMatrix[p.first][p.second];
 }
 
 //Returns true if the position is inside the matrix dimensions and that position contains a valid ball
