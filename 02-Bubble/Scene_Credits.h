@@ -13,7 +13,11 @@ public:
 
 	int getLevelToOpen() override { return -1; };
 private:
+	Texture *_creditsSpritesheet;
 	Sprite *_credits;
+
+	int _fadeouttime;
+
 	float creditsHeight;
 };
 

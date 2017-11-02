@@ -1,10 +1,12 @@
 #include "Scene_Credits.h"
 #include "../Game.h"
 
+#define CREDITS_BG_TEXTURE "../media/images/credits_bg.png"
 #define CREDITS_TEXTURE "../media/images/credits_sprites.png"
-#define CREDITS_SIZE glm::vec2(260.f, 275.f)
+#define CREDITS_SIZE glm::vec2(256.f, 1150.f)
 
 #define FADE_TIME 1000
+#define WAIT_TIME FADE_TIME + 1000
 
 
 void Scene_Credits::init()
@@ -12,16 +14,19 @@ void Scene_Credits::init()
 
 	initShaders();
 	_state = state::RUNNING;
+	_fadeouttime = 0;
+
 	_bg_tex = new Texture();
-	if (!_bg_tex->loadFromFile(CREDITS_TEXTURE, TEXTURE_PIXEL_FORMAT_RGBA)) printf("Failed to load howtoplay texture");
+	if (!_bg_tex->loadFromFile(CREDITS_BG_TEXTURE, TEXTURE_PIXEL_FORMAT_RGBA)) printf("Failed to load credits bg texture");
+	_creditsSpritesheet = new Texture();
+	if (!_creditsSpritesheet->loadFromFile(CREDITS_TEXTURE, TEXTURE_PIXEL_FORMAT_RGBA)) printf("Failed to load credits texture");
 
-
-	creditsHeight = SCREEN_HEIGHT;
+	creditsHeight = 0;
 
 	_bg = Sprite::createSprite(glm::vec2(SCREEN_WIDTH, SCREEN_HEIGHT), glm::vec2(SCREEN_WIDTH, SCREEN_HEIGHT), _bg_tex, &texProgram);
-	_credits = Sprite::createSprite(CREDITS_SIZE, CREDITS_SIZE, _bg_tex, &texProgram);
-		_credits->setPosition(glm::vec2((SCREEN_WIDTH - CREDITS_SIZE.x)/2.f, SCREEN_HEIGHT));
-		_credits->setTexturePosition(glm::vec2(640.f/900.f, 0.f));
+	_credits = Sprite::createSprite(CREDITS_SIZE, CREDITS_SIZE, _creditsSpritesheet, &texProgram);
+		_credits->setPosition(glm::vec2((SCREEN_WIDTH - CREDITS_SIZE.x)/2.f, 0.f));
+		//_credits->setTexturePosition(glm::vec2(640.f/900.f, 0.f));
 
 	projection = glm::ortho(0.f, float(SCREEN_WIDTH - 1), float(SCREEN_HEIGHT - 1), 0.f);
 	currentTime = 0;
@@ -30,8 +35,12 @@ void Scene_Credits::init()
 int Scene_Credits::update(int deltaTime)
 {
 	currentTime += deltaTime;
+	
 
-	creditsHeight = SCREEN_HEIGHT - currentTime / 10.f;
+	if (currentTime >= WAIT_TIME) {
+		creditsHeight = (WAIT_TIME - currentTime) / 10.f;
+		if (creditsHeight <= -CREDITS_SIZE.y) _fadeouttime += deltaTime;
+	}
 	
 	_credits->setPosition(glm::vec2((SCREEN_WIDTH - CREDITS_SIZE.x)/2, creditsHeight));
 
@@ -44,7 +53,7 @@ int Scene_Credits::update(int deltaTime)
 		_state = state::OPEN_LEVEL;
 
 	//When info is completely off-screen, return to main menu
-	if (currentTime/10.f >= SCREEN_HEIGHT + CREDITS_SIZE.y) _state = state::OPEN_LEVEL;
+	if (_fadeouttime >= FADE_TIME) _state = state::OPEN_LEVEL;
 
 	return _state;
 }
@@ -56,10 +65,13 @@ void Scene_Credits::render()
 	texProgram.use();
 	texProgram.setUniformMatrix4f("projection", projection);
 	float alpha = 1.0f;
-	if (currentTime <= FADE_TIME)
-		alpha = min(1.0f, (float)currentTime / (float)FADE_TIME);
-	else if (creditsHeight <= -CREDITS_SIZE.y/2.f)
-		alpha = min(1.0f, (CREDITS_SIZE.y + creditsHeight) / (CREDITS_SIZE.y/2.f));
+	
+	if (creditsHeight <= -CREDITS_SIZE.y) {
+		alpha = 1.f - min(1.f, (float)_fadeouttime / (float)FADE_TIME);
+	}
+	else if (currentTime <= FADE_TIME)
+		alpha = min(1.f, (float)currentTime / (float)FADE_TIME);
+
 	texProgram.setUniform4f("color", 1.0f, 1.0f, 1.0f, alpha);
 	modelview = glm::mat4(1.0f);
 	texProgram.setUniformMatrix4f("modelview", modelview);
