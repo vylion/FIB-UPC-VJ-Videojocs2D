@@ -63,6 +63,13 @@ void Sprite::render() const
 	glDisable(GL_TEXTURE_2D);
 }
 
+void Sprite::render(glm::vec2 displacement)
+{
+	setPosition(this->position + displacement);
+	render();
+	setPosition(this->position - displacement);
+}
+
 //Renders a rotated sprite at @angle
 void Sprite::render(float angle) const
 {
