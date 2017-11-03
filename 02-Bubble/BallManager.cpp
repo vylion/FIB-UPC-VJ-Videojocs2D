@@ -40,36 +40,51 @@ void BallManager::init(const string & levelFile)
 
 int BallManager::update(int deltaTime)
 {
+	//Update ball matrix and store state for switching later on
 	int matState = _bmat->update(deltaTime, false);
+
 	switch (_state) {
+		//Just launched a ball, move to waiting for ball
 		case state::LAUNCHED_BALL:
 			_state = state::W8_LAUNCHED_BALL;
+			//No break because we want to update the ball
+		//Waiting for launched ball
 		case state::W8_LAUNCHED_BALL:
+			//Update position etc
 			_launchedBall->update(deltaTime);
-			if (_bmat->checkCollision(_launchedBall))
+			//Check for collisions
+			if (_bmat->checkCollision(_launchedBall)) {
 				_state = state::W8_MATRIX;
+				//TODO
+				//if (_thrownBall%5 == 0)_bmat->lowerRowsOnNextBall();
+			}
+			//Check if launched ball is off bounds
 			else if (_launchedBall->getPosition().y <= -_ballPixelSize || _launchedBall->getPosition().y > SCREEN_HEIGHT)
 				_state = state::W8_AIMER;
 			break;
+		//Waiting for feedback from matrix after a collision
 		case state::W8_MATRIX:
 			switch (matState) {
+				//Free to move. We wait for aimer instructions
 				case BallMatrix::State::RUNNING:
 					_state = state::W8_AIMER;
 					break;
+				//We win, tell Scene to display win panel
 				case BallMatrix::State::WON:
 					_state = state::WON;
 					break;
+				//Same as won state
 				case BallMatrix::State::LOST:
 					_state = state::LOST;
-					break;
-				case BallMatrix::State::UPDATING:
-					_state = state::W8_MATRIX;
 					break;
 			}
 			break;
 	}
+<<<<<<< HEAD
 	//_bmat->update(deltaTime);
 	
+=======
+>>>>>>> e2b97a20b4db9bc88f173f1d5472efd15e0bfe77
 	return _state;
 }
 
@@ -80,33 +95,14 @@ void BallManager::render() const
 	_nextBall->render();
 }
 
-/*
-bool BallManager::ballUpdatesLeft()
-{
-	return _thereIsLaunchedBall;
-	/*
-	if (_launchedBall != nullptr) {
-		if (_launchedBall->getPosition().y < 0.f || _launchedBall->getPosition().y > 600.f) return true;
-		else return false;
-	}
-	//return true;
-	//return (_launchedBall != nullptr || _launchedBall->getPosition().y < -_ballPixelSize);
-	//return false;
-}
-
-bool BallManager::ballsLeft()
-{
-	return (_bmat->ballsLeft() > 0);
-}
-*/
-
 Ball_Held * BallManager::getNextHeldBall()
 {
 	
 	//Store next held ball for the return
 	Ball_Held *ret = new Ball_Held(_shaderProgram, _nextBall);
 	ret->init(_nextBall->getColor(), _nextBall->getPosition(), _tmap->getMinRenderCoords());
-
+	
+	_colorsInMatrix = _bmat->colorsLeftInMatrix();
 	//Generate a new ball for display
 	_nextBall = getNewBall();
 
@@ -130,7 +126,10 @@ int BallManager::getAccumulatedScoreVariation()
 
 Ball * BallManager::getNewBall()
 {
-	int color = rand()%_availableColors + _minColor;
+	int color;
+	do {
+		color = rand() % _availableColors + _minColor;
+	} while (!((unsigned int)pow(2, color) & _colorsInMatrix));
 
 	Ball *b = new Ball(_ballPixelSize, glm::vec2((float)_spritePixelSize), _spritesheet, _shaderProgram);
 	b->init(color, _minBallCoords + _tmap->getBallSpace() * _ballPixelSize, _tmap->getMinRenderCoords());

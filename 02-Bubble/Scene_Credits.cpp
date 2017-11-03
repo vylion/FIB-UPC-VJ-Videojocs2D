@@ -93,4 +93,5 @@ void Scene_Credits::render()
 void Scene_Credits::initAudio()
 {
 	SoundManager::instance().setMusic(CREDITS_MUSIC);
+	SoundManager::instance().setMusicVolume(0.f);
 }
