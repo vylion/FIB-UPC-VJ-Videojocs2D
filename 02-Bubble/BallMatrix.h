@@ -23,7 +23,8 @@ public:
 				Texture *spritesheet,
 				ShaderProgram &shaderProgram);
 
-	State update(int &deltaTime);
+	State update(int &deltaTime, bool shake);
+	bool shakeAnim;
 	int descendAnimLeft;
 	void render();
 

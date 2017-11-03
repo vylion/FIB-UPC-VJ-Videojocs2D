@@ -40,7 +40,7 @@ void BallManager::init(const string & levelFile)
 
 int BallManager::update(int deltaTime)
 {
-	int matState = _bmat->update(deltaTime);
+	int matState = _bmat->update(deltaTime, false);
 	switch (_state) {
 		case state::LAUNCHED_BALL:
 			_state = state::W8_LAUNCHED_BALL;
@@ -69,7 +69,6 @@ int BallManager::update(int deltaTime)
 			break;
 	}
 	//_bmat->update(deltaTime);
-	
 	
 	return _state;
 }

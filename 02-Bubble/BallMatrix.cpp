@@ -83,10 +83,15 @@ BallMatrix::BallMatrix( int * colorMatrix,
 
 	_visibleMatrixHeight = levelHeight + 1;
 	descendAnimLeft = 0;
+	shakeAnim = false;
 }
 
-BallMatrix::State BallMatrix::update(int &deltaTime)
+BallMatrix::State BallMatrix::update(int &deltaTime, bool shake)
 {
+	if (shake) {
+		shakeAnim = true;
+	}
+
 	if (descendAnimLeft > 0) {
 		descendAnimLeft -= deltaTime;
 		if (descendAnimLeft < 0) {
@@ -114,6 +119,11 @@ BallMatrix::State BallMatrix::update(int &deltaTime)
 
 void BallMatrix::render()
 {
+	//if (shakeAnim)
+	//...
+
+	//else
+
 	//Rows
 	for (int i = _ballMatrix.size() - 1; i >= int(_ballMatrix.size()) - _visibleMatrixHeight && i >= 0; --i) {
 		//Balls
@@ -162,6 +172,11 @@ bool BallMatrix::checkCollision(Ball * b)
 				pos = pop[i];
 				success = success && popBall(pos); // Animation and control
 			}
+		}
+
+		if (shakeAnim) {
+			descendAnimLeft = DESCEND_ANIM_TIME;
+			shakeAnim = false;
 		}
 
 		return success;
@@ -237,10 +252,11 @@ unsigned int BallMatrix::colorsLeftInMatrix()
 {
 	unsigned int res = 0;
 
+
 	for (int i = 0; i < int(_ballMatrix.size()); ++i) {
 		//Balls
 		for (int j = 0; j < int(_ballMatrix[i].size()); ++j) {
-			if (_connectedMatrix[i][j]) res = res | _ballMatrix[i][j]->getColor();
+			if (_connectedMatrix[i][j]) res = res | unsigned int(pow(2, _ballMatrix[i][j]->getColor()));
 		}
 	}
 
