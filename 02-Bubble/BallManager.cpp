@@ -80,11 +80,7 @@ int BallManager::update(int deltaTime)
 			}
 			break;
 	}
-<<<<<<< HEAD
 	//_bmat->update(deltaTime);
-	
-=======
->>>>>>> e2b97a20b4db9bc88f173f1d5472efd15e0bfe77
 	return _state;
 }
 
