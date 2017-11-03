@@ -38,7 +38,7 @@ private:
 	//Size in spritesheet (Pixels) and size in screen (Pixels)
 	int _spritePixelSize, _ballPixelSize;
 	//Available spawned ball color and min color
-	int _availableColors, _minColor;
+	int _availableColors, _minColor, _colorsInMatrix;
 	//Throw count
 	int _thrownBalls;
 	//Starting coords for balls (tilemap), Space available for balls (tilemap), Space used for balls (read from file)
