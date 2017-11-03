@@ -8,7 +8,7 @@
 #define MAX_ANGLE 1.f							//In rads, or 1*180/pi degrees
 #define AIMER_SIZE glm::vec2(16.f,64.f)			//Pixel size in spritesheet and in game
 
-#define ANIMATION_TIME 20000
+#define ANIMATION_TIME 200
 
 void Aimer::init(const glm::vec2 & pos, glm::vec2 &minRenderCoords, Texture *tex, ShaderProgram & shaderProgram, BallManager *bmng)
 {
