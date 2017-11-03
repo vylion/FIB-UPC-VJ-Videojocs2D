@@ -18,18 +18,22 @@ public:
 
 	BallManager::BallManager(TileMap *tmap, ShaderProgram & shaderProgram);
 	
+	enum state {WON, LOST, W8_AIMER, LAUNCHED_BALL, W8_LAUNCHED_BALL, W8_MATRIX};
+
 	//void init(glm::ivec2 &minRenderCoords);
 	void init(const string &levelFile);
-	void update(int deltaTime);
+	int update(int deltaTime);
 	void render() const;
 
-	bool ballUpdatesLeft();
-	bool ballsLeft();
+	//bool ballUpdatesLeft();
+	//bool ballsLeft();
 	
 	Ball_Held *getNextHeldBall();
 	void launchHeldBall(Ball_Held *heldBall, float angle);
 
 private:
+	//Manager status
+	int _state;
 	//Size in spritesheet (Pixels) and size in screen (Pixels)
 	int _spritePixelSize, _ballPixelSize;
 	//Available spawned ball color and min color

@@ -177,13 +177,23 @@ int Scene_Level::update(int deltaTime)
 			switch (_state) {
 				//Not paused, keep updating game elements
 				case state::RUNNING:
-					aimer->update(deltaTime);
-					bmng->update(deltaTime);
-	
-					//No balls left, we win
-					if (!bmng->ballsLeft() || (currentTime > 1000 && _level == 1)) {
-						win();
-						//lose();
+					{
+						int bmngState = bmng->update(deltaTime);
+						switch (bmngState) {
+							//No balls left in BallManager
+						case BallManager::state::WON:
+							win();
+							break;
+							//Balls reached bottom
+						case BallManager::state::LOST:
+							lose();
+							break;
+						}
+						aimer->update(deltaTime, bmngState);
+						if (currentTime > 2000 && _level == 1) {
+							win();
+							//lose();
+						}
 					}
 					break;
 				//Paused, stop updating game elements and update pause panel

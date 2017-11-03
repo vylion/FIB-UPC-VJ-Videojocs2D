@@ -35,31 +35,53 @@ void BallManager::init(const string & levelFile)
 	if (!readLevel(levelFile)) printf("BallManager: Failed to read levelFile");
 
 	_nextBall = getNewBall();
-	_thereIsLaunchedBall = false;
+	_state = state::W8_AIMER;
 }
 
-void BallManager::update(int deltaTime)
+int BallManager::update(int deltaTime)
 {
-	_bmat->update(deltaTime);
-	if (_thereIsLaunchedBall) {
-		_launchedBall->update(deltaTime);
-
-		bool collision = _bmat->checkCollision(_launchedBall);
-		if (collision) {
-			_thereIsLaunchedBall = false;
-		}
-		if (_launchedBall->getPosition().y <= -_ballPixelSize || _launchedBall->getPosition().y > SCREEN_HEIGHT)
-			_thereIsLaunchedBall = false;
+	int matState = _bmat->update(deltaTime);
+	switch (_state) {
+		case state::LAUNCHED_BALL:
+			_state = state::W8_LAUNCHED_BALL;
+		case state::W8_LAUNCHED_BALL:
+			_launchedBall->update(deltaTime);
+			if (_bmat->checkCollision(_launchedBall))
+				_state = state::W8_MATRIX;
+			else if (_launchedBall->getPosition().y <= -_ballPixelSize || _launchedBall->getPosition().y > SCREEN_HEIGHT)
+				_state = state::W8_AIMER;
+			break;
+		case state::W8_MATRIX:
+			switch (matState) {
+				case BallMatrix::State::RUNNING:
+					_state = state::W8_AIMER;
+					break;
+				case BallMatrix::State::WON:
+					_state = state::WON;
+					break;
+				case BallMatrix::State::LOST:
+					_state = state::LOST;
+					break;
+				case BallMatrix::State::UPDATING:
+					_state = state::W8_MATRIX;
+					break;
+			}
+			break;
 	}
+	//_bmat->update(deltaTime);
+	
+	
+	return _state;
 }
 
 void BallManager::render() const
 {
-	if (_thereIsLaunchedBall) _launchedBall->render();
+	if (_state == state::W8_LAUNCHED_BALL || _state == state::LAUNCHED_BALL) _launchedBall->render();
 	_bmat->render();
 	_nextBall->render();
 }
 
+/*
 bool BallManager::ballUpdatesLeft()
 {
 	return _thereIsLaunchedBall;
@@ -67,7 +89,7 @@ bool BallManager::ballUpdatesLeft()
 	if (_launchedBall != nullptr) {
 		if (_launchedBall->getPosition().y < 0.f || _launchedBall->getPosition().y > 600.f) return true;
 		else return false;
-	}*/
+	}
 	//return true;
 	//return (_launchedBall != nullptr || _launchedBall->getPosition().y < -_ballPixelSize);
 	//return false;
@@ -77,6 +99,7 @@ bool BallManager::ballsLeft()
 {
 	return (_bmat->ballsLeft() > 0);
 }
+*/
 
 Ball_Held * BallManager::getNextHeldBall()
 {
@@ -96,7 +119,7 @@ void BallManager::launchHeldBall(Ball_Held * heldBall, float angle)
 	_launchedBall = new Ball_Launched(_shaderProgram, heldBall, heldBall->getAngle(), _tmap);
 	_launchedBall->init(heldBall->getColor(), heldBall->getPosition(), _tmap->getMinRenderCoords());
 
-	_thereIsLaunchedBall = true;
+	_state = state::LAUNCHED_BALL;
 }
 
 Ball * BallManager::getNewBall()
