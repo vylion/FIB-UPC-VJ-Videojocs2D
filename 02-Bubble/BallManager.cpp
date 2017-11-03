@@ -29,7 +29,7 @@ BallManager::BallManager(TileMap *tmap, ShaderProgram & shaderProgram)
 //void BallManager::init(glm::ivec2 &minBallCoords)
 void BallManager::init(const string & levelFile)
 {
-	//_minBallCoords = glm::ivec2(minBallCoords);
+	_thrownBalls = 0;
 	//Minimum float pos at which we can render a ball (top left)
 	_minBallCoords = /*(glm::vec2)_tmap->getMinRenderCoords() + */(glm::vec2)_tmap->getBallOffset() * (float)_tmap->getTileSize();
 	if (!readLevel(levelFile)) printf("BallManager: Failed to read levelFile");
@@ -119,7 +119,14 @@ void BallManager::launchHeldBall(Ball_Held * heldBall, float angle)
 	_launchedBall = new Ball_Launched(_shaderProgram, heldBall, heldBall->getAngle(), _tmap);
 	_launchedBall->init(heldBall->getColor(), heldBall->getPosition(), _tmap->getMinRenderCoords());
 
+	_thrownBalls++;
+
 	_state = state::LAUNCHED_BALL;
+}
+
+int BallManager::getAccumulatedScoreVariation()
+{
+	return -50*_thrownBalls;
 }
 
 Ball * BallManager::getNewBall()

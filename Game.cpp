@@ -40,6 +40,7 @@ bool Game::update(int deltaTime)
 			bPlay = false;
 			break;
 	}
+	SoundManager::instance().update();
 	for (int i = 0; i < 256; i++) {
 		keys_pressed[i] = false;
 		keys_released[i] = false;

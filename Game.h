@@ -7,6 +7,7 @@
 #include "02-Bubble/Scene_Level.h"
 #include "02-Bubble/Scene_HowToPlay.h"
 #include "02-Bubble/Scene_Credits.h"
+#include "02-Bubble/SoundManager.h"
 
 
 #define SCREEN_WIDTH 640

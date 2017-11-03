@@ -30,6 +30,7 @@ public:
 	
 	Ball_Held *getNextHeldBall();
 	void launchHeldBall(Ball_Held *heldBall, float angle);
+	int getAccumulatedScoreVariation();
 
 private:
 	//Manager status
@@ -38,6 +39,8 @@ private:
 	int _spritePixelSize, _ballPixelSize;
 	//Available spawned ball color and min color
 	int _availableColors, _minColor;
+	//Throw count
+	int _thrownBalls;
 	//Starting coords for balls (tilemap), Space available for balls (tilemap), Space used for balls (read from file)
 	glm::ivec2 _minBallCoords, _matrixSpace, _matrixTileSize;
 	//Ball size in spritesheet (0..1) and total spritesheet size

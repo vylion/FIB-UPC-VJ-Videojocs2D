@@ -10,11 +10,15 @@
 #define BACKGROUND_TEXTURE "../media/images/level_bg.png"
 #define SPRITE_TEXTURE "../media/images/level_sprites.png"
 
+#define WIN_SOUND "../media/audio/sounds/game_win.ogg"
+#define LOSE_SOUND "../media/audio/sounds/game_lose.ogg"
+
 #define LEVEL_NUMBER_SIZE glm::vec2(24.f,24.f)
 #define LEVEL_NUMBER_POSITION glm::vec2(552.f, 52.f)
 #define LEVEL_NUMBER_SPRITESHEET_SIZE glm::vec2(16.f, 16.f)
 #define LEVEL_NUMBER_SPRITESHEET_POSITION glm::vec2(208.f, 0.f)
 
+#define INITIAL_SCORE 5000
 #define SCORE_SIZE glm::vec2(96.f, 24.f)
 #define SCORE_POSITION glm::vec2(480.f, 144.f)
 #define SCORE_SPRITESHEET_POSITION  LEVEL_NUMBER_SPRITESHEET_POSITION
@@ -66,7 +70,8 @@ void Scene_Level::init(int level)
 	_levelStatus = levelStatus::RUNNING;
 	_level = level;
 	initShaders();
-	//initAudio();
+	Pause::instance().init(&texProgram);
+	initAudio();
 
 	string levelFiller = "";
 	if (_level < 10) {
@@ -97,19 +102,17 @@ void Scene_Level::init(int level)
 	/*----------------------------------------AIMER--------------------------------------------------------*/
 
 	aimer = new Aimer();
-	//Horizontal position is ball starting position + ball space
-	//Vertical position is ball starting position + ball space
-	glm::vec2 aimerDist = (glm::vec2)map->getBallSpace() * glm::vec2(0.5f, 1.f);
-	glm::vec2 aimerPos = (glm::vec2)map->getBallOffset();
-	glm::vec2 pos = (aimerPos + aimerDist) * 16.f;
-	aimer->init(pos, MIN_SCREEN_COORDS, _spriteTexture, texProgram, bmng);
+	//Horizontal position is ball starting position + ball space/2+0.5
+	//Vertical position is ball starting position + ball space + 1(strange behavior)
+	glm::vec2 aimerTilePos = (glm::vec2)map->getBallOffset() + (glm::vec2)map->getBallSpace() * glm::vec2(0.5f, 1.f);
+	aimer->init(aimerTilePos * 16.f, MIN_SCREEN_COORDS, _spriteTexture, texProgram, bmng);
 
 	/*----------------------------------------BACKGROUND---------------------------------------------------*/
 	_levelNumber = Sprite::createSprite(LEVEL_NUMBER_SIZE, LEVEL_NUMBER_SPRITESHEET_SIZE, _spriteTexture, &texProgram);
 		_levelNumber->setPosition(LEVEL_NUMBER_POSITION);
 		_levelNumber->setTexturePosition((LEVEL_NUMBER_SPRITESHEET_POSITION + glm::vec2(_level%3,_level/3)*16.f) / _spriteTexture->getSize());
 
-	_scoreVal = 9999;
+	_scoreVal = INITIAL_SCORE;
 
 	_score1 = Sprite::createSprite(LEVEL_NUMBER_SIZE, LEVEL_NUMBER_SPRITESHEET_SIZE, _spriteTexture, &texProgram);
 	_score10 = Sprite::createSprite(LEVEL_NUMBER_SIZE, LEVEL_NUMBER_SPRITESHEET_SIZE, _spriteTexture, &texProgram);
@@ -181,19 +184,18 @@ int Scene_Level::update(int deltaTime)
 						int bmngState = bmng->update(deltaTime);
 						switch (bmngState) {
 							//No balls left in BallManager
-						case BallManager::state::WON:
-							win();
-							break;
+							case BallManager::state::WON:
+								win();
+								break;
 							//Balls reached bottom
-						case BallManager::state::LOST:
-							lose();
-							break;
+							case BallManager::state::LOST:
+								lose();
+								break;
 						}
 						aimer->update(deltaTime, bmngState);
-						if (currentTime > 2000 && _level == 1) {
-							win();
-							//lose();
-						}
+						_scoreVal = INITIAL_SCORE + 1 + bmng->getAccumulatedScoreVariation() - (int)currentTime/1000;
+						_scoreVal = max(0, _scoreVal);
+						updateScoreSprites();
 					}
 					break;
 				//Paused, stop updating game elements and update pause panel
@@ -288,7 +290,9 @@ void Scene_Level::initAudio()
 	//SoundManager::instance().setMusic(MUSIC_FILE);
 
 	//SoundManager::instance().addSound(CHANGE_BUTTON_SFX);
-	//SoundManager::instance().setSoundVolume(CHANGE_BUTTON_SFX, 0.1f);
+	SoundManager::instance().addSound(WIN_SOUND);
+	SoundManager::instance().addSound(LOSE_SOUND);
+	//SoundManager::instance().setSoundVolume(LOSE_SOUND, 0.2f);
 }
 
 void Scene_Level::checkButtons(int deltaTime)
@@ -306,13 +310,13 @@ void Scene_Level::checkButtons(int deltaTime)
 
 			_buttons[_selectedButton]->use();
 		}
-		else if (Game::instance().getSpecialKeyJustPressed(GLUT_KEY_RIGHT) && _moveCooldown == 0) {
+		else if (Game::instance().getSpecialKeyJustPressed(GLUT_KEY_RIGHT) && _moveCooldown == 0 && _selectedButton != 1) {
 			_moveCooldown = 50;
 			_buttons[_selectedButton]->unselect();
 			_selectedButton = 1 + (_levelStatus == levelStatus::WON);
 			_buttons[_selectedButton]->select();
 		}
-		else if (Game::instance().getSpecialKeyJustPressed(GLUT_KEY_LEFT) && _moveCooldown == 0) {
+		else if (Game::instance().getSpecialKeyJustPressed(GLUT_KEY_LEFT) && _moveCooldown == 0 && _selectedButton != 0) {
 			_moveCooldown = 50;
 			_buttons[_selectedButton]->unselect();
 			_selectedButton = 0;
@@ -349,8 +353,10 @@ void Scene_Level::win()
 	//Default selection to next level
 	_moveCooldown = 0;
 	_selectedButton = 2;
-	bool playSound = false;
-	_buttons[_selectedButton]->select(playSound);
+	SoundManager::instance().playSound(WIN_SOUND);
+
+	bool playButtonSound = false;
+	_buttons[_selectedButton]->select(playButtonSound);
 }
 
 void Scene_Level::lose()
@@ -362,12 +368,15 @@ void Scene_Level::lose()
 	//Default selection to next level
 	_moveCooldown = 0;
 	_selectedButton = 1;
-	bool playSound = false;
-	_buttons[_selectedButton]->select(playSound);
+
+	SoundManager::instance().playSound(LOSE_SOUND);
+	bool playButtonSound = false;
+	_buttons[_selectedButton]->select(playButtonSound);
 }
 
 void Scene_Level::quit()
 {
+	SoundManager::instance().dropAll();
 	_levelStatus = levelStatus::RUNNING;
 	_state = state::OPEN_LEVEL;
 	_level = -2; //-1 or any negative int opens menu
@@ -375,6 +384,7 @@ void Scene_Level::quit()
 
 void Scene_Level::retry()
 {
+	SoundManager::instance().dropAll();
 	_levelStatus = levelStatus::RUNNING;
 	_state = state::OPEN_LEVEL;
 	_level -= 1;
@@ -382,6 +392,7 @@ void Scene_Level::retry()
 
 void Scene_Level::next()
 {
+	SoundManager::instance().dropAll();
 	_levelStatus = levelStatus::RUNNING;
 	_state = OPEN_LEVEL;
 }

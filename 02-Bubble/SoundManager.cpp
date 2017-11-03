@@ -33,6 +33,7 @@ SoundManager::~SoundManager()
 
 void SoundManager::update()
 {
+
 	_music_engine->update();
 
 	//Refresh finished isounds for the next time they are played

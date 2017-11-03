@@ -24,8 +24,6 @@
 #define MENU_SPRITES "../media/images/menu_sprites.png"
 #define MENU_BACKGROUND "../media/images/menu_bg.png"
 #define MUSIC_FILE "../media/audio/music/menu_bgm.ogg"
-#define CHANGE_BUTTON_SFX "../media/audio/sounds/menu_button_change.ogg"
-#define CLICK_BUTTON_SFX "../media/audio/sounds/menu_button_click.ogg"
 
 
 void Scene_Menu::init()
@@ -118,7 +116,7 @@ void Scene_Menu::init()
 
 	/*----------------------------------------MUSIC--------------------------------------------------------*/
 	
-	initAudio();
+	//initAudio();
 
 	/*----------------------------------------END--------------------------------------------------------*/
 
@@ -218,11 +216,6 @@ int Scene_Menu::getLevelToOpen()
 void Scene_Menu::initAudio()
 {
 	SoundManager::instance().setMusic(MUSIC_FILE);
-
-	SoundManager::instance().addSound(CHANGE_BUTTON_SFX);
-	SoundManager::instance().setSoundVolume(CHANGE_BUTTON_SFX, 0.1f);
-	SoundManager::instance().addSound(CLICK_BUTTON_SFX);
-
 }
 
 void Scene_Menu::checkButtons(int deltaTime)
@@ -271,7 +264,6 @@ void Scene_Menu::checkButtons(int deltaTime)
 
 	//Enter key pressed
 	if (Game::instance().getKeyJustPressed(13)) {
-		SoundManager::instance().playSound(CLICK_BUTTON_SFX);
 		_buttons[_selectedButton]->use();
 	}
 	//Escape from game
@@ -283,6 +275,7 @@ void Scene_Menu::checkButtons(int deltaTime)
 void Scene_Menu::play()
 {
 	_state = state::FADE_OUT;
+	SoundManager::instance().dropAll();
 }
 
 void Scene_Menu::howtoplay()

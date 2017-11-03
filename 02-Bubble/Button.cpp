@@ -40,5 +40,6 @@ void Button::unselect()
 
 void Button::use()
 {
+	SoundManager::instance().playSound(CLICK_BUTTON_SFX);
 	_callback();
 }
