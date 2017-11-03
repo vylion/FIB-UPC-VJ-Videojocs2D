@@ -5,6 +5,8 @@
 #define CREDITS_TEXTURE "../media/images/credits_sprites.png"
 #define CREDITS_SIZE glm::vec2(256.f, 1150.f)
 
+#define CREDITS_MUSIC "../media/audio/music/credits_bgm.ogg"
+
 #define FADE_TIME 1000
 #define WAIT_TIME FADE_TIME + 1000
 
@@ -13,6 +15,7 @@ void Scene_Credits::init()
 {
 
 	initShaders();
+	initAudio();
 	_state = state::RUNNING;
 	_fadeouttime = 0;
 
@@ -39,7 +42,13 @@ int Scene_Credits::update(int deltaTime)
 
 	if (currentTime >= WAIT_TIME) {
 		creditsHeight = (WAIT_TIME - currentTime) / 10.f;
-		if (creditsHeight <= -CREDITS_SIZE.y) _fadeouttime += deltaTime;
+		if (creditsHeight <= -CREDITS_SIZE.y) {
+			_fadeouttime += deltaTime;
+			SoundManager::instance().setMusicVolume(max(0,FADE_TIME - _fadeouttime) / (float)FADE_TIME);
+		}
+	}
+	else if (currentTime <= FADE_TIME) {
+		SoundManager::instance().setMusicVolume(min(currentTime, (float)FADE_TIME) / (float)FADE_TIME);
 	}
 	
 	_credits->setPosition(glm::vec2((SCREEN_WIDTH - CREDITS_SIZE.x)/2, creditsHeight));
@@ -79,4 +88,9 @@ void Scene_Credits::render()
 
 	_bg->render();
 	_credits->render();
+}
+
+void Scene_Credits::initAudio()
+{
+	SoundManager::instance().setMusic(CREDITS_MUSIC);
 }

@@ -19,5 +19,6 @@ private:
 	int _fadeouttime;
 
 	float creditsHeight;
+	void initAudio() override;
 };
 

@@ -30,6 +30,7 @@ void Scene_Menu::init()
 {
 	initShaders();
 	Pause::instance().init(&texProgram);
+	initAudio();
 
 	_state = FADE_IN;
 	_fadeTime = 0;
@@ -114,9 +115,6 @@ void Scene_Menu::init()
 
 	_bg = Sprite::createSprite(glm::vec2(SCREEN_WIDTH, SCREEN_HEIGHT), glm::vec2(SCREEN_WIDTH, SCREEN_HEIGHT), _bg_tex, &texProgram);
 
-	/*----------------------------------------MUSIC--------------------------------------------------------*/
-	
-	//initAudio();
 
 	/*----------------------------------------END--------------------------------------------------------*/
 

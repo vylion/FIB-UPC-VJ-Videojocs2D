@@ -12,4 +12,6 @@ public:
 	void render() override;
 
 	int getLevelToOpen() override { return -1; };
+private:
+	//void initAudio() override;
 };
