@@ -50,9 +50,7 @@ private:
 	ShaderProgram _shaderProgram;
 	//Flying ball, ball after current shot
 	//Current ball is managed by aimer.cpp as it only needs to be displayed
-	Ball *_nextBall;
 	Ball_Launched *_launchedBall;
-	bool _thereIsLaunchedBall;
 	//Static balls are managed by BallMatrix
 	BallMatrix * _bmat;
 

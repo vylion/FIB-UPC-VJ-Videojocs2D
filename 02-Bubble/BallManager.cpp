@@ -34,7 +34,6 @@ void BallManager::init(const string & levelFile)
 	_minBallCoords = /*(glm::vec2)_tmap->getMinRenderCoords() + */(glm::vec2)_tmap->getBallOffset() * (float)_tmap->getTileSize();
 	if (!readLevel(levelFile)) printf("BallManager: Failed to read levelFile");
 
-	_nextBall = getNewBall();
 	_state = state::W8_AIMER;
 }
 
@@ -54,14 +53,14 @@ int BallManager::update(int deltaTime)
 			_launchedBall->update(deltaTime);
 			//Check for collisions
 
-			if (_bmat->checkCollision(_launchedBall)) {
+			/*if (_bmat->checkCollision(_launchedBall)) {
 				_state = state::W8_MATRIX;
 				//TODO
 				if(_thrownBalls%5 == 0) _bmat->lowerRowsOnNextBall();
 			}
 			//Check if launched ball is off bounds
 
-			else if (_launchedBall->getPosition().y <= -_ballPixelSize || _launchedBall->getPosition().y > SCREEN_HEIGHT)
+			else */if (_launchedBall->getPosition().y <= -_ballPixelSize || _launchedBall->getPosition().y > SCREEN_HEIGHT)
 				_state = state::W8_AIMER;
 			break;
 		//Waiting for feedback from matrix after a collision
@@ -90,19 +89,19 @@ void BallManager::render() const
 {
 	if (_state == state::W8_LAUNCHED_BALL || _state == state::LAUNCHED_BALL) _launchedBall->render();
 	_bmat->render();
-	_nextBall->render();
+	//_nextBall->render();
 }
 
 Ball_Held * BallManager::getNextHeldBall()
 {
-	
+	Ball *b = getNewBall();
 	//Store next held ball for the return
-	Ball_Held *ret = new Ball_Held(_shaderProgram, _nextBall);
-	ret->init(_nextBall->getColor(), _nextBall->getPosition(), _tmap->getMinRenderCoords());
+	Ball_Held *ret = new Ball_Held(_shaderProgram, b);
+	ret->init(b->getColor(), b->getPosition(), _tmap->getMinRenderCoords());
 	
 	_colorsInMatrix = _bmat->colorsLeftInMatrix();
 	//Generate a new ball for display
-	_nextBall = getNewBall();
+	//_nextBall = getNewBall();
 
 	return ret;
 }
@@ -130,7 +129,7 @@ Ball * BallManager::getNewBall()
 	} while (!((unsigned int)pow(2, color) & _colorsInMatrix));
 
 	Ball *b = new Ball(_ballPixelSize, glm::vec2((float)_spritePixelSize), _spritesheet, _shaderProgram);
-	b->init(color, _minBallCoords + _tmap->getBallSpace() * _ballPixelSize, _tmap->getMinRenderCoords());
+	b->init(color, _minBallCoords, _tmap->getMinRenderCoords());
 
 	return b;
 }

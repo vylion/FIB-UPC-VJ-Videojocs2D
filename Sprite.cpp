@@ -54,7 +54,7 @@ void Sprite::render() const
 {
 	glm::mat4 modelview = glm::mat4(1.0f);
 	modelview = glm::translate(modelview, glm::vec3(position.x , position.y, 0.f));
-	modelview = glm::translate(modelview, glm::vec3(size.x / 2, size.y / 2, 0.f));
+	modelview = glm::translate(modelview, glm::vec3(size.x * size.x / initialSize.x / 2, size.y * size.y / initialSize.y / 2, 0.f));
 	modelview = glm::scale(modelview, glm::vec3(size.x/initialSize.x,size.y/initialSize.y,1.f));
 	modelview = glm::translate(modelview, glm::vec3(-size.x / 2, -size.y / 2, 0.f));
 	shaderProgram->setUniformMatrix4f("modelview", modelview);
@@ -80,7 +80,7 @@ void Sprite::render(float angle) const
 {
 	glm::mat4 modelview = glm::mat4(1.0f);
 	modelview = glm::translate(modelview, glm::vec3(position.x, position.y, 0.f));
-	modelview = glm::translate(modelview, glm::vec3(size.x / 2, size.y / 2, 0.f));
+	modelview = glm::translate(modelview, glm::vec3(size.x * size.x / initialSize.x / 2, size.y * size.y / initialSize.y / 2, 0.f));
 	modelview = glm::scale(modelview, glm::vec3(size.x / initialSize.x, size.y / initialSize.y, 1.f));
 	modelview = glm::rotate(modelview, angle, glm::vec3(0.f, 0.f, 1.f));
 	modelview = glm::translate(modelview, glm::vec3(-size.x/2, -size.y/2, 0.f));
@@ -103,10 +103,10 @@ void Sprite::render(float angle, const glm::vec2 rotationAxisRatio) const
 {
 	glm::mat4 modelview = glm::mat4(1.0f);
 	modelview = glm::translate(modelview, glm::vec3(position.x, position.y, 0.f));
-	modelview = glm::translate(modelview, glm::vec3(size.x * rotationAxisRatio.x, size.y * rotationAxisRatio.y, 0.f));
+	modelview = glm::translate(modelview, glm::vec3(size.x * size.x / initialSize.x * rotationAxisRatio.x, size.y * size.y / initialSize.y * rotationAxisRatio.y, 0.f));
 	modelview = glm::rotate(modelview, angle, glm::vec3(0.f, 0.f, 1.f));
-	modelview = glm::translate(modelview, glm::vec3(-size.x * rotationAxisRatio.x, -size.y * rotationAxisRatio.y, 0.f));
-	modelview = glm::translate(modelview, glm::vec3(size.x / 2, size.y / 2, 0.f));
+	modelview = glm::translate(modelview, glm::vec3(-size.x * size.x / initialSize.x * rotationAxisRatio.x, -size.y * size.y / initialSize.y * rotationAxisRatio.y, 0.f));
+	modelview = glm::translate(modelview, glm::vec3(size.x * size.x / initialSize.x / 2, size.y * size.y / initialSize.y / 2, 0.f));
 	modelview = glm::scale(modelview, glm::vec3(size.x / initialSize.x, size.y / initialSize.y, 1.f));
 	modelview = glm::translate(modelview, glm::vec3(-size.x / 2, -size.y / 2, 0.f));
 	shaderProgram->setUniformMatrix4f("modelview", modelview);

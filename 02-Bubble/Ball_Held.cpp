@@ -23,15 +23,14 @@ void Ball_Held::initHeldPosition(const glm::vec2 position, float &angle) {
 }
 
 void Ball_Held::updateShooting(int deltaTime, int maxTime) {
-	int size;
-	glm::vec2 pos;
+	
+	float timeRatio = (float)deltaTime / (float)maxTime;
 	//Increase regularly from 0 to normal ball size
-	size = min(_originalSize, (int)((float)deltaTime/(float)maxTime*_originalSize));
+	int newsize = min(_originalSize, (int)(timeRatio*_originalSize));
+	glm::vec2 newpos = _shootingPosition + glm::vec2((float)_originalSize/2.f) - glm::vec2((float)newsize /2.f);
 
-	pos = _shootingPosition + glm::vec2((float)_originalSize/2.f) - glm::vec2((float)deltaTime / (float)maxTime * _originalSize /2.f);
-
-	setSize(size);
-	setPosition(pos);
+	setSize(newsize);
+	setPosition(newpos);
 }
 
 float Ball_Held::getAngle()

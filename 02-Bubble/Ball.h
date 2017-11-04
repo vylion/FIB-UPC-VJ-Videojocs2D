@@ -13,6 +13,7 @@ public:
 	void update(int &deltaTime);
 	void render();
 	void render(glm::vec2 displacement);
+	void render(float angle);
 
 	unsigned int getColor();
 	void setColor(int color);

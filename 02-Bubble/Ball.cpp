@@ -33,6 +33,11 @@ void Ball::render(glm::vec2 displacement) {
 	_sprite->render(displacement);
 }
 
+void Ball::render(float angle)
+{
+	_sprite->render(angle);
+}
+
 unsigned int Ball::getColor()
 {
 	return _color;

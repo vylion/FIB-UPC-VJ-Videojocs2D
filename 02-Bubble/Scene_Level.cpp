@@ -106,7 +106,7 @@ void Scene_Level::init(int level)
 	//Horizontal position is ball starting position + ball space/2+0.5
 	//Vertical position is ball starting position + ball space + 1(strange behavior)
 	glm::vec2 aimerTilePos = (glm::vec2)map->getBallOffset() + (glm::vec2)map->getBallSpace() * glm::vec2(0.5f, 1.f);
-	aimer->init(aimerTilePos * 16.f, MIN_SCREEN_COORDS, _spriteTexture, texProgram, bmng);
+	aimer->init(aimerTilePos * 16.f, MIN_SCREEN_COORDS, texProgram, bmng);
 
 	/*----------------------------------------BACKGROUND---------------------------------------------------*/
 	_levelNumber = Sprite::createSprite(LEVEL_NUMBER_SIZE, LEVEL_NUMBER_SPRITESHEET_SIZE, _spriteTexture, &texProgram);
@@ -326,6 +326,7 @@ void Scene_Level::checkButtons(int deltaTime)
 	}
 
 	if (Game::instance().getKeyReleased(27)) {
+		Pause::instance().init(&texProgram);
 		_state = state::PAUSED;
 	}
 }
