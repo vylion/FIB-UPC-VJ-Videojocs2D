@@ -22,8 +22,8 @@
 
 #define NEXTBALL_COORDS glm::vec2(280.f, 448.f)
 
-#define LOADING_TIME 400
-#define SHOOTING_TIME 200
+#define LOADING_TIME 750
+#define SHOOTING_TIME 250
 
 void Aimer::init(const glm::vec2 &cannonPos, glm::vec2 &minRenderCoords, ShaderProgram & shaderProgram, BallManager *bmng)
 {
@@ -111,7 +111,7 @@ void Aimer::render()
 	_cannon->render(_angle, glm::vec2(0.5f, 1.f));
 	//Render ball
 
-	_heldBall->render(((float)_animationTime/(float)LOADING_TIME)*(float)M_PI/180.f);
+	_heldBall->render(_animationRatio*(float)M_PI*4.f);
 
 	if (_swappedBall != nullptr) _swappedBall->render();
 
@@ -167,8 +167,8 @@ void Aimer::checkButtons(int deltaTime)
 void Aimer::loadUpdate(int deltaTime)
 {
 	_animationTime += deltaTime;
-	float ratio = (float)_animationTime / (float)LOADING_TIME;
-	_heldBall->setPosition(_heldBall->getPosition() * (1-ratio) + NEXTBALL_COORDS * ratio);
+	_animationRatio = (float)_animationTime / (float)LOADING_TIME;
+	_heldBall->setPosition(NEXTBALL_COORDS * (1 - _animationRatio) + (_cannonPosition + MAINBOX_DISPLACEMENT + glm::vec2(8.f, 24.f)) * _animationRatio);
 	if (_animationTime >= LOADING_TIME) {
 		_state = state::W8_BALL_MANAGER;
 	}

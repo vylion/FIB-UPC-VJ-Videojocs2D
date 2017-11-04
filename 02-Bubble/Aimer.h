@@ -20,7 +20,7 @@ public:
 private:
 	int _state, _animationTime;
 
-	float _angle;
+	float _angle, _animationRatio;
 	glm::vec2 _cannonPosition, _minRenderCoords;
 	Texture *_spritesheet;
 	Sprite *_cannon, *_mainBox, *_swapBox;
