@@ -181,7 +181,14 @@ bool BallMatrix::checkCollision(Ball * b)
 				pos = pop[i];
 				success = success && popBall(pos); // Animation and control
 			}
+
+			pop = checkNotHanging();
+			for (unsigned int i = 0; i < pop.size(); ++i) {
+				pos = pop[i];
+				success = success && popBall(pos); // Animation and control
+			}
 		}
+
 		updateFrontier();
 
 		return success;
@@ -338,8 +345,8 @@ std::vector<Ball_InMatrix::posT> BallMatrix::checkBallsAround(const posT &b)
 	if (validBall(pos)) group.push_back(pos);
 
 	//MIDDLE
-	pos = posT(b.first, b.second);
-	if (validBall(pos)) group.push_back(pos);
+	//pos = posT(b.first, b.second);
+	//if (validBall(pos)) group.push_back(pos);
 
 	//RIGHT
 	pos = posT(b.first, b.second + 1);
@@ -411,6 +418,73 @@ void BallMatrix::checkPopping(const posT & b, const unsigned int & mask, std::ve
 	}
 }
 
+std::vector<Ball_InMatrix::posT> BallMatrix::checkNotHanging()
+{
+	std::vector<posT> pop = std::vector<posT>();
+
+	std::vector< std::vector<bool> > connected = std::vector< std::vector<bool> >(_connectedMatrix.size(), std::vector<bool>(int(_connectedMatrix[0].size()), false));
+
+	int i;
+	posT p;
+	for (i = 0; i < _connectedMatrix[0].size(); ++i) {
+		connected[0][i] = _connectedMatrix[0][i];
+	}
+
+	for (i = 1; i < _connectedMatrix.size(); ++i) {
+		for (int j = 0; j < _connectedMatrix[i].size(); ++j) {
+			if (_connectedMatrix[i][j]) {
+				//TOP LEFT
+				p = posT(i - 1, j - 1 + (i % 2));
+				if (inMatrixRange(p) && connected[p.first][p.second]) {
+					connected[i][j] = true;
+					continue;
+				}
+
+				//TOP RIGHT
+				p = posT(i - 1, j + (i % 2));
+				if (inMatrixRange(p) && connected[p.first][p.second]) {
+					connected[i][j] = true;
+					continue;
+				}
+
+				//LEFT
+				p = posT(i, j - 1);
+				if (inMatrixRange(p) && connected[p.first][p.second]) {
+					connected[i][j] = true;
+					continue;
+				}
+
+				//RIGHT
+				p = posT(i, j + 1);
+				if (inMatrixRange(p) && connected[p.first][p.second]) {
+					connected[i][j] = true;
+					continue;
+				}
+
+				//BOTTOM LEFT
+				p = posT(i + 1, j - 1 + (i % 2));
+				if (inMatrixRange(p) && connected[p.first][p.second]) {
+					connected[i][j] = true;
+					continue;
+				}
+
+				//BOTTOM RIGHT
+				p = posT(i + 1, j + (i % 2));
+				if (inMatrixRange(p) && connected[p.first][p.second]) {
+					connected[i][j] = true;
+					continue;
+				}
+
+				//IF NONE
+				pop.push_back(posT(i, j));
+			}
+		}
+	}
+	_connectedMatrix = connected;
+
+	return pop;
+}
+
 bool BallMatrix::popBall(posT & p)
 {
 	_connectedMatrix[p.first][p.second] = false;
@@ -446,8 +520,8 @@ void BallMatrix::updateFrontier()
 {
 	_collisionFrontier = vector<posT>();
 
-	for (int i = 0; i < _connectedMatrix.size(); ++i) {
-		for (int j = 0; j < _connectedMatrix[i].size(); ++j) {
+	for (int i = 0; i < _ballMatrix.size(); ++i) {
+		for (int j = 0; j < _ballMatrix[i].size(); ++j) {
 			if (_connectedMatrix[i][j]) {
 				int maxNeighbors = 6;
 
