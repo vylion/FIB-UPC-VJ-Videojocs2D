@@ -23,6 +23,7 @@ private:
 	float _angle, _animationRatio;
 	glm::vec2 _cannonPosition, _minRenderCoords;
 	Texture *_spritesheet;
+	ShaderProgram _shaderProgram;
 	Sprite *_cannon, *_mainBox, *_swapBox;
 	Ball_Held *_heldBall, *_swappedBall, *_nextBall;
 	BallManager *_bmng;

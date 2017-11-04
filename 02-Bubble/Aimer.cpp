@@ -24,6 +24,7 @@
 
 #define LOADING_TIME 750
 #define SHOOTING_TIME 250
+#define SWAPPING_TIME 1000
 
 void Aimer::init(const glm::vec2 &cannonPos, glm::vec2 &minRenderCoords, ShaderProgram & shaderProgram, BallManager *bmng)
 {
@@ -35,6 +36,7 @@ void Aimer::init(const glm::vec2 &cannonPos, glm::vec2 &minRenderCoords, ShaderP
 	_bmng = bmng;
 	//Aimer rotation
 	_angle = 0;
+	_shaderProgram = shaderProgram;
 
 	_state = state::READY;
 	_animationTime = 0;
@@ -85,6 +87,9 @@ void Aimer::update(int deltaTime, int &bmngState)
 		case state::READY:
 			checkButtons(deltaTime);
 			break;
+		case state::SWAPPING:
+			swapUpdate(deltaTime);
+			break;
 		//Just launched a ball, get a new ball and start animation
 		case state::LAUNCHED_BALL:
 			getNewHeldBall();
@@ -92,9 +97,10 @@ void Aimer::update(int deltaTime, int &bmngState)
 			_animationTime = 0;
 			checkButtons(deltaTime);
 			break;
+		//Launching a ball
 		case state::SHOOTING:
 			shootUpdate(deltaTime);
-			checkButtons(deltaTime);
+			//checkButtons(deltaTime);
 			break;
 		//Animate the new heldBall
 		case state::LOADING:
@@ -113,8 +119,20 @@ void Aimer::render()
 	if (_nextBall != nullptr) {
 		_nextBall->render();
 	}
-	_heldBall->render(_animationRatio*(float)M_PI*4.f);
-	if (_swappedBall != nullptr) _swappedBall->render();
+	switch (_state) {
+		case state::LOADING:
+			_heldBall->render(_animationRatio*(float)M_PI*4.f);
+			if (_swappedBall != nullptr) _swappedBall->render();
+			break;
+		case state::SWAPPING:
+			_heldBall->render(_animationRatio*(float)M_PI*6.f);
+			if (_swappedBall != nullptr) _swappedBall->render(_animationRatio*(float)M_PI*6.f);
+			break;
+		default:
+			_heldBall->render();
+			if (_swappedBall != nullptr) _swappedBall->render();
+			break;
+	}
 
 	
 	_mainBox->render();
@@ -149,17 +167,16 @@ void Aimer::checkButtons(int deltaTime)
 		if (Game::instance().getSpecialKey(GLUT_KEY_UP) || Game::instance().getKey(32)) {
 			//Set to just launched
 			_state = state::SHOOTING;
-			//_nextBall = _bmng->getNextHeldBall();
 			//Init position and angle
-			//_nextBall->initHeldPosition(NEXTBALL_COORDS, _angle);
 			_heldBall->initHeldPosition(calculateLaunchedBallPosition(), _angle);
 			//Set initial size to 0 for spawn effect
 			int size = 0;
 			_heldBall->setSize(size);
-			//_nextBall->setSize(size);
 			_animationTime = 0;
-			//_cannon->changeAnimation(0);
-			//_cannon->setTexturePosition((CANNON_SPRITESHEET_POSITION + glm::vec2(0,CANNON_SIZE.y)) / _spritesheet->getSize());
+		}
+		else if (Game::instance().getSpecialKey(GLUT_KEY_DOWN)) {
+			_state = state::SWAPPING;
+			_animationTime = 0;
 		}
 	}
 }
@@ -167,9 +184,13 @@ void Aimer::checkButtons(int deltaTime)
 void Aimer::loadUpdate(int deltaTime)
 {
 	_animationTime += deltaTime;
+	//Spawn animation for new next ball
 	_nextBall->updateShooting(min(max(0, _animationTime - 500), SHOOTING_TIME), SHOOTING_TIME);
+	//Update animation ratio for render and position
 	_animationRatio = (float)_animationTime / (float)LOADING_TIME;
+	//Update position
 	_heldBall->setPosition(NEXTBALL_COORDS * (1 - _animationRatio) + (_cannonPosition + MAINBOX_DISPLACEMENT + glm::vec2(8.f, 24.f)) * _animationRatio);
+	//If we're done, change to waiting for ballManager
 	if (_animationTime >= LOADING_TIME) {
 		_state = state::W8_BALL_MANAGER;
 	}
@@ -183,13 +204,11 @@ void Aimer::shootUpdate(int deltaTime)
 	if (_animationTime <= SHOOTING_TIME) {
 		//Update ball
 		_heldBall->updateShooting(_animationTime, SHOOTING_TIME);
-		//_nextBall->updateShooting(_animationTime, SHOOTING_TIME);
 	}
 	//Finished loading
 	else {
 		//Restore initial size
 		_heldBall->updateShooting(SHOOTING_TIME, SHOOTING_TIME);
-		//_nextBall->updateShooting(SHOOTING_TIME, SHOOTING_TIME);
 		//Launch ball
 		_bmng->launchHeldBall(_heldBall, _angle);
 		//_cannon->changeAnimation(0);
@@ -199,6 +218,37 @@ void Aimer::shootUpdate(int deltaTime)
 
 void Aimer::swapUpdate(int deltaTime)
 {
+	_animationTime += deltaTime;
+	_animationRatio = (float)_animationTime / (float)SWAPPING_TIME;
+	if (_animationRatio <= 1.f) {
+		if (_swappedBall != nullptr) _swappedBall->updateSwapping(_animationTime, SWAPPING_TIME, false);
+		_heldBall->updateSwapping(_animationTime, SWAPPING_TIME, true);
+	}
+	else {
+		_heldBall->initHeldPosition(_cannonPosition + SWAPBOX_DISPLACEMENT + glm::vec2(4.f), _angle);
+		
+		if (_swappedBall != nullptr) {
+			//Create temp ball
+			Ball_Held *b = new Ball_Held(_shaderProgram, _heldBall);
+			b->init(_heldBall->getColor(), _heldBall->getPosition(), _minRenderCoords);
+			b->initHeldPosition(_heldBall->getPosition(), _angle);
+
+			//Trade ball names	
+			_heldBall = _swappedBall;
+			_heldBall->initHeldPosition(_cannonPosition + MAINBOX_DISPLACEMENT + glm::vec2(8.f,24.f), _angle);
+			_swappedBall = b;
+			_state = state::READY;
+		}
+		//Request new ball
+		else {
+			_swappedBall = _heldBall;
+			getNewHeldBall();
+			//int size = 0;
+			//_heldBall->setSize(size);
+			_animationTime = 0;
+			_state = state::LOADING;
+		}
+	}
 }
 
 glm::vec2 Aimer::calculateLaunchedBallPosition()
@@ -213,7 +263,7 @@ glm::vec2 Aimer::calculateLaunchedBallPosition()
 	//of current angle
 	shootingPosition.y -= (float)_heldBall->getSize()/4.f;
 
-	//Angle rotated 1/4 of circumference clockwise to calculate position correctly
+	//Angle rotated 1/4 of circumference counter-clockwise to calculate position correctly
 	float angle = _angle - float(M_PI / 2);
 	shootingPosition.x += CANNON_SIZE.x  * 2.f * cos(angle);
 	shootingPosition.y += CANNON_SIZE.y  * 1.5f * sin(angle);

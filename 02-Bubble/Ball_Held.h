@@ -8,6 +8,7 @@ public:
 	Ball_Held(ShaderProgram & shaderProgram, Ball * b);
 	void initHeldPosition(const glm::vec2 position, float &angle);
 	void updateShooting(int deltaTime, int maxTime);
+	void updateSwapping(int deltaTime, int maxTime, bool toSwapped);
 
 	float getAngle();
 
