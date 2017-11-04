@@ -2,6 +2,8 @@
 
 #include <vector>
 #include <algorithm>
+#include <random>
+#include <ctime>
 #include "Ball_InMatrix.h"
 
 class BallMatrix
@@ -25,6 +27,8 @@ public:
 
 	State update(int &deltaTime);
 	bool shakeAnim;
+	int shakeCount, shakeSide;
+	glm::vec2 shake;
 	int descendAnimLeft;
 	void render();
 
@@ -38,6 +42,7 @@ public:
 private:
 	typedef Ball_InMatrix::posT posT;
 	const static int DESCEND_ANIM_TIME = 100;
+	const static int SHAKE_COUNT_MAX = 20;
 
 	std::vector< std::vector<Ball_InMatrix*> > _ballMatrix;
 	std::vector< std::vector<bool> > _connectedMatrix;

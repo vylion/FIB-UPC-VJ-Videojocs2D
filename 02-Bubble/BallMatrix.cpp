@@ -1,4 +1,6 @@
 #include "BallMatrix.h"
+#define _USE_MATH_DEFINES
+#include <math.h>
 
 BallMatrix::BallMatrix( int * colorMatrix,
 						glm::ivec2 &matrixDimensions,
@@ -87,14 +89,30 @@ BallMatrix::BallMatrix( int * colorMatrix,
 	descendAnimLeft = 0;
 	shakeAnim = false;
 	updateFrontier();
+	shakeCount = 0;
+	shakeSide = 1;
 
 	for (int i = 0; i < _ballMatrix[0].size(); ++i) {
 		_ballMatrix[0][i]->setTopRow(true);
 	}
+
+	srand((unsigned)time(0));
+	float k = (rand() % 360)*M_PI / 180;
+	shake = glm::vec2(sin(k), cos(k));
 }
 
 BallMatrix::State BallMatrix::update(int &deltaTime)
 {
+	if (shakeAnim) {
+		shakeCount += deltaTime;
+		if (shakeCount > SHAKE_COUNT_MAX) {
+			shakeCount = 0;
+			//shakeSide = -shakeSide;
+			float k = (rand() % 360)*M_PI/180;
+			shake = glm::vec2(sin(k), 0.8f*cos(k));
+		}
+	}
+
 	if (descendAnimLeft > 0) {
 		descendAnimLeft -= deltaTime;
 		if (descendAnimLeft < 0) {
@@ -122,15 +140,22 @@ BallMatrix::State BallMatrix::update(int &deltaTime)
 
 void BallMatrix::render()
 {
-	//if (shakeAnim)
-	//...
-	//else
-
-	//Rows
-	for (int i = _ballMatrix.size() - 1; i >= int(_ballMatrix.size()) - _visibleMatrixHeight && i >= 0; --i) {
-		//Balls
-		for (int j = 0; j < int(_ballMatrix[i].size()); ++j) {
-			if(_connectedMatrix[i][j]) _ballMatrix[i][j]->render();
+	if (shakeAnim) {
+		for (int i = _ballMatrix.size() - 1; i >= int(_ballMatrix.size()) - _visibleMatrixHeight && i >= 0; --i) {
+			//Balls
+			for (int j = 0; j < int(_ballMatrix[i].size()); ++j) {
+				if (_connectedMatrix[i][j]) _ballMatrix[i][j]->render(shake);
+			}
+		}
+	}
+	
+	else {
+		//Rows
+		for (int i = _ballMatrix.size() - 1; i >= int(_ballMatrix.size()) - _visibleMatrixHeight && i >= 0; --i) {
+			//Balls
+			for (int j = 0; j < int(_ballMatrix[i].size()); ++j) {
+				if (_connectedMatrix[i][j]) _ballMatrix[i][j]->render();
+			}
 		}
 	}
 }
