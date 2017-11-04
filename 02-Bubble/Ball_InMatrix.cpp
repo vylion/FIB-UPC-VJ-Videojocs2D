@@ -69,9 +69,9 @@ Ball_InMatrix::NeighborBalls Ball_InMatrix::checkCollision(Ball * b)
 	return OUTSIDE;
 }
 
-bool Ball_InMatrix::addNeighbor(Ball_InMatrix::posT b, int pos)
+bool Ball_InMatrix::addNeighbor(Ball_InMatrix::posT b, NeighborBalls pos)
 {
-	if (pos < 6 && pos >= 0) {
+	if (pos < OUTSIDE && pos >= 0) {
 		neighbors[pos] = b;
 		return true;
 	}

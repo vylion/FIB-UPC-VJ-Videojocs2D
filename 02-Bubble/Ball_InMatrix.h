@@ -23,7 +23,7 @@ public:
 	void setTopRow(const bool &topRow);
 
 	NeighborBalls checkCollision(Ball * b);
-	bool addNeighbor(posT b, int pos);
+	bool addNeighbor(posT b, NeighborBalls pos);
 	std::vector<posT> getNeighbors();
 	std::list<Ball_InMatrix*> getDisconnected();
 

@@ -23,7 +23,7 @@ public:
 				Texture *spritesheet,
 				ShaderProgram &shaderProgram);
 
-	State update(int &deltaTime, bool shake);
+	State update(int &deltaTime);
 	bool shakeAnim;
 	int descendAnimLeft;
 	void render();
@@ -33,6 +33,7 @@ public:
 
 	int ballsLeft();
 	unsigned int colorsLeftInMatrix();
+	void lowerRowsOnNextBall();
 
 private:
 	typedef Ball_InMatrix::posT posT;

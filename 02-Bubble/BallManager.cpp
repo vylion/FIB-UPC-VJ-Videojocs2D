@@ -41,7 +41,7 @@ void BallManager::init(const string & levelFile)
 int BallManager::update(int deltaTime)
 {
 	//Update ball matrix and store state for switching later on
-	int matState = _bmat->update(deltaTime, false);
+	int matState = _bmat->update(deltaTime);
 
 	switch (_state) {
 		//Just launched a ball, move to waiting for ball
@@ -56,7 +56,7 @@ int BallManager::update(int deltaTime)
 			if (_bmat->checkCollision(_launchedBall)) {
 				_state = state::W8_MATRIX;
 				//TODO
-				//if (_thrownBall%5 == 0)_bmat->lowerRowsOnNextBall();
+				if(_thrownBalls%5 == 0) _bmat->lowerRowsOnNextBall();
 			}
 			//Check if launched ball is off bounds
 			else if (_launchedBall->getPosition().y <= -_ballPixelSize || _launchedBall->getPosition().y > SCREEN_HEIGHT)
