@@ -38,6 +38,7 @@ void Aimer::init(const glm::vec2 &cannonPos, glm::vec2 &minRenderCoords, ShaderP
 
 	_state = state::READY;
 	_animationTime = 0;
+	_animationRatio = 0.f;
 
 	
 	_spritesheet = new Texture();
@@ -64,9 +65,8 @@ void Aimer::init(const glm::vec2 &cannonPos, glm::vec2 &minRenderCoords, ShaderP
 
 	//Ball_Held from BallManager
 	_nextBall = _bmng->getNextHeldBall();
-	_nextBall->initHeldPosition(NEXTBALL_COORDS, _angle);
 	getNewHeldBall();
-	_heldBall->initHeldPosition(calculateLaunchedBallPosition(), _angle);
+	_heldBall->initHeldPosition(_cannonPosition + MAINBOX_DISPLACEMENT + glm::vec2(8.f, 24.f), _angle);
 	_swappedBall = nullptr;
 	
 }
@@ -101,7 +101,7 @@ void Aimer::update(int deltaTime, int &bmngState)
 			loadUpdate(deltaTime);
 			checkButtons(deltaTime);
 			break;
-	}	
+	}
 }
 
 void Aimer::render()
@@ -109,16 +109,14 @@ void Aimer::render()
 	
 	//Render aimer sprite rotated
 	_cannon->render(_angle, glm::vec2(0.5f, 1.f));
-	//Render ball
-
-	_heldBall->render(_animationRatio*(float)M_PI*4.f);
-
-	if (_swappedBall != nullptr) _swappedBall->render();
-
-	if (_state == state::SHOOTING && _nextBall != nullptr) {
-
+	//Render balls
+	if (_nextBall != nullptr) {
 		_nextBall->render();
 	}
+	_heldBall->render(_animationRatio*(float)M_PI*4.f);
+	if (_swappedBall != nullptr) _swappedBall->render();
+
+	
 	_mainBox->render();
 	_swapBox->render();
 	
@@ -128,6 +126,8 @@ void Aimer::getNewHeldBall()
 {
 	//Held ball at <nextBall> position
 	_heldBall = _nextBall;
+	_nextBall = _bmng->getNextHeldBall();
+	_nextBall->initHeldPosition(NEXTBALL_COORDS, _angle);
 }
 
 void Aimer::checkButtons(int deltaTime)
@@ -149,14 +149,14 @@ void Aimer::checkButtons(int deltaTime)
 		if (Game::instance().getSpecialKey(GLUT_KEY_UP) || Game::instance().getKey(32)) {
 			//Set to just launched
 			_state = state::SHOOTING;
-			_nextBall = _bmng->getNextHeldBall();
+			//_nextBall = _bmng->getNextHeldBall();
 			//Init position and angle
-			_nextBall->initHeldPosition(NEXTBALL_COORDS, _angle);
+			//_nextBall->initHeldPosition(NEXTBALL_COORDS, _angle);
 			_heldBall->initHeldPosition(calculateLaunchedBallPosition(), _angle);
 			//Set initial size to 0 for spawn effect
 			int size = 0;
 			_heldBall->setSize(size);
-			_nextBall->setSize(size);
+			//_nextBall->setSize(size);
 			_animationTime = 0;
 			//_cannon->changeAnimation(0);
 			//_cannon->setTexturePosition((CANNON_SPRITESHEET_POSITION + glm::vec2(0,CANNON_SIZE.y)) / _spritesheet->getSize());
@@ -167,6 +167,7 @@ void Aimer::checkButtons(int deltaTime)
 void Aimer::loadUpdate(int deltaTime)
 {
 	_animationTime += deltaTime;
+	_nextBall->updateShooting(min(max(0, _animationTime - 500), SHOOTING_TIME), SHOOTING_TIME);
 	_animationRatio = (float)_animationTime / (float)LOADING_TIME;
 	_heldBall->setPosition(NEXTBALL_COORDS * (1 - _animationRatio) + (_cannonPosition + MAINBOX_DISPLACEMENT + glm::vec2(8.f, 24.f)) * _animationRatio);
 	if (_animationTime >= LOADING_TIME) {
@@ -182,13 +183,13 @@ void Aimer::shootUpdate(int deltaTime)
 	if (_animationTime <= SHOOTING_TIME) {
 		//Update ball
 		_heldBall->updateShooting(_animationTime, SHOOTING_TIME);
-		_nextBall->updateShooting(_animationTime, SHOOTING_TIME);
+		//_nextBall->updateShooting(_animationTime, SHOOTING_TIME);
 	}
 	//Finished loading
 	else {
 		//Restore initial size
 		_heldBall->updateShooting(SHOOTING_TIME, SHOOTING_TIME);
-		_nextBall->updateShooting(SHOOTING_TIME, SHOOTING_TIME);
+		//_nextBall->updateShooting(SHOOTING_TIME, SHOOTING_TIME);
 		//Launch ball
 		_bmng->launchHeldBall(_heldBall, _angle);
 		//_cannon->changeAnimation(0);
@@ -202,13 +203,20 @@ void Aimer::swapUpdate(int deltaTime)
 
 glm::vec2 Aimer::calculateLaunchedBallPosition()
 {
+	//Start on cannon beginning
+	glm::vec2 shootingPosition = _cannonPosition;
+	//We want the ball to be horizontally centered with the cannon so we will subtract
+	//half the ball size from the middle the cannon position (pos + size/2)
+	shootingPosition.x += CANNON_SIZE.x/2.f;
+	shootingPosition.x -= (float)_heldBall->getSize()/2.f;
+	//Subtract 12.f vertically so it is right above the cannon at all times regardless
+	//of current angle
+	shootingPosition.y -= (float)_heldBall->getSize()/4.f;
+
 	//Angle rotated 1/4 of circumference clockwise to calculate position correctly
 	float angle = _angle - float(M_PI / 2);
-	//Initial position at the middle of aimer
-	glm::vec2 shootingPosition = _cannonPosition + glm::vec2(CANNON_SIZE.x, 0.f) - _minRenderCoords;
-	//Add position relative to angle
-	shootingPosition.x += CANNON_SIZE.x * cos(_angle);
-	shootingPosition.y += CANNON_SIZE.y / 2.f * sin(_angle);
+	shootingPosition.x += CANNON_SIZE.x  * 2.f * cos(angle);
+	shootingPosition.y += CANNON_SIZE.y  * 1.5f * sin(angle);
 
 	return shootingPosition;
 }
