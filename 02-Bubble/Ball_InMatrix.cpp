@@ -6,6 +6,7 @@ Ball_InMatrix::Ball_InMatrix(ShaderProgram & shaderProgram, Ball * b)
 
 	setColor(b->getColor());
 	//snapToGrid();
+	_topRow = false;
 
 	neighbors = std::vector<posT>();
 }
@@ -48,7 +49,7 @@ Ball_InMatrix::NeighborBalls Ball_InMatrix::checkCollision(Ball * b)
 			}
 			else return BOT_LEFT;
 		}
-		else if (b->getPosition().y - getPosition().y < -getSize()*cos(30)) {
+		else if (b->getPosition().y - getPosition().y <= -getSize()*cos(30)) {
 			//TOP
 			if (b->getPosition().x - getPosition().x > 0) {
 				//RIGHT
@@ -76,9 +77,24 @@ bool Ball_InMatrix::addNeighbor(Ball_InMatrix::posT b)
 	return neighbors.size() <= 6;
 }
 
+bool Ball_InMatrix::removeNeighbor(posT b)
+{
+	std::vector<posT>::iterator it = std::find(neighbors.begin(), neighbors.end(), b);
+	if (it != neighbors.end()) {
+		neighbors.erase(it);
+		return true;
+	}
+	return false;
+}
+
 std::vector<Ball_InMatrix::posT> Ball_InMatrix::getNeighbors()
 {
 	return neighbors;
+}
+
+void Ball_InMatrix::resetNeighbors()
+{
+	neighbors = vector<posT>();
 }
 
 list<Ball_InMatrix*> Ball_InMatrix::getDisconnected()

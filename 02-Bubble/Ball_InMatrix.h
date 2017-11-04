@@ -23,7 +23,9 @@ public:
 
 	NeighborBalls checkCollision(Ball * b);
 	bool addNeighbor(posT b);
+	bool removeNeighbor(posT b);
 	std::vector<posT> getNeighbors();
+	void resetNeighbors();
 	std::list<Ball_InMatrix*> getDisconnected();
 
 private:

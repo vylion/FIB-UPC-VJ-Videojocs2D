@@ -67,7 +67,8 @@ BallMatrix::BallMatrix( int * colorMatrix,
 		_ballMatrix.push_back(ballRow);
 	}
 	
-	for (int i = visibleMatrixHeight; i <= levelHeight; ++i) {
+	int limit = levelHeight - visibleMatrixHeight + _ballMatrix.size();
+	for (int i = _ballMatrix.size(); i <= limit; ++i) {
 		std::vector<Ball_InMatrix*> ballRow;
 
 		for (int j = 0; j < matrixDimensions.x - i % 2; ++j) {
@@ -86,6 +87,10 @@ BallMatrix::BallMatrix( int * colorMatrix,
 	descendAnimLeft = 0;
 	shakeAnim = false;
 	updateFrontier();
+
+	for (int i = 0; i < _ballMatrix[0].size(); ++i) {
+		_ballMatrix[0][i]->setTopRow(true);
+	}
 }
 
 BallMatrix::State BallMatrix::update(int &deltaTime)
@@ -164,7 +169,7 @@ bool BallMatrix::checkCollision(Ball * b)
 			else ballPos.second++;
 		}
 
-		//ballPos = snapToGrid(b, pos);
+		if(validBall(ballPos)) ballPos = snapToGrid(b, pos);
 		
 		bool success = addBallToMat(ballPos, collided, b->getColor());
 		vector<posT> pop = vector<posT>();
@@ -410,6 +415,13 @@ bool BallMatrix::popBall(posT & p)
 {
 	_connectedMatrix[p.first][p.second] = false;
 	// Do animations
+	std::vector<posT> neighbors = _ballMatrix[p.first][p.second]->getNeighbors();
+	_ballMatrix[p.first][p.second]->resetNeighbors();
+
+	for (int i = 0; i < neighbors.size(); ++i) {
+		posT pos = neighbors[i];
+		_ballMatrix[pos.first][pos.second]->removeNeighbor(p);
+	}
 
 	return !_connectedMatrix[p.first][p.second];
 }
@@ -436,8 +448,18 @@ void BallMatrix::updateFrontier()
 
 	for (int i = 0; i < _connectedMatrix.size(); ++i) {
 		for (int j = 0; j < _connectedMatrix[i].size(); ++j) {
-			if (_connectedMatrix[i][j] && _ballMatrix[i][j]->getNeighbors().size() < 6) {
-				_collisionFrontier.push_back(posT(i, j));
+			if (_connectedMatrix[i][j]) {
+				int maxNeighbors = 6;
+
+				if (i == 0) maxNeighbors -= 2;
+				if (j == 0 || j == _ballMatrix[i].size() - 1) {
+					if (i % 2 == 0) maxNeighbors -= 2;
+					maxNeighbors--;
+				}
+
+				if (_ballMatrix[i][j]->getNeighbors().size() < maxNeighbors) {
+					_collisionFrontier.push_back(posT(i, j));
+				}
 			}
 		}
 	}
