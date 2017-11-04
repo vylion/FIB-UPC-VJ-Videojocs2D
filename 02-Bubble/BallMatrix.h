@@ -42,6 +42,7 @@ private:
 	std::vector< std::vector<Ball_InMatrix*> > _ballMatrix;
 	std::vector< std::vector<bool> > _connectedMatrix;
 	int _visibleMatrixHeight;
+	std::vector<posT> _collisionFrontier;
 
 	glm::vec2  _ballSizeInSpritesheet, _minBallCoords, _minRenderCoords;
 	int _ballSize;
@@ -51,11 +52,15 @@ private:
 	Ball_InMatrix * ballFromColor(int &color);
 	void passRowToShown();
 
-	Ball_InMatrix::posT snapToGrid(Ball *b);
+	posT snapToGrid(Ball *b, posT pos);
 	std::vector<posT> checkBallsAround(const Ball_InMatrix::posT &b);
+	std::vector<Ball_InMatrix::posT> checkSpaceAround(const posT & b);
 	void checkPopping(const posT & b, const unsigned int & color, std::vector<posT>& pop);
 	bool popBall(posT & p);
-	bool inMatrix(const Ball_InMatrix::posT &pos);
+	bool inMatrixRange(const Ball_InMatrix::posT &pos);
+	bool validBall(const Ball_InMatrix::posT &pos);
+	bool validSpace(const posT & pos);
+	void updateFrontier();
 };
 
 #pragma once

@@ -3,7 +3,6 @@
 #include "Collider.h"
 #include <utility>
 #include <list>
-#define POS_NULL posT(-1, -1)
 
 class Ball_InMatrix :
 	public Ball
@@ -23,7 +22,7 @@ public:
 	void setTopRow(const bool &topRow);
 
 	NeighborBalls checkCollision(Ball * b);
-	bool addNeighbor(posT b, NeighborBalls pos);
+	bool addNeighbor(posT b);
 	std::vector<posT> getNeighbors();
 	std::list<Ball_InMatrix*> getDisconnected();
 

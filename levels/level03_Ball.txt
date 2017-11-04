@@ -1,5 +1,5 @@
 BALLMAP
-14 9 6				-- Size of tile map in tiles (x, y) and visible starting height
+14 9 9				-- Size of tile map in tiles (x, y) and visible starting height
 16 16 				-- Tile size & block size
 ../media/images/balls.png	-- Tilesheet
 7 0				-- Number of available colors and min color
