@@ -53,13 +53,15 @@ int BallManager::update(int deltaTime)
 			//Update position etc
 			_launchedBall->update(deltaTime);
 			//Check for collisions
-			if (_bmat->checkCollision(_launchedBall)) {
+
+			/*if (_bmat->checkCollision(_launchedBall)) {
 				_state = state::W8_MATRIX;
 				//TODO
 				if(_thrownBalls%5 == 0) _bmat->lowerRowsOnNextBall();
 			}
 			//Check if launched ball is off bounds
-			else if (_launchedBall->getPosition().y <= -_ballPixelSize || _launchedBall->getPosition().y > SCREEN_HEIGHT)
+
+			else*/if (_launchedBall->getPosition().y <= -_ballPixelSize || _launchedBall->getPosition().y > SCREEN_HEIGHT)
 				_state = state::W8_AIMER;
 			break;
 		//Waiting for feedback from matrix after a collision

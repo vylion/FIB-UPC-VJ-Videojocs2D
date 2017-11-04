@@ -6,12 +6,14 @@ class Ball_Held :
 {
 public:
 	Ball_Held(ShaderProgram & shaderProgram, Ball * b);
-	void initHeldPosition(const glm::vec2 &aimerPos, const glm::vec2 &aimerSize);
-	void update(int deltaTime, float &angle);
+	void initHeldPosition(const glm::vec2 position, float &angle);
+	void updateShooting(int deltaTime, int maxTime);
 
 	float getAngle();
 
 private:
 	glm::vec2 _aimerPos, _aimerSize, _minRenderCoords;
+	glm::vec2 _shootingPosition;
+	int _originalSize;
 	float _angle;
 };

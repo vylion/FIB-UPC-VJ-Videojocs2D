@@ -32,6 +32,7 @@ Sprite::Sprite(const glm::vec2 &quadSize, const glm::vec2 &spriteSize, Texture *
 	shaderProgram = program;
 	currentAnimation = -1;
 	position = glm::vec2(0.f);
+	initialSize = quadSize;
 	size = quadSize;
 }
 
@@ -51,7 +52,11 @@ void Sprite::update(int deltaTime)
 
 void Sprite::render() const
 {
-	glm::mat4 modelview = glm::translate(glm::mat4(1.0f), glm::vec3(position.x, position.y, 0.f));
+	glm::mat4 modelview = glm::mat4(1.0f);
+	modelview = glm::translate(modelview, glm::vec3(position.x , position.y, 0.f));
+	modelview = glm::translate(modelview, glm::vec3(size.x / 2, size.y / 2, 0.f));
+	modelview = glm::scale(modelview, glm::vec3(size.x/initialSize.x,size.y/initialSize.y,1.f));
+	modelview = glm::translate(modelview, glm::vec3(-size.x / 2, -size.y / 2, 0.f));
 	shaderProgram->setUniformMatrix4f("modelview", modelview);
 	shaderProgram->setUniform2f("texCoordDispl", texCoordDispl.x, texCoordDispl.y);
 	glEnable(GL_TEXTURE_2D);
@@ -73,8 +78,10 @@ void Sprite::render(glm::vec2 displacement)
 //Renders a rotated sprite at @angle
 void Sprite::render(float angle) const
 {
-	glm::mat4 modelview = glm::translate(glm::mat4(1.0f), glm::vec3(position.x, position.y, 0.f));
+	glm::mat4 modelview = glm::mat4(1.0f);
+	modelview = glm::translate(modelview, glm::vec3(position.x, position.y, 0.f));
 	modelview = glm::translate(modelview, glm::vec3(size.x / 2, size.y / 2, 0.f));
+	modelview = glm::scale(modelview, glm::vec3(size.x / initialSize.x, size.y / initialSize.y, 1.f));
 	modelview = glm::rotate(modelview, angle, glm::vec3(0.f, 0.f, 1.f));
 	modelview = glm::translate(modelview, glm::vec3(-size.x/2, -size.y/2, 0.f));
 	shaderProgram->setUniformMatrix4f("modelview", modelview);
@@ -94,10 +101,14 @@ Renders a rotated sprite at @angle, and relative to point @rotationAxisRatio
 */
 void Sprite::render(float angle, const glm::vec2 rotationAxisRatio) const
 {
-	glm::mat4 modelview = glm::translate(glm::mat4(1.0f), glm::vec3(position.x, position.y, 0.f));
+	glm::mat4 modelview = glm::mat4(1.0f);
+	modelview = glm::translate(modelview, glm::vec3(position.x, position.y, 0.f));
 	modelview = glm::translate(modelview, glm::vec3(size.x * rotationAxisRatio.x, size.y * rotationAxisRatio.y, 0.f));
 	modelview = glm::rotate(modelview, angle, glm::vec3(0.f, 0.f, 1.f));
 	modelview = glm::translate(modelview, glm::vec3(-size.x * rotationAxisRatio.x, -size.y * rotationAxisRatio.y, 0.f));
+	modelview = glm::translate(modelview, glm::vec3(size.x / 2, size.y / 2, 0.f));
+	modelview = glm::scale(modelview, glm::vec3(size.x / initialSize.x, size.y / initialSize.y, 1.f));
+	modelview = glm::translate(modelview, glm::vec3(-size.x / 2, -size.y / 2, 0.f));
 	shaderProgram->setUniformMatrix4f("modelview", modelview);
 	shaderProgram->setUniform2f("texCoordDispl", texCoordDispl.x, texCoordDispl.y);
 	glEnable(GL_TEXTURE_2D);

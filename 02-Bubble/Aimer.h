@@ -9,7 +9,7 @@ class Aimer
 {
 
 public:
-	enum state {READY, ANIMATING, LAUNCHED_BALL, W8_BALL_MANAGER };
+	enum state {READY, SHOOTING, SWAPPING, LOADING, LAUNCHED_BALL, W8_BALL_MANAGER };
 
 	Aimer() {}
 	void init(const glm::vec2 &pos, glm::vec2 &minRenderCoords, Texture *tex,  ShaderProgram &shaderProgram, BallManager *bmng);
@@ -32,6 +32,10 @@ private:
 	//Check key presses
 	void checkButtons(int deltaTime);
 	//Animate ball load
-	void animationUpdate(int deltaTime);
+	void loadUpdate(int deltaTime);
+	void shootUpdate(int deltaTime);
+	void swapUpdate(int deltaTime);
+
+	glm::vec2 calculateLaunchedBallPosition();
 };
 

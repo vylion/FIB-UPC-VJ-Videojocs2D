@@ -12,6 +12,7 @@
 
 #define WIN_SOUND "../media/audio/sounds/game_win.ogg"
 #define LOSE_SOUND "../media/audio/sounds/game_lose.ogg"
+#define MUSIC_FILE "../media/audio/music/level_bgm.ogg"
 
 #define LEVEL_NUMBER_SIZE glm::vec2(24.f,24.f)
 #define LEVEL_NUMBER_POSITION glm::vec2(552.f, 52.f)

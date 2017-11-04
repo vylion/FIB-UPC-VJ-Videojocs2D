@@ -8,7 +8,8 @@
 #define MAX_ANGLE 1.f							//In rads, or 1*180/pi degrees
 #define AIMER_SIZE glm::vec2(16.f,64.f)			//Pixel size in spritesheet and in game
 
-#define ANIMATION_TIME 400
+#define LOADING_TIME 400
+#define SHOOTING_TIME 200
 
 void Aimer::init(const glm::vec2 & pos, glm::vec2 &minRenderCoords, Texture *tex, ShaderProgram & shaderProgram, BallManager *bmng)
 {
@@ -33,7 +34,7 @@ void Aimer::init(const glm::vec2 & pos, glm::vec2 &minRenderCoords, Texture *tex
 	_sprite->setPosition(_position + _minRenderCoords);
 	//Ball_Held from BallManager
 	getNewHeldBall();
-	_heldBall->initHeldPosition(_position, AIMER_SIZE);
+	_heldBall->initHeldPosition(calculateLaunchedBallPosition(), _angle);
 	
 }
 
@@ -48,39 +49,35 @@ void Aimer::update(int deltaTime, int &bmngState)
 					_state = state::READY;
 					break;
 			}
-			//No break because we want to update held ball
 		case state::READY:
-			_heldBall->update(deltaTime, _angle);
+			checkButtons(deltaTime);
 			break;
 		//Just launched a ball, get a new ball and start animation
 		case state::LAUNCHED_BALL:
 			getNewHeldBall();
-			_state = state::ANIMATING;
+			_state = state::LOADING;
 			_animationTime = 0;
+			checkButtons(deltaTime);
+			break;
+		case state::SHOOTING:
+			shootUpdate(deltaTime);
 			break;
 		//Animate the new heldBall
-		case state::ANIMATING:
-			animationUpdate(deltaTime);
+		case state::LOADING:
+			loadUpdate(deltaTime);
+			checkButtons(deltaTime);
 			break;
-	}
-	/*
-	if (!_bmng->ballUpdatesLeft()) {
-		//And there is no ball held, we ask for a new ball
-		if (_heldBall == nullptr) getNewHeldBall();
-	}
-	//If we have a held ball, update it (position, etc)
-	if (_heldBall != nullptr) 
-	*/
-
-	checkButtons(deltaTime);
+	}	
 }
 
 void Aimer::render()
 {
+	
 	//Render aimer sprite rotated
 	_sprite->render(_angle, glm::vec2(0.5f, 37.75f / AIMER_SIZE.y));
 	//Render ball
 	_heldBall->render();
+	
 }
 
 void Aimer::getNewHeldBall()
@@ -107,21 +104,59 @@ void Aimer::checkButtons(int deltaTime)
 	if (_state == state::READY){
 		//Shoot with UP or SPACE
 		if (Game::instance().getSpecialKey(GLUT_KEY_UP) || Game::instance().getKey(32)) {
-			//Tell ballManager to shoot the ball
-			_bmng->launchHeldBall(_heldBall, _angle);
 			//Set to just launched
-			_state = state::LAUNCHED_BALL;
+			_state = state::SHOOTING;
+			//Init position and angle
+			_heldBall->initHeldPosition(calculateLaunchedBallPosition(), _angle);
+			//Set initial size to 0 for spawn effect
+			int size = 0;
+			_heldBall->setSize(size);
+			_animationTime = 0;
 		}
 	}
 }
 
-void Aimer::animationUpdate(int deltaTime)
+void Aimer::loadUpdate(int deltaTime)
 {
 	_animationTime += deltaTime;
-	float ratio = (float)_animationTime / (float)ANIMATION_TIME;
-	_heldBall->setPosition( _position * ratio);
-	if (_animationTime >= ANIMATION_TIME) {
-		_heldBall->initHeldPosition(_position, AIMER_SIZE);
+	float ratio = (float)_animationTime / (float)LOADING_TIME;
+	_heldBall->setPosition(_position * ratio);
+	if (_animationTime >= LOADING_TIME) {
 		_state = state::W8_BALL_MANAGER;
 	}
+}
+
+void Aimer::shootUpdate(int deltaTime)
+{
+	_animationTime += deltaTime;
+	//Hasn't finished loading
+	if (_animationTime <= SHOOTING_TIME) {
+		//Update ball
+		_heldBall->updateShooting(_animationTime, SHOOTING_TIME);
+	}
+	//Finished loading
+	else {
+		//Restore initial size
+		_heldBall->updateShooting(SHOOTING_TIME, SHOOTING_TIME);
+		//Launch ball
+		_bmng->launchHeldBall(_heldBall, _angle);
+		_state = state::LAUNCHED_BALL;
+	}
+}
+
+void Aimer::swapUpdate(int deltaTime)
+{
+}
+
+glm::vec2 Aimer::calculateLaunchedBallPosition()
+{
+	//Angle rotated 1/4 of circumference clockwise to calculate position correctly
+	float angle = _angle - float(M_PI / 2);
+	//Initial position at the middle of aimer
+	glm::vec2 shootingPosition = _position + glm::vec2(0.f, AIMER_SIZE.y / 2);
+	//Add position relative to angle
+	shootingPosition.x += AIMER_SIZE.x * cos(_angle);
+	shootingPosition.y += AIMER_SIZE.y / 4 * sin(_angle);
+
+	return shootingPosition;
 }
