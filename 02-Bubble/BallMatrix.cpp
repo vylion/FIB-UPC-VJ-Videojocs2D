@@ -136,7 +136,7 @@ bool BallMatrix::checkCollision(Ball * b)
 	Ball_InMatrix::NeighborBalls collided = Ball_InMatrix::OUTSIDE;
 	posT pos;
 
-	for (int i = 0; i < nearby.size() && collided == Ball_InMatrix::OUTSIDE; ++i) {
+	for (unsigned int i = 0; i < nearby.size() && collided == Ball_InMatrix::OUTSIDE; ++i) {
 		pos = nearby[i];
 		collided = _ballMatrix[pos.first][pos.second]->checkCollision(b);
 	}
@@ -165,11 +165,11 @@ bool BallMatrix::checkCollision(Ball * b)
 
 		bool success = addBallToMat(ballPos, collided, b->getColor());
 		vector<posT> pop = vector<posT>();
-		unsigned int mask = pow(2, b->getColor());
+		unsigned int mask = (unsigned int)pow(2, b->getColor());
 		checkPopping(ballPos, mask, pop);
 
 		if (pop.size() >= 3) {
-			for (int i = 0; i < pop.size(); ++i) {
+			for (unsigned int i = 0; i < pop.size(); ++i) {
 				pos = pop[i];
 				success = success && popBall(pos); // Animation and control
 			}
@@ -293,22 +293,22 @@ Ball_InMatrix::posT BallMatrix::snapToGrid(Ball *b)
 {
 	glm::vec2 pos = b->getPosition();
 
-	int i = (pos.y - _minBallCoords.y) / _ballSize;
+	int i = (int)(pos.y - _minBallCoords.y) / _ballSize;
 	//i += -1 - _matrixOffset.y;
 	if (int(_ballMatrix.size()) - _visibleMatrixHeight > 0) i += int(_ballMatrix.size()) - _visibleMatrixHeight;
 
 	int j;
 	if (i % 2 == 0) {
-		j = (pos.x - _minBallCoords.x) / _ballSize;
+		j = (int)(pos.x - _minBallCoords.x) / _ballSize;
 	}
 	else {
-		j = (pos.x - _minBallCoords.x) / _ballSize;
+		j = (int)(pos.x - _minBallCoords.x) / _ballSize;
 	}
 	//j += -2 - _matrixOffset.x;
 	
 	int visibleOffset = _ballMatrix.size() - _visibleMatrixHeight;
 	//if (visibleOffset < 0) visibleOffset = 0;
-	posT posInMatrix(i + visibleOffset - _minRenderCoords.y/_ballSize, j);
+	posT posInMatrix(i + visibleOffset - (int)_minRenderCoords.y/_ballSize, j);
 	return posInMatrix;
 }
 
@@ -353,11 +353,11 @@ void BallMatrix::checkPopping(const posT & b, const unsigned int & mask, std::ve
 {
 	vector<posT> group = _ballMatrix[b.first][b.second]->getNeighbors();
 	
-	for (int i = 0; i < group.size(); ++i) {
+	for (unsigned int i = 0; i < group.size(); ++i) {
 		posT next = group[i];
-		unsigned int color = pow(2, _ballMatrix[next.first][next.second]->getColor());
+		unsigned int color = (unsigned int)pow(2, _ballMatrix[next.first][next.second]->getColor());
 
-		if (color & mask != 0) {
+		if ((color & mask) != 0) {
 			if (std::find(pop.begin(), pop.end(), next) == pop.end()) {
 				//It has not been popped
 				pop.push_back(next);
@@ -378,5 +378,5 @@ bool BallMatrix::popBall(posT & p)
 //Returns true if the position is inside the matrix dimensions and that position contains a valid ball
 bool BallMatrix::inMatrix(const posT & pos)
 {
-	return (pos.first >= 0 && pos.first < _connectedMatrix.size()) && (pos.second >= 0 && pos.second < _connectedMatrix[pos.first].size()) && _connectedMatrix[pos.first][pos.second];
+	return (pos.first >= 0 && pos.first < (int)_connectedMatrix.size()) && (pos.second >= 0 && pos.second < (int)_connectedMatrix[pos.first].size()) && _connectedMatrix[pos.first][pos.second];
 }
