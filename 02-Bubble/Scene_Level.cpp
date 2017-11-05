@@ -198,7 +198,7 @@ int Scene_Level::update(int deltaTime)
 								break;
 						}
 						aimer->update(deltaTime, bmngState);
-						_scoreVal = INITIAL_SCORE + 1 + bmng->getAccumulatedScoreVariation() - (int)currentTime/1000;
+						_scoreVal = INITIAL_SCORE + bmng->getAccumulatedScoreVariation() - (int)currentTime/1000;
 						_scoreVal = max(0, _scoreVal);
 						updateScoreSprites();
 					}
