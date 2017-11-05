@@ -173,7 +173,6 @@ void Scene_Level::init(int level)
 
 int Scene_Level::update(int deltaTime)
 {
-	currentTime += deltaTime;
 	checkButtons(deltaTime);
 
 	switch (_levelStatus) {
@@ -183,6 +182,7 @@ int Scene_Level::update(int deltaTime)
 				//Not paused, keep updating game elements
 				case state::RUNNING:
 					{
+						currentTime += deltaTime;
 						int bmngState = bmng->update(deltaTime);
 						switch (bmngState) {
 							//No balls left in BallManager
@@ -330,8 +330,7 @@ void Scene_Level::checkButtons(int deltaTime)
 			_buttons[_selectedButton]->select();
 		}
 	}
-
-	if (Game::instance().getKeyReleased(27)) {
+	else if (_state != state::PAUSED && Game::instance().getKeyReleased(27)) {
 		Pause::instance().init(&texProgram);
 		_state = state::PAUSED;
 	}
