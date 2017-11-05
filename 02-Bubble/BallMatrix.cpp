@@ -24,7 +24,7 @@ BallMatrix::BallMatrix( int * colorMatrix,
 	int visibleOffset = matrixDimensions.y - visibleMatrixHeight;
 	//if (visibleOffset < 0) visibleOffset = 0;
 
-	_connectedMatrix = std::vector< std::vector<bool> >(int(visibleOffset + levelHeight + 1), std::vector<bool>(int(matrixDimensions.x), false));
+	_connectedMatrix = std::vector< std::vector<bool> >(visibleOffset + levelHeight + 1, std::vector<bool>((int)matrixDimensions.x, false));
 
 	for (int i = 0; i < matrixDimensions.y; ++i) {
 		std::vector<Ball_InMatrix*> ballRow;
@@ -92,12 +92,12 @@ BallMatrix::BallMatrix( int * colorMatrix,
 	shakeCount = 0;
 	shakeSide = 1;
 
-	for (int i = 0; i < _ballMatrix[0].size(); ++i) {
+	for (int i = 0; i < (int)_ballMatrix[0].size(); ++i) {
 		_ballMatrix[0][i]->setTopRow(true);
 	}
 
 	srand((unsigned)time(0));
-	float k = (rand() % 360)*M_PI / 180;
+	float k = float((rand() % 360)*M_PI / 180);
 	shake = glm::vec2(sin(k), cos(k));
 }
 
@@ -107,30 +107,32 @@ BallMatrix::State BallMatrix::update(int &deltaTime)
 		shakeCount += deltaTime;
 		if (shakeCount > SHAKE_COUNT_MAX) {
 			shakeCount = 0;
-			//shakeSide = -shakeSide;
-			float k = (rand() % 360)*M_PI/180;
-			shake = glm::vec2(sin(k), 0.8f*cos(k));
+			shakeSide = -shakeSide;
+			float k = float((rand() % 360)*M_PI/180);
+			shake = glm::vec2(shakeSide*sin(k), shakeSide*0.6f*cos(k));
 		}
 	}
 
 	if (descendAnimLeft > 0) {
 		descendAnimLeft -= deltaTime;
+
 		if (descendAnimLeft < 0) {
 			descendAnimLeft = 0;
 			passRowToShown();
 		}
+
 		return UPDATING;
 	}
 
 	//Last row has at least 1 ball -> lose
 	int last = _ballMatrix.size() - 1;
-	for (int j = 0; j < int(_ballMatrix[last].size()); ++j) {
+	for (int j = 0; j < (int)_ballMatrix[last].size(); ++j) {
 		//_ballMatrix[i][j]->update(deltaTime);
 		if (_connectedMatrix[last][j]) return LOST;
 	}
 	
 	//First row has at least 1 ball -> game keeps running
-	for (int j = 0; j < int(_ballMatrix[0].size()); ++j) {
+	for (int j = 0; j < (int)_ballMatrix[0].size(); ++j) {
 		//_ballMatrix[i][j]->update(deltaTime);
 		if (_connectedMatrix[0][j]) return RUNNING;
 	}
@@ -141,19 +143,46 @@ BallMatrix::State BallMatrix::update(int &deltaTime)
 void BallMatrix::render()
 {
 	if (shakeAnim) {
-		for (int i = _ballMatrix.size() - 1; i >= int(_ballMatrix.size()) - _visibleMatrixHeight && i >= 0; --i) {
+		for (int i = _ballMatrix.size() - 1; i >= (int)_ballMatrix.size() - _visibleMatrixHeight && i >= 0; --i) {
 			//Balls
-			for (int j = 0; j < int(_ballMatrix[i].size()); ++j) {
+			for (int j = 0; j < (int)_ballMatrix[i].size(); ++j) {
 				if (_connectedMatrix[i][j]) _ballMatrix[i][j]->render(shake);
+			}
+		}
+	}
+
+	else if (descendAnimLeft > 0) {
+		float descendPercent = ((float)DESCEND_ANIM_TIME - (float)descendAnimLeft) / (float)DESCEND_ANIM_TIME;
+		glm::vec2 descend = glm::vec2(0, descendPercent * _ballSize);
+
+		int size = min(_ballSize, (int)(descendPercent * _ballSize));
+		glm::vec2 pos = glm::vec2((float)_ballSize / 2.f) - glm::vec2(descendPercent * _ballSize / 2.f);
+		pos.y += _ballSize; //So it appears one row below; the row it will snap to, in passRowToShown
+
+		int newRow = (int)_ballMatrix.size() - _visibleMatrixHeight - 1;
+
+		if (newRow >= 0) {
+			for (int j = 0; j < (int)_ballMatrix[newRow].size(); ++j) {
+				if (_connectedMatrix[newRow][j]) {
+					_ballMatrix[newRow][j]->setSize(size);
+					_ballMatrix[newRow][j]->render(pos);
+				}
+			}
+		}
+
+		for (int i = _ballMatrix.size() - 1; i >= newRow + 1 && i >= 0; --i) {
+			//Balls
+			for (int j = 0; j < (int)_ballMatrix[i].size(); ++j) {
+				if (_connectedMatrix[i][j]) _ballMatrix[i][j]->render(descend);
 			}
 		}
 	}
 	
 	else {
 		//Rows
-		for (int i = _ballMatrix.size() - 1; i >= int(_ballMatrix.size()) - _visibleMatrixHeight && i >= 0; --i) {
+		for (int i = _ballMatrix.size() - 1; i >= (int)_ballMatrix.size() - _visibleMatrixHeight && i >= 0; --i) {
 			//Balls
-			for (int j = 0; j < int(_ballMatrix[i].size()); ++j) {
+			for (int j = 0; j < (int)_ballMatrix[i].size(); ++j) {
 				if (_connectedMatrix[i][j]) _ballMatrix[i][j]->render();
 			}
 		}
@@ -290,10 +319,10 @@ unsigned int BallMatrix::colorsLeftInMatrix()
 	unsigned int res = 0;
 
 
-	for (int i = 0; i < int(_ballMatrix.size()); ++i) {
+	for (int i = 0; i < (int)_ballMatrix.size(); ++i) {
 		//Balls
-		for (int j = 0; j < int(_ballMatrix[i].size()); ++j) {
-			if (_connectedMatrix[i][j]) res = res | unsigned int(pow(2, _ballMatrix[i][j]->getColor()));
+		for (int j = 0; j < (int)_ballMatrix[i].size(); ++j) {
+			if (_connectedMatrix[i][j]) res = res | (unsigned int)pow(2, _ballMatrix[i][j]->getColor());
 		}
 	}
 
@@ -318,8 +347,15 @@ Ball_InMatrix * BallMatrix::ballFromColor(int & color)
 //Destroys last row of matrix, and moves down all balls for the height of a row
 void BallMatrix::passRowToShown()
 {
-	for (int i = 0; i < int(_ballMatrix.size()); ++i) {
-		for (int j = 0; j < int(_ballMatrix[i].size()); ++j) {
+	int newRow = (int)_ballMatrix.size() - _visibleMatrixHeight - 1;
+	if (newRow >= 0) {
+		for (int j = 0; j < (int)_ballMatrix[newRow].size(); ++j) {
+			_ballMatrix[newRow][j]->setSize(_ballSize);
+		}
+	}
+
+	for (int i = 0; i < (int)_ballMatrix.size(); ++i) {
+		for (int j = 0; j < (int)_ballMatrix[i].size(); ++j) {
 			glm::vec2 currentPos = _ballMatrix[i][j]->getPosition();
 			glm::vec2 nextPos = glm::vec2(currentPos.x, currentPos.y + _ballSize);
 			_ballMatrix[i][j]->setPosition(nextPos);
@@ -334,14 +370,14 @@ void BallMatrix::passRowToShown()
 Ball_InMatrix::posT BallMatrix::snapToGrid(Ball *b, posT pos)
 {
 	posT ballPos;
-	int minDist = pow(_ballMatrix.size()*_ballSize, 2) + pow(_ballMatrix.size()*_ballSize, 2);
+	double minDist = pow(_ballMatrix.size()*_ballSize, 2) + pow(_ballMatrix.size()*_ballSize, 2);
 	glm::vec2 coord;
 	vector<posT> space = checkSpaceAround(pos);
 
 	for (int i = 0; i < space.size(); ++i) {
 		coord = _ballMatrix[space[i].first][space[i].second]->getPosition();
 
-		int dist = pow(coord.x - b->getPosition().x, 2) + pow(coord.y - b->getPosition().y, 2);
+		double dist = pow(coord.x - b->getPosition().x, 2) + pow(coord.y - b->getPosition().y, 2);
 
 		if (dist < minDist) {
 			minDist = dist;
@@ -447,16 +483,16 @@ std::vector<Ball_InMatrix::posT> BallMatrix::checkNotHanging()
 {
 	std::vector<posT> pop = std::vector<posT>();
 
-	std::vector< std::vector<bool> > connected = std::vector< std::vector<bool> >(_connectedMatrix.size(), std::vector<bool>(int(_connectedMatrix[0].size()), false));
+	std::vector< std::vector<bool> > connected = std::vector< std::vector<bool> >(_connectedMatrix.size(), std::vector<bool>((int)_connectedMatrix[0].size(), false));
 
 	int i;
 	posT p;
-	for (i = 0; i < _connectedMatrix[0].size(); ++i) {
+	for (i = 0; i < (int)_connectedMatrix[0].size(); ++i) {
 		connected[0][i] = _connectedMatrix[0][i];
 	}
 
-	for (i = 1; i < _connectedMatrix.size(); ++i) {
-		for (int j = 0; j < _connectedMatrix[i].size(); ++j) {
+	for (i = 1; i < (int)_connectedMatrix.size(); ++i) {
+		for (int j = 0; j < (int)_connectedMatrix[i].size(); ++j) {
 			if (_connectedMatrix[i][j]) {
 				//TOP LEFT
 				p = posT(i - 1, j - 1 + (i % 2));
@@ -517,7 +553,7 @@ bool BallMatrix::popBall(posT & p)
 	std::vector<posT> neighbors = _ballMatrix[p.first][p.second]->getNeighbors();
 	_ballMatrix[p.first][p.second]->resetNeighbors();
 
-	for (int i = 0; i < neighbors.size(); ++i) {
+	for (int i = 0; i < (int)neighbors.size(); ++i) {
 		posT pos = neighbors[i];
 		_ballMatrix[pos.first][pos.second]->removeNeighbor(p);
 	}
@@ -545,8 +581,8 @@ void BallMatrix::updateFrontier()
 {
 	_collisionFrontier = vector<posT>();
 
-	for (int i = 0; i < _ballMatrix.size(); ++i) {
-		for (int j = 0; j < _ballMatrix[i].size(); ++j) {
+	for (int i = 0; i < (int)_ballMatrix.size(); ++i) {
+		for (int j = 0; j < (int)_ballMatrix[i].size(); ++j) {
 			if (_connectedMatrix[i][j]) {
 				int maxNeighbors = 6;
 
@@ -556,7 +592,7 @@ void BallMatrix::updateFrontier()
 					maxNeighbors--;
 				}
 
-				if (_ballMatrix[i][j]->getNeighbors().size() < maxNeighbors) {
+				if ((int)_ballMatrix[i][j]->getNeighbors().size() < maxNeighbors) {
 					_collisionFrontier.push_back(posT(i, j));
 				}
 			}

@@ -101,15 +101,3 @@ list<Ball_InMatrix*> Ball_InMatrix::getDisconnected()
 {
 	return list<Ball_InMatrix*>();
 }
-
-/*
-void Ball_InMatrix::snapToGrid() {
-	glm::vec2 closestValidPos = getPosition();
-	// pos/size to get the lower snap point
-	// %size to know at what above point we are right now
-	// /size/2 to know if we are on the first or second half
-	// *size to snap to correct point
-	closestValidPos.x = float(int(closestValidPos.x) / getSize() + ((int(closestValidPos.x) % getSize()) / (getSize() / 2)) * getSize());
-	closestValidPos.y = float(int(closestValidPos.y) / getSize() + ((int(closestValidPos.y) % getSize()) / (getSize() / 2)) * getSize());
-	setPosition(closestValidPos);
-}*/

@@ -17,6 +17,7 @@ public:
 
 	unsigned int getColor();
 	void setColor(int color);
+	unsigned int getColorMask();
 
 	int getSize();
 	void setSize(int &size);

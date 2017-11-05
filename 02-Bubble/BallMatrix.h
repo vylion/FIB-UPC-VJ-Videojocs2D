@@ -26,6 +26,7 @@ public:
 				ShaderProgram &shaderProgram);
 
 	State update(int &deltaTime);
+
 	bool shakeAnim;
 	int shakeCount, shakeSide;
 	glm::vec2 shake;
@@ -41,7 +42,7 @@ public:
 
 private:
 	typedef Ball_InMatrix::posT posT;
-	const static int DESCEND_ANIM_TIME = 100;
+	const static int DESCEND_ANIM_TIME = 1000;
 	const static int SHAKE_COUNT_MAX = 20;
 
 	std::vector< std::vector<Ball_InMatrix*> > _ballMatrix;
