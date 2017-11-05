@@ -63,7 +63,6 @@ BallMatrix::BallMatrix( int * colorMatrix,
 					_ballMatrix[neighbor.first][neighbor.second]->addNeighbor(posT(i, j));
 				}
 			}
-
 			iterated++;
 		}
 		_ballMatrix.push_back(ballRow);
@@ -81,7 +80,6 @@ BallMatrix::BallMatrix( int * colorMatrix,
 			b->setOddRow((i % 2 != 0));
 			ballRow.push_back(b);
 		}
-
 		_ballMatrix.push_back(ballRow);
 	}
 
@@ -104,6 +102,17 @@ BallMatrix::BallMatrix( int * colorMatrix,
 
 BallMatrix::State BallMatrix::update(int &deltaTime)
 {
+	vector<Ball_Falling*>::iterator it = fallingBalls.begin();
+	Ball_Falling* current;
+
+	while (it != fallingBalls.end()) {
+		current = *it;
+		current->update(deltaTime);
+
+		if (current->dead()) it = fallingBalls.erase(it);
+		else ++it;
+	}
+
 	if (shakeAnim) {
 		shakeCount += deltaTime;
 		if (shakeCount > SHAKE_COUNT_MAX) {
@@ -136,20 +145,7 @@ BallMatrix::State BallMatrix::update(int &deltaTime)
 	for (int j = 0; j < (int)_ballMatrix[0].size(); ++j) {
 		//_ballMatrix[i][j]->update(deltaTime);
 
-		if (_connectedMatrix[0][j]) {
-			vector<Ball_Falling*>::iterator it = fallingBalls.begin();
-			Ball_Falling* current;
-
-			while (it != fallingBalls.end()) {
-				current = *it;
-				current->update(deltaTime);
-
-				if (current->dead()) it = fallingBalls.erase(it);
-				else ++it;
-			}
-
-			return RUNNING;
-		}
+		if (_connectedMatrix[0][j]) return RUNNING;
 	}
 
 	return WON;
@@ -157,7 +153,7 @@ BallMatrix::State BallMatrix::update(int &deltaTime)
 
 void BallMatrix::render()
 {
-	for (int i = 0; i < fallingBalls.size(); ++i) {
+	for (int i = 0; i < (int)fallingBalls.size(); ++i) {
 		fallingBalls[i]->render();
 	}
 
@@ -214,9 +210,10 @@ bool BallMatrix::checkCollision(Ball * b)
 	bool collision = false;;
 
 	int visibleOffset = (int)_ballMatrix.size() - _visibleMatrixHeight;
-	if (b->getPosition().y <= (float)_minBallCoords.y - visibleOffset*_ballSize + 0.25f) {
+	float maxHeight = _minRenderCoords.y + _ballSize *(0.2f + max(-visibleOffset, 0));
+	if (b->getPosition().y <= maxHeight) {
 		//COLLISIONS WITH CEILING
-		pos = posT(0, (b->getPosition().x - _minBallCoords.x) / (float)_ballSize);
+		pos = posT(max(visibleOffset, 0), (b->getPosition().x - _minBallCoords.x) / (float)_ballSize);
 		ballPos = snapToGrid(b, pos);
 
 		collision = true;
@@ -225,7 +222,7 @@ bool BallMatrix::checkCollision(Ball * b)
 		//COLLISIONS WITH BALLS
 		Ball_InMatrix::NeighborBalls collided = Ball_InMatrix::OUTSIDE;
 
-		for (int i = 0; i < _collisionFrontier.size() && collided == Ball_InMatrix::OUTSIDE; ++i) {
+		for (int i = 0; i < (int)_collisionFrontier.size() && collided == Ball_InMatrix::OUTSIDE; ++i) {
 			pos = _collisionFrontier[i];
 			collided = _ballMatrix[pos.first][pos.second]->checkCollision(b);
 		}
@@ -264,14 +261,16 @@ bool BallMatrix::checkCollision(Ball * b)
 		if (pop.size() >= 3) {
 			for (unsigned int i = 0; i < pop.size(); ++i) {
 				pos = pop[i];
+
+				float k = float((rand() % 360)*M_PI / 180);
+				glm::vec2 speed = glm::vec2(std::cos(k), std::sin(k));
+				Ball_Falling * falling = new Ball_Falling(_shaderProgram, _ballMatrix[pos.first][pos.second], 0.15f * speed, _minRenderCoords);
+				fallingBalls.push_back(falling);
+
 				success = success && popBall(pos); // Animation and control
 			}
 
-			pop = checkNotHanging();
-			for (unsigned int i = 0; i < pop.size(); ++i) {
-				pos = pop[i];
-				success = success && popBall(pos); // Animation and control
-			}
+			popNotHanging();
 		}
 
 		updateFrontier();
@@ -283,7 +282,7 @@ bool BallMatrix::checkCollision(Ball * b)
 		else {
 			bool descend = true;
 			int row = max((int)_ballMatrix.size() - _visibleMatrixHeight, 0);
-			for (int i = 0; i < _ballMatrix[row].size() && descend; ++i) {
+			for (int i = 0; i < (int)_ballMatrix[row].size() && descend; ++i) {
 				descend = descend && !(_connectedMatrix[row][i]);
 			}
 			if (descend) descendAnimLeft = DESCEND_ANIM_TIME;
@@ -405,9 +404,10 @@ void BallMatrix::passRowToShown()
 			_ballMatrix[i][j]->setPosition(nextPos);
 		}
 	}
+
 	_ballMatrix.pop_back();
 	_connectedMatrix.pop_back();
-	//--_visibleMatrixHeight;
+	popNotHanging();
 }
 
 //Gives the closest matrix position to the ball given
@@ -418,7 +418,7 @@ Ball_InMatrix::posT BallMatrix::snapToGrid(Ball *b, posT pos)
 	glm::vec2 coord;
 	vector<posT> space = checkSpaceAround(pos);
 
-	for (int i = 0; i < space.size(); ++i) {
+	for (int i = 0; i < (int)space.size(); ++i) {
 		coord = _ballMatrix[space[i].first][space[i].second]->getPosition();
 
 		double dist = pow(coord.x - b->getPosition().x, 2) + pow(coord.y - b->getPosition().y, 2);
@@ -531,13 +531,13 @@ std::vector<Ball_InMatrix::posT> BallMatrix::checkNotHanging()
 
 	int i;
 	posT p;
-	for (i = 0; i < (int)_connectedMatrix[0].size(); ++i) {
-		connected[0][i] = _connectedMatrix[0][i];
-	}
 
-	for (i = 1; i < (int)_connectedMatrix.size(); ++i) {
+	for (i = 0; i < (int)_connectedMatrix.size(); ++i) {
 		for (int j = 0; j < (int)_connectedMatrix[i].size(); ++j) {
-			if (_connectedMatrix[i][j]) {
+			if (i == 0 || i <= (int)_ballMatrix.size() - _visibleMatrixHeight) {
+				connected[i][j] = _connectedMatrix[i][j];
+			}
+			else if (_connectedMatrix[i][j]) {
 				//TOP LEFT
 				p = posT(i - 1, j - 1 + (i % 2));
 				if (inMatrixRange(p) && connected[p.first][p.second]) {
@@ -590,6 +590,23 @@ std::vector<Ball_InMatrix::posT> BallMatrix::checkNotHanging()
 	return pop;
 }
 
+bool BallMatrix::popNotHanging()
+{
+	vector<posT> pop = checkNotHanging();
+	bool success = pop.size() > 0;
+
+	for (unsigned int i = 0; i < pop.size(); ++i) {
+		float k = float((rand() % 360)*M_PI / 180);
+		glm::vec2 speed = glm::vec2(std::cos(k), 0);
+		Ball_Falling * falling = new Ball_Falling(_shaderProgram, _ballMatrix[pop[i].first][pop[i].second], 0.1f * speed, _minRenderCoords);
+		fallingBalls.push_back(falling);
+
+		success = success && popBall(pop[i]); // Animation and control
+	}
+
+	return success;
+}
+
 bool BallMatrix::popBall(posT & p)
 {
 	_connectedMatrix[p.first][p.second] = false;
@@ -601,10 +618,6 @@ bool BallMatrix::popBall(posT & p)
 		posT pos = neighbors[i];
 		_ballMatrix[pos.first][pos.second]->removeNeighbor(p);
 	}
-
-	float k = float((rand() % 360)*M_PI / 180);
-	Ball_Falling * b = new Ball_Falling(_shaderProgram, _ballMatrix[p.first][p.second], k);
-	fallingBalls.push_back(b);
 
 	return !_connectedMatrix[p.first][p.second];
 }

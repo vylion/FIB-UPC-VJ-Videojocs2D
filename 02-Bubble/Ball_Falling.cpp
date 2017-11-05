@@ -1,17 +1,13 @@
 #include "Ball_Falling.h"
 
-Ball_Falling::Ball_Falling(ShaderProgram & shaderProgram, Ball_InMatrix * b, float angle)
+Ball_Falling::Ball_Falling(ShaderProgram & shaderProgram, Ball_InMatrix * b, glm::vec2 speed, glm::vec2 minRenderCoords)
 	: Ball(b->getSize(), b->getSpritesheetSize(), b->getTexture(), shaderProgram)
 {
-	setColor(b->getColor());
-	setPosition(b->getPosition());
+	init(b->getColor(), b->getPosition(), minRenderCoords);
 
-	float spd_angle = angle;// -float(M_PI);
-	float spdx = 0.15f * std::cos(spd_angle);
-	float spdy = 0.15f * std::sin(spd_angle);
-	_speed = glm::vec2(spdx, spdy);
+	_speed = speed;
 	_ballSize = b->getSize();
-	_sizeShrinked = _ballSize;
+	_sizeShrinked = (float)_ballSize;
 }
 
 void Ball_Falling::update(int deltaTime)

@@ -65,6 +65,7 @@ private:
 	std::vector<Ball_InMatrix::posT> checkSpaceAround(const posT & b);
 	void checkPopping(const posT & b, const unsigned int & color, std::vector<posT>& pop);
 	std::vector<posT> checkNotHanging();
+	bool popNotHanging();
 	bool popBall(posT & p);
 	bool inMatrixRange(const Ball_InMatrix::posT &pos);
 	bool validBall(const Ball_InMatrix::posT &pos);

@@ -10,9 +10,10 @@ class Ball_Falling :
 	public Ball
 {
 public:
-	Ball_Falling(ShaderProgram & shaderProgram, Ball_InMatrix * b, float angle);
+	Ball_Falling(ShaderProgram & shaderProgram, Ball_InMatrix * b, glm::vec2 speed, glm::vec2 minRenderCoords);
 	void update(int deltaTime);
 	void render();
+
 	bool dead();
 
 	//glm::vec2 getSpeed();
