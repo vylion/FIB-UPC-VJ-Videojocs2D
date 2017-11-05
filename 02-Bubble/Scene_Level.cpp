@@ -16,13 +16,13 @@
 #define LAUNCH_BALL_SOUND "../media/audio/sounds/ball_launch.ogg"
 
 #define LEVEL_NUMBER_SIZE glm::vec2(24.f,24.f)
-#define LEVEL_NUMBER_POSITION glm::vec2(552.f, 52.f)
+#define LEVEL_NUMBER_POSITION glm::vec2(128.f, 52.f)
 #define LEVEL_NUMBER_SPRITESHEET_SIZE glm::vec2(16.f, 16.f)
 #define LEVEL_NUMBER_SPRITESHEET_POSITION glm::vec2(208.f, 0.f)
 
 #define INITIAL_SCORE 5000
 #define SCORE_SIZE glm::vec2(96.f, 24.f)
-#define SCORE_POSITION glm::vec2(480.f, 144.f)
+#define SCORE_POSITION glm::vec2(480.f, 65.f)
 #define SCORE_SPRITESHEET_POSITION  LEVEL_NUMBER_SPRITESHEET_POSITION
 
 
