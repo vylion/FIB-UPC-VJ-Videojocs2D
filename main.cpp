@@ -98,7 +98,7 @@ int main(int argc, char **argv)
 	glutSpecialFunc(specialDownCallback);
 	glutSpecialUpFunc(specialUpCallback);
 	glutMouseFunc(mouseCallback);
-	//glutMotionFunc(motionCallback);
+	glutMotionFunc(motionCallback);
 	glutPassiveMotionFunc(motionCallback);
 
 	// GLEW will take care of OpenGL extension functions

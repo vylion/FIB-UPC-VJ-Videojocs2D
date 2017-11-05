@@ -30,6 +30,8 @@ private:
 	float _fadeTime;
 	//Alpha and position ratio
 	float _ratio;
+	//
+	bool dragging;
 
 	int _selectedRow, _selectedCol, _moveCooldown;
 	//Slider marker
@@ -49,6 +51,7 @@ private:
 	ShaderProgram *_shaderProgram;
 
 	void setSliderPositions();
+	void checkMouse();
 
 	void checkButtons(int deltaTime);
 	void toMenu();

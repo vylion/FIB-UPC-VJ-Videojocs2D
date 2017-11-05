@@ -131,6 +131,7 @@ int Pause::update(int deltaTime)
 	switch (_state) {
 		case state::RUNNING:
 			checkButtons(deltaTime);
+			checkMouse();
 			break;
 		case state::FADE_IN:
 			_ratio = _fadeTime / FADE_TIME;
@@ -199,6 +200,37 @@ void Pause::setSliderPositions()
 	_soundVolumeMarker->setPosition(CONTROLS_STARTING_POSITION + 2.f * glm::vec2(0.f, CONTROLS_SPACE.y) + _soundOffset * glm::vec2(CONTROLS_SPACE.x, 0.f));
 	_soundVolumeMarker->setTexturePosition(glm::vec2(PANEL_SIZE.x, 192.f + CONTROLS_SPRITESHEET_SIZE.y * (_selectedRow==2)) / TEXTURE_SIZE);
 
+}
+
+void Pause::checkMouse()
+{
+	if (Game::instance().mouseJustMoved()) {
+		unsigned int i = 0;
+		bool hoveringButton = false;
+
+		while (i < _buttons.size() && !hoveringButton) {
+			hoveringButton = _buttons[i]->checkMouseHover();
+			if (!hoveringButton) i++;
+		}
+		if (hoveringButton) {
+			_buttons[_selectedCol]->unselectMouse();
+			_buttons[i]->select();
+			_selectedCol = i;
+			_selectedRow = 3;
+		}
+	}
+	if (Game::instance().mouseJustPressed()) {
+		unsigned int i = 0;
+		bool hoveringButton = false;
+
+		while (i < _buttons.size() && !hoveringButton) {
+			hoveringButton = _buttons[i]->checkMouseHover();
+			if (!hoveringButton) i++;
+		}
+		if (hoveringButton) {
+			_buttons[i]->use();
+		}
+	}
 }
 
 void Pause::checkButtons(int deltaTime)
