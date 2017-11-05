@@ -33,6 +33,20 @@ void Ball_Held::updateShooting(int deltaTime, int maxTime) {
 	setPosition(newpos);
 }
 
+void Ball_Held::updateSwapping(int deltaTime, int maxTime, bool toSwapped)
+{
+	float timeRatio = (float)deltaTime / (float)maxTime;
+	glm::vec2 midPoint = glm::vec2(254.f, 424.f);
+	glm::vec2 displacement;
+	//Only using half circumference
+	float angle = timeRatio * (float)M_PI;
+	displacement = glm::vec2(-cos(angle)*24.f, sin(angle)*14.f);
+	
+	if (toSwapped) displacement = -displacement;
+
+	setPosition(midPoint + displacement);
+}
+
 float Ball_Held::getAngle()
 {
 	return _angle;
