@@ -140,6 +140,7 @@ int Scene_Menu::update(int deltaTime)
 			//No break because we want to check buttons aswell
 		case RUNNING:
 			checkButtons(deltaTime);
+			checkMouse();
 			break;
 		case FADE_OUT:
 			_fadeTime -= deltaTime;
@@ -206,11 +207,6 @@ void Scene_Menu::render()
 	if (_state == PAUSED) Pause::instance().render();
 }
 
-int Scene_Menu::getLevelToOpen()
-{
-	return 1;
-}
-
 void Scene_Menu::initAudio()
 {
 	SoundManager::instance().setMusic(MUSIC_FILE);
@@ -247,6 +243,7 @@ void Scene_Menu::checkButtons(int deltaTime)
 		_moveCooldown = 0;
 	}
 
+	//Move buttons right to left if we are in the split row
 	if (_moveCooldown == 0 && (Game::instance().getSpecialKeyJustPressed(GLUT_KEY_LEFT) || Game::instance().getSpecialKeyJustPressed(GLUT_KEY_RIGHT)) && (_selectedButton == 1 || _selectedButton == 2)) {
 		_buttons[_selectedButton]->unselect();
 		_halfButtonSide = (_halfButtonSide + 1) % 2;
@@ -267,6 +264,38 @@ void Scene_Menu::checkButtons(int deltaTime)
 	//Escape from game
 	else if (Game::instance().getKeyReleased(27)) {
 		_state = state::EXIT;
+	}
+}
+
+void Scene_Menu::checkMouse()
+{
+	if (Game::instance().mouseJustMoved()) {
+		unsigned int i = 0;
+		bool hoveringButton = false;
+
+		while (i < _buttons.size() && !hoveringButton) {
+			hoveringButton = _buttons[i]->checkMouseHover();
+			if (!hoveringButton) i++;
+		}
+		if (hoveringButton) {
+			_buttons[_selectedButton]->unselectMouse();
+			_buttons[i]->select();
+			_selectedButton = i;
+			if (_selectedButton == 1) _halfButtonSide = 0;
+			else if (_selectedButton == 2) _halfButtonSide = 1;
+		}
+	}
+	if (Game::instance().mouseJustPressed()) {
+		unsigned int i = 0;
+		bool hoveringButton = false;
+
+		while (i < _buttons.size() && !hoveringButton) {
+			hoveringButton = _buttons[i]->checkMouseHover();
+			if (!hoveringButton) i++;
+		}
+		if (hoveringButton) {
+			_buttons[i]->use();
+		}
 	}
 }
 

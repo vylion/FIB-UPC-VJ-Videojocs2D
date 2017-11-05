@@ -17,7 +17,7 @@ public:
 	int update(int deltaTime) override;
 	void render() override;
 
-	int getLevelToOpen() override;
+	int getLevelToOpen() override { return 1; };
 
 private:
 	//Selection and change button cooldown
@@ -35,6 +35,7 @@ private:
 
 	void initAudio() override;
 	void checkButtons(int deltaTime) override;
+	void checkMouse();
 
 	void play();
 	void howtoplay();

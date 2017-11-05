@@ -46,6 +46,7 @@ static void specialUpCallback(int key, int x, int y)
 
 static void motionCallback(int x, int y)
 {
+
 	Game::instance().mouseMove(x, y);
 }
 
@@ -97,7 +98,8 @@ int main(int argc, char **argv)
 	glutSpecialFunc(specialDownCallback);
 	glutSpecialUpFunc(specialUpCallback);
 	glutMouseFunc(mouseCallback);
-	glutMotionFunc(motionCallback);
+	//glutMotionFunc(motionCallback);
+	glutPassiveMotionFunc(motionCallback);
 
 	// GLEW will take care of OpenGL extension functions
 	glewExperimental = GL_TRUE;

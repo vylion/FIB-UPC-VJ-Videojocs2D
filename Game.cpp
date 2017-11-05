@@ -18,26 +18,21 @@ bool Game::update(int deltaTime)
 	switch (scene->update(deltaTime)) {
 		case Scene::OPEN_LEVEL:
 			if (scene->getLevelToOpen() < 0) {
-				delete scene;
 				scene = new Scene_Menu();
 				scene->init();
 			}
 			else {
 				int level = scene->getLevelToOpen();
-				//Pause::instance().clearAll();
-				//delete scene;
 				scene = new Scene_Level();
 				scene->init(level);
 			}
 
 			break;
 		case Scene::HOW_TO_PLAY:
-			delete scene;
 			scene = new Scene_HowToPlay();
 			scene->init();
 			break;
 		case Scene::OPEN_CREDITS:
-			delete scene;
 			scene = new Scene_Credits();
 			scene->init();
 			break;
@@ -46,6 +41,9 @@ bool Game::update(int deltaTime)
 			break;
 	}
 	SoundManager::instance().update();
+	mouseMoved = false;
+	mousePressed = false;
+	mouseReleased = false;
 	for (int i = 0; i < 256; i++) {
 		keys_pressed[i] = false;
 		keys_released[i] = false;
@@ -90,14 +88,19 @@ void Game::specialKeyReleased(int key)
 
 void Game::mouseMove(int x, int y)
 {
+	mouseMoved = true;
+	mousex = x;
+	mousey = y;
 }
 
 void Game::mousePress(int button)
 {
+	mousePressed = true;
 }
 
 void Game::mouseRelease(int button)
 {
+	mouseReleased = true;
 }
 
 bool Game::getKey(int key) const
@@ -128,6 +131,26 @@ bool Game::getSpecialKeyJustPressed(int key)
 bool Game::getSpecialKeyReleased(int key) const
 {
 	return specialKeys_released[key];
+}
+
+bool Game::mouseJustMoved()
+{
+	return mouseMoved;
+}
+
+bool Game::mouseJustPressed()
+{
+	return mousePressed;
+}
+
+bool Game::mouseJustReleased()
+{
+	return mouseReleased;
+}
+
+glm::vec2 Game::getMousePos()
+{
+	return glm::vec2(mousex, mousey);
 }
 
 

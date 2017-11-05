@@ -51,6 +51,11 @@ public:
 	bool getSpecialKeyJustPressed(int key);
 	bool getSpecialKeyReleased(int key) const;
 
+	bool mouseJustMoved();
+	bool mouseJustPressed();
+	bool mouseJustReleased();
+	glm::vec2 getMousePos();
+
 private:
 	bool bPlay;                       // Continue to play game?
 	Scene *scene;                      // Scene to render
@@ -58,6 +63,8 @@ private:
 	                                  // we can have access at any time
 	bool keys_pressed[256], specialKeys_pressed[256];
 	bool keys_released[256], specialKeys_released[256];
+	int mousex, mousey;
+	bool mousePressed, mouseReleased, mouseMoved;
 
 };
 

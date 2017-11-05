@@ -13,8 +13,12 @@ public:
 
 	void setCallback(std::function<void(void)> callback);
 
+	bool checkMouseHover();
+
 	//Change displayed texture
-	void select(bool playSound=true); 	void unselect();
+	void select(bool playSound=true);
+	void unselect();
+	void unselectMouse();
 
 	//Trigger callback
 	void use();
@@ -22,6 +26,9 @@ public:
 private:
 	std::function<void(void)> _callback;
 	glm::vec2 _spritesheet_pos, _spritesheet_size;
+	glm::vec2 _position, _size;
+
+	bool _selected;
 
 	Texture *_spritesheet;
 };

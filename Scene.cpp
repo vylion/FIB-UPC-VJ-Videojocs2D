@@ -34,5 +34,5 @@ void Scene::initShaders()
 
 void Scene::renderPause()
 {
-
+	Pause::instance().render();
 }
