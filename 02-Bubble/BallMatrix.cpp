@@ -86,6 +86,7 @@ BallMatrix::BallMatrix( int * colorMatrix,
 	}
 
 	_visibleMatrixHeight = levelHeight + 1;
+	fallingBalls = vector<Ball_Falling*>();
 	descendAnimLeft = 0;
 	shakeAnim = false;
 	updateFrontier();
@@ -134,7 +135,21 @@ BallMatrix::State BallMatrix::update(int &deltaTime)
 	//First row has at least 1 ball -> game keeps running
 	for (int j = 0; j < (int)_ballMatrix[0].size(); ++j) {
 		//_ballMatrix[i][j]->update(deltaTime);
-		if (_connectedMatrix[0][j]) return RUNNING;
+
+		if (_connectedMatrix[0][j]) {
+			vector<Ball_Falling*>::iterator it = fallingBalls.begin();
+			Ball_Falling* current;
+
+			while (it != fallingBalls.end()) {
+				current = *it;
+				current->update(deltaTime);
+
+				if (current->dead()) it = fallingBalls.erase(it);
+				else ++it;
+			}
+
+			return RUNNING;
+		}
 	}
 
 	return WON;
@@ -142,6 +157,10 @@ BallMatrix::State BallMatrix::update(int &deltaTime)
 
 void BallMatrix::render()
 {
+	for (int i = 0; i < fallingBalls.size(); ++i) {
+		fallingBalls[i]->render();
+	}
+
 	if (shakeAnim) {
 		for (int i = _ballMatrix.size() - 1; i >= (int)_ballMatrix.size() - _visibleMatrixHeight && i >= 0; --i) {
 			//Balls
@@ -191,41 +210,53 @@ void BallMatrix::render()
 
 bool BallMatrix::checkCollision(Ball * b)
 {
-	Ball_InMatrix::NeighborBalls collided = Ball_InMatrix::OUTSIDE;
-	posT pos;
+	posT pos, ballPos;
+	bool collision = false;;
 
-	//TO DO COLLISIONS
-	for (int i = 0; i < _collisionFrontier.size() && collided == Ball_InMatrix::OUTSIDE; ++i) {
-		pos = _collisionFrontier[i];
-		collided = _ballMatrix[pos.first][pos.second]->checkCollision(b);
+	int visibleOffset = (int)_ballMatrix.size() - _visibleMatrixHeight;
+	if (b->getPosition().y <= (float)_minBallCoords.y - visibleOffset*_ballSize + 0.25f) {
+		//COLLISIONS WITH CEILING
+		pos = posT(0, (b->getPosition().x - _minBallCoords.x) / (float)_ballSize);
+		ballPos = snapToGrid(b, pos);
+
+		collision = true;
 	}
+	else {
+		//COLLISIONS WITH BALLS
+		Ball_InMatrix::NeighborBalls collided = Ball_InMatrix::OUTSIDE;
 
-	if (collided != Ball_InMatrix::OUTSIDE) {
-		if (shakeAnim) {
-			descendAnimLeft = DESCEND_ANIM_TIME;
-			shakeAnim = false;
-		}
-		
-		posT ballPos = posT(pos);
-		if (collided == Ball_InMatrix::BOT_LEFT || collided == Ball_InMatrix::TOP_LEFT) {
-			ballPos.second--;
-		}
-		if (collided == Ball_InMatrix::BOT_RIGHT || collided == Ball_InMatrix::BOT_LEFT) {
-			ballPos.first++;
-			ballPos.second += (pos.first % 2);
-		}
-		else if (collided == Ball_InMatrix::TOP_RIGHT || collided == Ball_InMatrix::TOP_LEFT) {
-			ballPos.first--;
-			ballPos.second += (pos.first % 2);
-		}
-		else {
-			if (collided == Ball_InMatrix::LEFT) ballPos.second--;
-			else ballPos.second++;
+		for (int i = 0; i < _collisionFrontier.size() && collided == Ball_InMatrix::OUTSIDE; ++i) {
+			pos = _collisionFrontier[i];
+			collided = _ballMatrix[pos.first][pos.second]->checkCollision(b);
 		}
 
-		if(validBall(ballPos)) ballPos = snapToGrid(b, pos);
-		
-		bool success = addBallToMat(ballPos, collided, b->getColor());
+		if (collided != Ball_InMatrix::OUTSIDE) {
+			ballPos = posT(pos);
+			if (collided == Ball_InMatrix::BOT_LEFT || collided == Ball_InMatrix::TOP_LEFT) {
+				ballPos.second--;
+			}
+			if (collided == Ball_InMatrix::BOT_RIGHT || collided == Ball_InMatrix::BOT_LEFT) {
+				ballPos.first++;
+				ballPos.second += (pos.first % 2);
+			}
+			else if (collided == Ball_InMatrix::TOP_RIGHT || collided == Ball_InMatrix::TOP_LEFT) {
+				ballPos.first--;
+				ballPos.second += (pos.first % 2);
+			}
+			else {
+				if (collided == Ball_InMatrix::LEFT) ballPos.second--;
+				else ballPos.second++;
+			}
+
+			if (validBall(ballPos)) ballPos = snapToGrid(b, pos);
+
+			collision = true;
+		}
+	}
+	
+	if (collision) {
+		//COMMON TO ALL COLLISIONS
+		bool success = addBallToMat(ballPos, b->getColor());
 		vector<posT> pop = vector<posT>();
 		unsigned int mask = (unsigned int)pow(2, b->getColor());
 		checkPopping(ballPos, mask, pop);
@@ -245,6 +276,19 @@ bool BallMatrix::checkCollision(Ball * b)
 
 		updateFrontier();
 
+		if (shakeAnim) {
+			descendAnimLeft = DESCEND_ANIM_TIME;
+			shakeAnim = false;
+		}
+		else {
+			bool descend = true;
+			int row = max((int)_ballMatrix.size() - _visibleMatrixHeight, 0);
+			for (int i = 0; i < _ballMatrix[row].size() && descend; ++i) {
+				descend = descend && !(_connectedMatrix[row][i]);
+			}
+			if (descend) descendAnimLeft = DESCEND_ANIM_TIME;
+		}
+
 		return success;
 	}
 
@@ -252,7 +296,7 @@ bool BallMatrix::checkCollision(Ball * b)
 }
 
 //Adds a collided ball into the matrix
-bool BallMatrix::addBallToMat(posT ballPos, Ball_InMatrix::NeighborBalls collided, unsigned int color)
+bool BallMatrix::addBallToMat(posT ballPos, unsigned int color)
 {
 	int visibleOffset = _ballMatrix.size() - _visibleMatrixHeight;
 	//if (visibleOffset < 0) visibleOffset = 0;
@@ -557,6 +601,10 @@ bool BallMatrix::popBall(posT & p)
 		posT pos = neighbors[i];
 		_ballMatrix[pos.first][pos.second]->removeNeighbor(p);
 	}
+
+	float k = float((rand() % 360)*M_PI / 180);
+	Ball_Falling * b = new Ball_Falling(_shaderProgram, _ballMatrix[p.first][p.second], k);
+	fallingBalls.push_back(b);
 
 	return !_connectedMatrix[p.first][p.second];
 }

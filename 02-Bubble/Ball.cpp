@@ -55,6 +55,11 @@ void Ball::setColor(int color)
 	);
 }
 
+unsigned int Ball::getColorMask()
+{
+	return (unsigned int)pow(2, _color);
+}
+
 int Ball::getSize()
 {
 	return _size;

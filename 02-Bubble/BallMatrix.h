@@ -5,6 +5,7 @@
 #include <random>
 #include <ctime>
 #include "Ball_InMatrix.h"
+#include "Ball_Falling.h"
 
 class BallMatrix
 {
@@ -34,7 +35,7 @@ public:
 	void render();
 
 	bool checkCollision(Ball * b);
-	bool addBallToMat(Ball_InMatrix::posT ballPos, Ball_InMatrix::NeighborBalls collided, unsigned int color);
+	bool addBallToMat(Ball_InMatrix::posT ballPos, unsigned int color);
 
 	int ballsLeft();
 	unsigned int colorsLeftInMatrix();
@@ -43,12 +44,13 @@ public:
 private:
 	typedef Ball_InMatrix::posT posT;
 	const static int DESCEND_ANIM_TIME = 1000;
-	const static int SHAKE_COUNT_MAX = 20;
+	const static int SHAKE_COUNT_MAX = 30;
 
 	std::vector< std::vector<Ball_InMatrix*> > _ballMatrix;
 	std::vector< std::vector<bool> > _connectedMatrix;
 	int _visibleMatrixHeight;
 	std::vector<posT> _collisionFrontier;
+	std::vector<Ball_Falling *> fallingBalls;
 
 	glm::vec2  _ballSizeInSpritesheet, _minBallCoords, _minRenderCoords;
 	int _ballSize;
