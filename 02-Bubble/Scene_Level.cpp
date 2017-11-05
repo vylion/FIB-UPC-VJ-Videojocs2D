@@ -405,5 +405,6 @@ void Scene_Level::next()
 {
 	SoundManager::instance().dropAll();
 	_levelStatus = levelStatus::RUNNING;
-	_state = OPEN_LEVEL;
+	if (_level == 5) _state = state::OPEN_CREDITS;
+	else _state = state::OPEN_LEVEL;
 }

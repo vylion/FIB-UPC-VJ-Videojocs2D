@@ -18,21 +18,25 @@ bool Game::update(int deltaTime)
 	switch (scene->update(deltaTime)) {
 		case Scene::OPEN_LEVEL:
 			if (scene->getLevelToOpen() < 0) {
+				delete scene;
 				scene = new Scene_Menu();
 				scene->init();
 			}
 			else {
 				int level = scene->getLevelToOpen();
+				delete scene;
 				scene = new Scene_Level();
 				scene->init(level);
 			}
 
 			break;
 		case Scene::HOW_TO_PLAY:
+			delete scene;
 			scene = new Scene_HowToPlay();
 			scene->init();
 			break;
 		case Scene::OPEN_CREDITS:
+			delete scene;
 			scene = new Scene_Credits();
 			scene->init();
 			break;
