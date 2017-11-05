@@ -24,7 +24,7 @@ bool Game::update(int deltaTime)
 			}
 			else {
 				int level = scene->getLevelToOpen();
-				delete scene;
+				//delete scene;
 				scene = new Scene_Level();
 				scene->init(level);
 			}
