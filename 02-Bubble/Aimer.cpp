@@ -50,11 +50,12 @@ void Aimer::init(const glm::vec2 &cannonPos, glm::vec2 &minRenderCoords, ShaderP
 	_cannon = Sprite::createSprite(CANNON_SIZE, CANNON_SIZE, _spritesheet, &shaderProgram);
 	//We don't need to update the aimer position at all so we pass minRendercoords to the sprite
 	_cannon->setPosition(_cannonPosition + _minRenderCoords);
-	_cannon->setNumberAnimations(6);
-	for (int i = 0; i < 6; i++) {
-		_cannon->addKeyframe(i, glm::vec2((int)CANNON_SIZE.x * i % (6/2), (int)CANNON_SIZE.y / (6/2)) / _spritesheet->getSize());
-		_cannon->setAnimationSpeed(i, SHOOTING_TIME / 6);
-	}
+	_cannon->setNumberAnimations(2);
+	_cannon->setAnimationSpeed(state::READY, 1);
+		_cannon->addKeyframe(state::READY, CANNON_SPRITESHEET_POSITION);
+	_cannon->setAnimationSpeed(state::SHOOTING, int(SHOOTING_TIME / 6 / 2));
+		for (int i = 0; i < 6; i++)	_cannon->addKeyframe(state::SHOOTING, glm::vec2((int)CANNON_SIZE.x * (i % (6/2)), (int)CANNON_SIZE.y * (i / (6/2))) / _spritesheet->getSize());
+	_cannon->changeAnimation(state::READY);
 
 
 	_mainBox = Sprite::createSprite(MAINBOX_SIZE, MAINBOX_SIZE, _spritesheet, &shaderProgram);
@@ -167,6 +168,7 @@ void Aimer::checkButtons(int deltaTime)
 		if (Game::instance().getSpecialKey(GLUT_KEY_UP) || Game::instance().getKey(32)) {
 			//Set to just launched
 			_state = state::SHOOTING;
+			_cannon->changeAnimation(state::SHOOTING);
 			//Init position and angle
 			_heldBall->initHeldPosition(calculateLaunchedBallPosition(), _angle);
 			//Set initial size to 0 for spawn effect
@@ -211,7 +213,7 @@ void Aimer::shootUpdate(int deltaTime)
 		_heldBall->updateShooting(SHOOTING_TIME, SHOOTING_TIME);
 		//Launch ball
 		_bmng->launchHeldBall(_heldBall, _angle);
-		//_cannon->changeAnimation(0);
+		_cannon->changeAnimation(state::READY);
 		_state = state::LAUNCHED_BALL;
 	}
 }
