@@ -45,6 +45,8 @@ int BallManager::update(int deltaTime)
 	switch (_state) {
 		//Just launched a ball, move to waiting for ball
 		case state::LAUNCHED_BALL:
+
+			
 			_state = state::W8_LAUNCHED_BALL;
 			//No break because we want to update the ball
 		//Waiting for launched ball

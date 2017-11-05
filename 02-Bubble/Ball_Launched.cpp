@@ -30,11 +30,18 @@ void Ball_Launched::update(int deltaTime)
 
 	glm::ivec2 pos = glm::ivec2(round(getPosition().x), round(getPosition().y));
 
-	if (movingRight() && _tmap->collisionMoveRight(pos, glm::ivec2(getSize())))
+	if (movingUp() && _tmap->collisionMoveUp(pos + glm::ivec2(0 ,-1), glm::ivec2(getSize())))
+		bounceVertical(deltaTime);
+	//else if (moving() && _tmap->collisionMoveUp(pos + glm::ivec2(0, -1), glm::ivec2(getSize())))
+	//	bounceVertical(deltaTime);
+
+	if (movingRight() && _tmap->collisionMoveRight(pos + glm::ivec2(1, 0), glm::ivec2(getSize())))
 		bounceHorizontal(deltaTime);
 
-	else if (movingLeft() && _tmap->collisionMoveLeft(pos, glm::ivec2(getSize())))
+	else if (movingLeft() && _tmap->collisionMoveLeft(pos + glm::ivec2(-1, 0), glm::ivec2(getSize())))
 		bounceHorizontal(deltaTime);
+
+	
 	/*
 	If ball is out of horizontal bounds we will recalculate position with traveled
 	total distance and reverse X speed.

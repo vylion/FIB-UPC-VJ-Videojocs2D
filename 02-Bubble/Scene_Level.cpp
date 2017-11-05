@@ -13,6 +13,7 @@
 #define WIN_SOUND "../media/audio/sounds/game_win.ogg"
 #define LOSE_SOUND "../media/audio/sounds/game_lose.ogg"
 #define MUSIC_FILE "../media/audio/music/level_bgm.ogg"
+#define LAUNCH_BALL_SOUND "../media/audio/sounds/ball_launch.ogg"
 
 #define LEVEL_NUMBER_SIZE glm::vec2(24.f,24.f)
 #define LEVEL_NUMBER_POSITION glm::vec2(552.f, 52.f)
@@ -192,6 +193,9 @@ int Scene_Level::update(int deltaTime)
 							case BallManager::state::LOST:
 								lose();
 								break;
+							case BallManager::state::LAUNCHED_BALL:
+								SoundManager::instance().playSound(LAUNCH_BALL_SOUND);
+								break;
 						}
 						aimer->update(deltaTime, bmngState);
 						_scoreVal = INITIAL_SCORE + 1 + bmng->getAccumulatedScoreVariation() - (int)currentTime/1000;
@@ -292,8 +296,10 @@ void Scene_Level::initAudio()
 
 	//SoundManager::instance().addSound(CHANGE_BUTTON_SFX);
 	SoundManager::instance().addSound(WIN_SOUND);
+	SoundManager::instance().setSoundVolume(WIN_SOUND, 0.2f);
 	SoundManager::instance().addSound(LOSE_SOUND);
-	//SoundManager::instance().setSoundVolume(LOSE_SOUND, 0.2f);
+	SoundManager::instance().setSoundVolume(LOSE_SOUND, 0.2f);
+	//SoundManager::instance().addSound(LAUNCH_BALL_SOUND);
 }
 
 void Scene_Level::checkButtons(int deltaTime)
