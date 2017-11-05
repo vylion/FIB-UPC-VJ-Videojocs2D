@@ -3,7 +3,6 @@
 
 #define CREDITS_BG_TEXTURE "../media/images/credits_bg.png"
 #define CREDITS_TEXTURE "../media/images/credits_sprites.png"
-#define CREDITS_SIZE glm::vec2(256.f, 1150.f)
 
 #define CREDITS_MUSIC "../media/audio/music/credits_bgm.ogg"
 
@@ -27,8 +26,8 @@ void Scene_Credits::init()
 	creditsHeight = 0;
 
 	_bg = Sprite::createSprite(glm::vec2(SCREEN_WIDTH, SCREEN_HEIGHT), glm::vec2(SCREEN_WIDTH, SCREEN_HEIGHT), _bg_tex, &texProgram);
-	_credits = Sprite::createSprite(CREDITS_SIZE, CREDITS_SIZE, _creditsSpritesheet, &texProgram);
-		_credits->setPosition(glm::vec2((SCREEN_WIDTH - CREDITS_SIZE.x)/2.f, 0.f));
+	_credits = Sprite::createSprite(_creditsSpritesheet->getSize(), _creditsSpritesheet->getSize(), _creditsSpritesheet, &texProgram);
+		_credits->setPosition(glm::vec2((SCREEN_WIDTH - _creditsSpritesheet->getSize().x)/2.f, 0.f));
 		//_credits->setTexturePosition(glm::vec2(640.f/900.f, 0.f));
 
 	projection = glm::ortho(0.f, float(SCREEN_WIDTH - 1), float(SCREEN_HEIGHT - 1), 0.f);
@@ -42,7 +41,7 @@ int Scene_Credits::update(int deltaTime)
 
 	if (currentTime >= WAIT_TIME) {
 		creditsHeight = (WAIT_TIME - currentTime) / 10.f;
-		if (creditsHeight <= -CREDITS_SIZE.y) {
+		if (creditsHeight <= -_creditsSpritesheet->getSize().y) {
 			_fadeouttime += deltaTime;
 			SoundManager::instance().setMusicVolume(max(0,FADE_TIME - _fadeouttime) / (float)FADE_TIME);
 		}
@@ -51,7 +50,7 @@ int Scene_Credits::update(int deltaTime)
 		SoundManager::instance().setMusicVolume(min(currentTime, (float)FADE_TIME) / (float)FADE_TIME);
 	}
 	
-	_credits->setPosition(glm::vec2((SCREEN_WIDTH - CREDITS_SIZE.x)/2, creditsHeight));
+	_credits->setPosition(glm::vec2((SCREEN_WIDTH - _creditsSpritesheet->getSize().x)/2, creditsHeight));
 
 	//Check keypresses for back to menu
 	if (Game::instance().getKeyJustPressed(32) || Game::instance().getKeyReleased(27) ||		//Space, Esc
@@ -75,7 +74,7 @@ void Scene_Credits::render()
 	texProgram.setUniformMatrix4f("projection", projection);
 	float alpha = 1.0f;
 	
-	if (creditsHeight <= -CREDITS_SIZE.y) {
+	if (creditsHeight <= -_creditsSpritesheet->getSize().y) {
 		alpha = 1.f - min(1.f, (float)_fadeouttime / (float)FADE_TIME);
 	}
 	else if (currentTime <= FADE_TIME)

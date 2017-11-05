@@ -292,7 +292,11 @@ int Scene_Level::getLevelToOpen()
 
 void Scene_Level::initAudio()
 {
-	//SoundManager::instance().setMusic(MUSIC_FILE);
+
+	SoundManager::instance().setMusic(MUSIC_FILE);
+	SoundManager::instance().setMusicVolume(1.f);
+
+
 
 	//SoundManager::instance().addSound(CHANGE_BUTTON_SFX);
 	SoundManager::instance().addSound(WIN_SOUND);

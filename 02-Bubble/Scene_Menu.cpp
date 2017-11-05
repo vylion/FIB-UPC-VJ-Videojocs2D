@@ -30,7 +30,7 @@ void Scene_Menu::init()
 {
 	initShaders();
 	Pause::instance().init(&texProgram);
-	//initAudio();
+	initAudio();
 
 	_state = FADE_IN;
 	_fadeTime = 0;
