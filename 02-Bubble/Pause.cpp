@@ -33,6 +33,7 @@ void Pause::init(ShaderProgram* shaderProgram)
 {
 	_shaderProgram = shaderProgram;
 	if (_texture == nullptr) {
+
 		_texture = new Texture();
 		if (!_texture->loadFromFile(TEXTURE_FILE, TEXTURE_PIXEL_FORMAT_RGBA)) printf("Failed to load pause texture");
 	}
@@ -49,6 +50,7 @@ void Pause::init(ShaderProgram* shaderProgram)
 	_soundOffset = _soundVol;
 
 	/*----------------------------------------BUTTONS-------------------------------------------------------*/
+	//No buttons loaded
 	if (!_buttons.size()) {
 		_b_quit = new Button(BUTTON_SIZE, BUTTON_PIXEL_SIZE, _texture, _shaderProgram);
 			_b_quit->init(BUTTON_STARTING_POSITION, glm::vec2(PANEL_SIZE.x, BUTTON_PIXEL_SIZE.y * 0) / TEXTURE_SIZE);
@@ -64,6 +66,7 @@ void Pause::init(ShaderProgram* shaderProgram)
 		_buttons.push_back(_b_cancel);
 		_buttons.push_back(_b_confirm);
 	}
+	//Buttons loaded, unset all to simulate starting state
 	else {
 		for (unsigned int i = 0; i < _buttons.size(); ++i) _buttons[i]->unselect();
 	}
@@ -84,21 +87,12 @@ void Pause::init(ShaderProgram* shaderProgram)
 
 	if (!_sliders.size()) {
 		_masterVolumeMarker = new Sprite(CONTROLS_SIZE, CONTROLS_SPRITESHEET_SIZE, _texture, _shaderProgram);
-			_masterVolumeMarker->setPosition(CONTROLS_STARTING_POSITION +
-											 0.f * glm::vec2(0.f, CONTROLS_SPACE.y) +
-											 _masterOffset * glm::vec2(CONTROLS_SPACE.x, 0.f));
-			_masterVolumeMarker->setTexturePosition(glm::vec2(PANEL_SIZE.x, 192.f) / TEXTURE_SIZE);
+			
 
 		_musicVolumeMarker = new Sprite(CONTROLS_SIZE, CONTROLS_SPRITESHEET_SIZE, _texture, _shaderProgram);
-			_musicVolumeMarker->setPosition(CONTROLS_STARTING_POSITION +
-											1.f * glm::vec2(0.f, CONTROLS_SPACE.y) +
-											_musicOffset * glm::vec2(CONTROLS_SPACE.x, 0.f));
-			_musicVolumeMarker->setTexturePosition(glm::vec2(PANEL_SIZE.x, 192.f) / TEXTURE_SIZE);
+			
 
 		_soundVolumeMarker = new Sprite(CONTROLS_SIZE, CONTROLS_SPRITESHEET_SIZE, _texture, _shaderProgram);
-			_soundVolumeMarker->setPosition(CONTROLS_STARTING_POSITION +
-											2.f * glm::vec2(0.f, CONTROLS_SPACE.y) +
-											_soundOffset * glm::vec2(CONTROLS_SPACE.x, 0.f));
 			_soundVolumeMarker->setTexturePosition(glm::vec2(PANEL_SIZE.x, 192.f) / TEXTURE_SIZE);
 
 		_sliders.push_back(_masterVolumeMarker);
@@ -106,6 +100,7 @@ void Pause::init(ShaderProgram* shaderProgram)
 		_sliders.push_back(_soundVolumeMarker);
 	}
 
+	setSliderPositions();
 
 	/*----------------------------------------END----------------------------------------------------------*/
 
@@ -116,9 +111,22 @@ void Pause::init(ShaderProgram* shaderProgram)
 	_fadeTime = 0.0f;
 }
 
+void Pause::clearAll()
+{
+	for (unsigned int i = 0; i < _buttons.size(); ++i) delete _buttons[i];
+	_buttons.clear();
+	for (unsigned int i = 0; i < _sliders.size(); ++i) delete _sliders[i];
+	_sliders.clear();
+	_action = action::WAIT;
+	_state = state::RUNNING;
+	_masterVol = _masterOffset = _musicVol = _musicOffset = _soundVol = _soundOffset = 0;
+	delete _texture;
+}
+
 int Pause::update(int deltaTime)
 {
 	_fadeTime += (float)deltaTime;
+	setSliderPositions();
 
 	switch (_state) {
 		case state::RUNNING:
@@ -174,6 +182,23 @@ void Pause::render()
 	_panel->render();
 	for (unsigned int i = 0; i < _sliders.size(); ++i) _sliders[i]->render();
 	for (unsigned int i = 0; i < _buttons.size(); ++i) _buttons[i]->render();
+}
+
+void Pause::setSliderPositions()
+{
+	_masterOffset = SoundManager::instance().getMasterVolume();
+	_musicOffset = SoundManager::instance().getMusicVolume();
+	_soundOffset = SoundManager::instance().getSoundVolumeFactor();
+
+	_masterVolumeMarker->setPosition(CONTROLS_STARTING_POSITION + 0.f * glm::vec2(0.f, CONTROLS_SPACE.y) + _masterOffset * glm::vec2(CONTROLS_SPACE.x, 0.f));
+	_masterVolumeMarker->setTexturePosition(glm::vec2(PANEL_SIZE.x, 192.f + CONTROLS_SPRITESHEET_SIZE.y * (_selectedRow == 0)) / TEXTURE_SIZE);
+
+	_musicVolumeMarker->setPosition(CONTROLS_STARTING_POSITION + 1.f * glm::vec2(0.f, CONTROLS_SPACE.y) + _musicOffset * glm::vec2(CONTROLS_SPACE.x, 0.f));
+	_musicVolumeMarker->setTexturePosition(glm::vec2(PANEL_SIZE.x, 192.f + CONTROLS_SPRITESHEET_SIZE.y * (_selectedRow == 1)) / TEXTURE_SIZE);
+
+	_soundVolumeMarker->setPosition(CONTROLS_STARTING_POSITION + 2.f * glm::vec2(0.f, CONTROLS_SPACE.y) + _soundOffset * glm::vec2(CONTROLS_SPACE.x, 0.f));
+	_soundVolumeMarker->setTexturePosition(glm::vec2(PANEL_SIZE.x, 192.f + CONTROLS_SPRITESHEET_SIZE.y * (_selectedRow==2)) / TEXTURE_SIZE);
+
 }
 
 void Pause::checkButtons(int deltaTime)

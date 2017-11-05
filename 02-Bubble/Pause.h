@@ -17,6 +17,7 @@ public:
 	}
 
 	void init(ShaderProgram *shaderProgram);
+	void clearAll();
 	int update(int deltaTime);
 	void render();
 	
@@ -46,6 +47,8 @@ private:
 	glm::mat4 projection;
 	Texture *_texture;
 	ShaderProgram *_shaderProgram;
+
+	void setSliderPositions();
 
 	void checkButtons(int deltaTime);
 	void toMenu();

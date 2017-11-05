@@ -99,12 +99,13 @@ void SoundManager::toggleMusicPause()
 
 float SoundManager::getMusicVolume()
 {
-	return _music_engine->getSoundVolume();
+	return _musicVolume;
 }
 
 void SoundManager::setMusicVolume(float volume)
 {
-	_music_engine->setSoundVolume(volume * _masterVolume);
+	_musicVolume = volume;
+	_music_engine->setSoundVolume(_musicVolume * _masterVolume);
 }
 
 
