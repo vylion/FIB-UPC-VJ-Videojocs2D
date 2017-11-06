@@ -35,7 +35,7 @@ void Ball_Launched::update(int deltaTime)
 	//else if (moving() && _tmap->collisionMoveUp(pos + glm::ivec2(0, -1), glm::ivec2(getSize())))
 	//	bounceVertical(deltaTime);
 
-	if (movingRight() && _tmap->collisionMoveRight(pos + glm::ivec2(1, 0), glm::ivec2(getSize())))
+	else if (movingRight() && _tmap->collisionMoveRight(pos + glm::ivec2(1, 0), glm::ivec2(getSize())))
 		bounceHorizontal(deltaTime);
 
 	else if (movingLeft() && _tmap->collisionMoveLeft(pos + glm::ivec2(-1, 0), glm::ivec2(getSize())))
