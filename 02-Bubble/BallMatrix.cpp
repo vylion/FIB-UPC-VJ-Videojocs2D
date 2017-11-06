@@ -526,65 +526,66 @@ std::vector<Ball_InMatrix::posT> BallMatrix::checkNotHanging()
 {
 	std::vector<posT> pop = std::vector<posT>();
 
-	std::vector< std::vector<bool> > connected = std::vector< std::vector<bool> >(_connectedMatrix.size(), std::vector<bool>((int)_connectedMatrix[0].size(), false));
+	std::vector< std::vector<bool> > newMatrix = std::vector< std::vector<bool> >(_connectedMatrix.size(), std::vector<bool>((int)_connectedMatrix[0].size(), false));
 
-	int i;
-	posT p;
+	vector<posT> connected = vector<posT>();
+	posT p, p2;
 
-	for (i = 0; i < (int)_connectedMatrix.size(); ++i) {
+	for (int i = 0; i == 0 || i <= (int)_ballMatrix.size() - _visibleMatrixHeight; ++i) {
 		for (int j = 0; j < (int)_connectedMatrix[i].size(); ++j) {
-			if (i == 0 || i <= (int)_ballMatrix.size() - _visibleMatrixHeight) {
-				connected[i][j] = _connectedMatrix[i][j];
+			if (_connectedMatrix[i][j]) connected.push_back(posT(i, j));
+		}
+	}
+
+	for (int i = 0; i < connected.size(); ++i) {
+		p = connected[i];
+		if (!newMatrix[p.first][p.second]) {
+			newMatrix[p.first][p.second] = true;
+
+			//TOP LEFT
+			p2 = posT(p.first - 1, p.second - 1 + (p.first % 2));
+			if (validBall(p2) && !newMatrix[p2.first][p2.second]) {
+				connected.push_back(p2);
 			}
-			else if (_connectedMatrix[i][j]) {
-				//TOP LEFT
-				p = posT(i - 1, j - 1 + (i % 2));
-				if (inMatrixRange(p) && connected[p.first][p.second]) {
-					connected[i][j] = true;
-					continue;
-				}
 
-				//TOP RIGHT
-				p = posT(i - 1, j + (i % 2));
-				if (inMatrixRange(p) && connected[p.first][p.second]) {
-					connected[i][j] = true;
-					continue;
-				}
+			//TOP RIGHT
+			p2 = posT(p.first - 1, p.second + (p.first % 2));
+			if (validBall(p2) && !newMatrix[p2.first][p2.second]) {
+				connected.push_back(p2);
+			}
 
-				//LEFT
-				p = posT(i, j - 1);
-				if (inMatrixRange(p) && connected[p.first][p.second]) {
-					connected[i][j] = true;
-					continue;
-				}
+			//LEFT
+			p2 = posT(p.first, p.second - 1);
+			if (validBall(p2) && !newMatrix[p2.first][p2.second]) {
+				connected.push_back(p2);
+			}
 
-				//RIGHT
-				p = posT(i, j + 1);
-				if (inMatrixRange(p) && connected[p.first][p.second]) {
-					connected[i][j] = true;
-					continue;
-				}
+			//RIGHT
+			p2 = posT(p.first, p.second + 1);
+			if (validBall(p2) && !newMatrix[p2.first][p2.second]) {
+				connected.push_back(p2);
+			}
 
-				//BOTTOM LEFT
-				p = posT(i + 1, j - 1 + (i % 2));
-				if (inMatrixRange(p) && connected[p.first][p.second]) {
-					connected[i][j] = true;
-					continue;
-				}
+			//BOTTOM LEFT
+			p2 = posT(p.first + 1, p.second - 1 + (p.first % 2));
+			if (validBall(p2) && !newMatrix[p2.first][p2.second]) {
+				connected.push_back(p2);
+			}
 
-				//BOTTOM RIGHT
-				p = posT(i + 1, j + (i % 2));
-				if (inMatrixRange(p) && connected[p.first][p.second]) {
-					connected[i][j] = true;
-					continue;
-				}
-
-				//IF NONE
-				pop.push_back(posT(i, j));
+			//BOTTOM RIGHT
+			p2 = posT(p.first + 1, p.second + (p.first % 2));
+			if (validBall(p2) && !newMatrix[p2.first][p2.second]) {
+				connected.push_back(p2);
 			}
 		}
 	}
-	_connectedMatrix = connected;
+
+	for (int i = 0; i < (int)_connectedMatrix.size(); ++i) {
+		for (int j = 0; j < (int)_connectedMatrix[i].size(); ++j) {
+			if (!newMatrix[i][j] && _connectedMatrix[i][j])
+				pop.push_back(posT(i, j));
+		}
+	}
 
 	return pop;
 }
