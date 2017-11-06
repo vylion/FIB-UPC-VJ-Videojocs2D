@@ -1,7 +1,7 @@
 #include "Scene_HowToPlay.h"
 #include "../Game.h"
 
-#define HOWTOPLAY_TEXTURE "../media/images/howtoplay.png"
+#define HOWTOPLAY_TEXTURE "media/images/howtoplay.png"
 
 void Scene_HowToPlay::init()
 {

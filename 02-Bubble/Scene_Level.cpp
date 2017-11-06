@@ -7,13 +7,13 @@
 #define INIT_PLAYER_X_TILES 9
 #define INIT_PLAYER_Y_TILES 26
 
-#define BACKGROUND_TEXTURE "../media/images/level_bg_temp.png"
-#define SPRITE_TEXTURE "../media/images/level_sprites.png"
+#define BACKGROUND_TEXTURE "media/images/level_bg_temp.png"
+#define SPRITE_TEXTURE "media/images/level_sprites.png"
 
-#define WIN_SOUND "../media/audio/sounds/game_win.ogg"
-#define LOSE_SOUND "../media/audio/sounds/game_lose.ogg"
-#define MUSIC_FILE "../media/audio/music/level_bgm.ogg"
-#define LAUNCH_BALL_SOUND "../media/audio/sounds/ball_launch.ogg"
+#define WIN_SOUND "media/audio/sounds/game_win.ogg"
+#define LOSE_SOUND "media/audio/sounds/game_lose.ogg"
+#define MUSIC_FILE "media/audio/music/level_bgm.ogg"
+#define LAUNCH_BALL_SOUND "media/audio/sounds/ball_launch.ogg"
 
 #define LEVEL_NUMBER_SIZE glm::vec2(24.f,24.f)
 #define LEVEL_NUMBER_POSITION glm::vec2(128.f, 52.f)
@@ -79,7 +79,7 @@ void Scene_Level::init(int level)
 	if (_level < 10) {
 		levelFiller = "0";
 	}
-	string levelLocation = "../levels/level" + levelFiller + std::to_string(_level);
+	string levelLocation = "levels/level" + levelFiller + std::to_string(_level);
 
 	/*----------------------------------------TEXTURES-----------------------------------------------------*/
 

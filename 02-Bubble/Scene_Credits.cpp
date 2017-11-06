@@ -1,10 +1,10 @@
 #include "Scene_Credits.h"
 #include "../Game.h"
 
-#define CREDITS_BG_TEXTURE "../media/images/credits_bg.png"
-#define CREDITS_TEXTURE "../media/images/credits_sprites.png"
+#define CREDITS_BG_TEXTURE "media/images/credits_bg.png"
+#define CREDITS_TEXTURE "media/images/credits_sprites.png"
 
-#define CREDITS_MUSIC "../media/audio/music/credits_bgm.ogg"
+#define CREDITS_MUSIC "media/audio/music/credits_bgm.ogg"
 
 #define FADE_TIME 1000
 #define WAIT_TIME FADE_TIME + 1000

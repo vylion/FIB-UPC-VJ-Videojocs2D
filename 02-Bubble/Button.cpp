@@ -3,8 +3,8 @@
 #include "Pause.h"
 #include "../Game.h"
 
-#define CHANGE_BUTTON_SFX "../media/audio/sounds/menu_button_change.ogg"
-#define CLICK_BUTTON_SFX "../media/audio/sounds/menu_button_click.ogg"
+#define CHANGE_BUTTON_SFX "media/audio/sounds/menu_button_change.ogg"
+#define CLICK_BUTTON_SFX "media/audio/sounds/menu_button_click.ogg"
 
 
 Button::Button(const glm::vec2 & quadSize, const glm::vec2 &sizeInSpritesheet, Texture *spritesheet, ShaderProgram *program)

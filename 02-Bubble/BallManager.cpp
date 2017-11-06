@@ -8,7 +8,7 @@
 #include "Ball_Launched.h"
 #include "../Game.h"
 
-#define LAUNCH_BALL_SOUND "../media/audio/sounds/ball_launch.ogg"
+#define LAUNCH_BALL_SOUND "media/audio/sounds/ball_launch.ogg"
 
 BallManager * BallManager::createBallManager(TileMap *tmap, ShaderProgram & shaderProgram)
 {

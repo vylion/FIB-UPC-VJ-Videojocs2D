@@ -7,7 +7,7 @@
 
 #define MAX_ANGLE 1.f							//In rads, or 1*180/pi degrees
 
-#define TEXTURE_FILE "../media/images/aimer_sprites.png"
+#define TEXTURE_FILE "media/images/aimer_sprites.png"
 
 #define CANNON_SIZE glm::vec2(8.f, 8.f)
 #define CANNON_SPRITESHEET_POSITION glm::vec2(0.f,0.f)

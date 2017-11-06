@@ -48,3 +48,5 @@
 *.pdb
 *.ilk
 *.res
+*.psd
+Release/levels/level01_Tile_withRightPanel.txt

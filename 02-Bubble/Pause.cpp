@@ -9,7 +9,7 @@
 
 #define FADE_TIME 100.f
 #define ROW_COOLDOWN 50
-#define TEXTURE_FILE "../media/images/pause_sprites.png"
+#define TEXTURE_FILE "media/images/pause_sprites.png"
 #define TEXTURE_SIZE glm::vec2(384.f, 240.f)
 
 #define PANEL_SIZE glm::vec2(SCREEN_WIDTH/2, SCREEN_HEIGHT/2)

@@ -21,9 +21,9 @@
 
 #define BUTTON_MOVE_COOLDOWN 175
 
-#define MENU_SPRITES "../media/images/menu_sprites.png"
-#define MENU_BACKGROUND "../media/images/menu_bg.png"
-#define MUSIC_FILE "../media/audio/music/menu_bgm.ogg"
+#define MENU_SPRITES "media/images/menu_sprites.png"
+#define MENU_BACKGROUND "media/images/menu_bg.png"
+#define MUSIC_FILE "media/audio/music/menu_bgm.ogg"
 
 
 void Scene_Menu::init()
