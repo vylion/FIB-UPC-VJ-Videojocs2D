@@ -3,8 +3,8 @@ BALLMAP
 16 16 				-- Tile size & block size
 ../media/images/balls.png	-- Tilesheet
 3 8				-- Min color and available colors
- 999999999999 
-9AAAAAAAAAAA9
-9A8888888888A9
-9AAAAAAAAAAA9
- 999999999999 
+ 333333333333 
+3555555555553
+35888888888853
+3555555555553
+ 333333333333 
