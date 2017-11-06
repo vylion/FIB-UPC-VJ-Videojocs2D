@@ -4,6 +4,7 @@
 
 #include "../Sprite.h"
 #include "Button.h"
+#include "Slider.h"
 
 class Pause
 {
@@ -35,8 +36,8 @@ private:
 
 	int _selectedRow, _selectedCol, _moveCooldown;
 	//Slider marker
-	Sprite *_masterVolumeMarker, *_musicVolumeMarker, *_soundVolumeMarker;
-	vector<Sprite*> _sliders;
+	Slider *_masterVolumeMarker, *_musicVolumeMarker, *_soundVolumeMarker;
+	vector<Slider*> _sliders;
 	//Buttons
 	Button *_b_quit, *_b_cancel, *_b_confirm;
 	vector<Button*> _buttons;
@@ -50,7 +51,7 @@ private:
 	Texture *_texture;
 	ShaderProgram *_shaderProgram;
 
-	void setSliderPositions();
+	void initSliders();
 	void checkMouse();
 
 	void checkButtons(int deltaTime);

@@ -43,6 +43,7 @@
     <ClCompile Include="Scene_HowToPlay.cpp" />
     <ClCompile Include="Scene_Menu.cpp" />
     <ClCompile Include="Scene_Level.cpp" />
+    <ClCompile Include="Slider.cpp" />
     <ClCompile Include="SoundManager.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -70,6 +71,7 @@
     <ClInclude Include="Scene_HowToPlay.h" />
     <ClInclude Include="Scene_Level.h" />
     <ClInclude Include="Scene_Menu.h" />
+    <ClInclude Include="Slider.h" />
     <ClInclude Include="SoundManager.h" />
   </ItemGroup>
   <ItemGroup>

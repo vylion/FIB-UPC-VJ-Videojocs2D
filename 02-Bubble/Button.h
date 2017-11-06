@@ -23,7 +23,7 @@ public:
 	//Trigger callback
 	void use();
 
-private:
+protected:
 	std::function<void(void)> _callback;
 	glm::vec2 _spritesheet_pos, _spritesheet_size;
 	glm::vec2 _position, _size;

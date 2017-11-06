@@ -7,11 +7,11 @@
 #define CLICK_BUTTON_SFX "../media/audio/sounds/menu_button_click.ogg"
 
 
-Button::Button(const glm::vec2 &quadSize, const glm::vec2 &sizeInSpritesheet, Texture *spritesheet, ShaderProgram *program)
+Button::Button(const glm::vec2 & quadSize, const glm::vec2 &sizeInSpritesheet, Texture *spritesheet, ShaderProgram *program)
 	: Sprite(quadSize, sizeInSpritesheet, spritesheet, program)
 {
 	_spritesheet = spritesheet;
-	_size = sizeInSpritesheet;
+	_size = quadSize;
 	_spritesheet_size = sizeInSpritesheet / _spritesheet->getSize();
 }
 
