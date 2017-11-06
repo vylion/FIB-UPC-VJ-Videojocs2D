@@ -509,14 +509,17 @@ void BallMatrix::checkPopping(const posT & b, const unsigned int & mask, std::ve
 
 	for (unsigned int i = 0; i < group.size(); ++i) {
 		posT next = group[i];
-		unsigned int color = (unsigned int)pow(2, _ballMatrix[next.first][next.second]->getColor());
 
-		if ((color & mask) != 0) {
-			//Check if position has already been marked for poppoing
-			if (std::find(pop.begin(), pop.end(), next) == pop.end()) {
-				//It has not been popped
-				pop.push_back(next);
-				checkPopping(next, color, pop);
+		if (next.first >= (int)_ballMatrix.size() - _visibleMatrixHeight) {
+			unsigned int color = (unsigned int)pow(2, _ballMatrix[next.first][next.second]->getColor());
+
+			if ((color & mask) != 0) {
+				//Check if position has already been marked for poppoing
+				if (std::find(pop.begin(), pop.end(), next) == pop.end()) {
+					//It has not been popped
+					pop.push_back(next);
+					checkPopping(next, color, pop);
+				}
 			}
 		}
 	}
