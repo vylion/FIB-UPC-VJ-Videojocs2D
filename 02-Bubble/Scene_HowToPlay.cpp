@@ -20,6 +20,7 @@ int Scene_HowToPlay::update(int deltaTime)
 	//Check back to menu
 	if (Game::instance().getKeyJustPressed(32) || Game::instance().getKeyReleased(27) ||		//Space, Esc
 		Game::instance().getKeyJustPressed(13) || Game::instance().getKeyJustPressed('q') ||	//Enter, q
+		Game::instance().mouseJustPressed() ||
 		Game::instance().getSpecialKeyJustPressed(GLUT_KEY_LEFT) || Game::instance().getSpecialKeyJustPressed(GLUT_KEY_RIGHT) ||
 		Game::instance().getSpecialKeyJustPressed(GLUT_KEY_DOWN) || Game::instance().getSpecialKeyJustPressed(GLUT_KEY_UP)
 		)
