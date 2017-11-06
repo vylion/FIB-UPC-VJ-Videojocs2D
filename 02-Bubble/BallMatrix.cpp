@@ -361,7 +361,6 @@ unsigned int BallMatrix::colorsLeftInMatrix()
 {
 	unsigned int res = 0;
 
-
 	for (int i = 0; i < (int)_ballMatrix.size(); ++i) {
 		//Balls
 		for (int j = 0; j < (int)_ballMatrix[i].size(); ++j) {
