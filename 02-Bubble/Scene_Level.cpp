@@ -7,7 +7,7 @@
 #define INIT_PLAYER_X_TILES 9
 #define INIT_PLAYER_Y_TILES 26
 
-#define BACKGROUND_TEXTURE "../media/images/level_bg.png"
+#define BACKGROUND_TEXTURE "../media/images/level_bg_temp.png"
 #define SPRITE_TEXTURE "../media/images/level_sprites.png"
 
 #define WIN_SOUND "../media/audio/sounds/game_win.ogg"
@@ -194,7 +194,8 @@ int Scene_Level::update(int deltaTime)
 								lose();
 								break;
 							case BallManager::state::LAUNCHED_BALL:
-								SoundManager::instance().playSound(LAUNCH_BALL_SOUND);
+
+								
 								break;
 						}
 						aimer->update(deltaTime, bmngState);
@@ -295,15 +296,12 @@ void Scene_Level::initAudio()
 
 	SoundManager::instance().setMusic(MUSIC_FILE);
 	SoundManager::instance().setMusicVolume(1.f);
-
-
-
 	//SoundManager::instance().addSound(CHANGE_BUTTON_SFX);
-	SoundManager::instance().addSound(WIN_SOUND);
-	SoundManager::instance().setSoundVolume(WIN_SOUND, 0.2f);
-	SoundManager::instance().addSound(LOSE_SOUND);
-	SoundManager::instance().setSoundVolume(LOSE_SOUND, 0.2f);
-	//SoundManager::instance().addSound(LAUNCH_BALL_SOUND);
+
+	SoundManager::instance().addSound(LAUNCH_BALL_SOUND);
+	SoundManager::instance().addSound(WIN_SOUND, 0.f);
+	SoundManager::instance().addSound(LOSE_SOUND, 0.1f);
+	//SoundManager::instance().setSoundVolumeFactor(0.4f);
 }
 
 void Scene_Level::checkButtons(int deltaTime)
@@ -381,6 +379,8 @@ void Scene_Level::lose()
 	_selectedButton = 1;
 
 	SoundManager::instance().playSound(LOSE_SOUND);
+	SoundManager::instance().setSoundVolume(LOSE_SOUND, 0.2f);
+
 	bool playButtonSound = false;
 	_buttons[_selectedButton]->select(playButtonSound);
 }

@@ -1,0 +1,14 @@
+BALLMAP
+14 9 7				-- Size of tile map in tiles (x, y) and visible starting height
+16 16 				-- Tile size & block size
+../media/images/balls.png	-- Tilesheet
+8 0				-- Number of available colors and min color
+01623241772222
+0112333322110
+01234522245730
+0134022635471
+52352263045723
+2222356703457
+33006130270452
+1336024713451
+11334567654321

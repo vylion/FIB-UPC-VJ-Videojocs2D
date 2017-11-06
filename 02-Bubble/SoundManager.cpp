@@ -47,6 +47,7 @@ void SoundManager::update()
 void SoundManager::dropAll()
 {
 	_music_engine->removeAllSoundSources();
+
 	_sound_engine->removeAllSoundSources();
 }
 
@@ -77,6 +78,7 @@ void SoundManager::setMusic(const char * fileName)
 	_music_engine->removeAllSoundSources();
 	//Read new music from file and start on loop
 	_music_engine->play2D(fileName, true);
+	setMusicVolume(_musicVolume);
 }
 
 

@@ -8,6 +8,8 @@
 #include "Ball_Launched.h"
 #include "../Game.h"
 
+#define LAUNCH_BALL_SOUND "../media/audio/sounds/ball_launch.ogg"
+
 BallManager * BallManager::createBallManager(TileMap *tmap, ShaderProgram & shaderProgram)
 {
 	BallManager *bm = new BallManager(tmap, shaderProgram);
@@ -45,8 +47,7 @@ int BallManager::update(int deltaTime)
 	switch (_state) {
 		//Just launched a ball, move to waiting for ball
 		case state::LAUNCHED_BALL:
-
-			
+			SoundManager::instance().playSound(LAUNCH_BALL_SOUND);
 			_state = state::W8_LAUNCHED_BALL;
 			//No break because we want to update the ball
 		//Waiting for launched ball
