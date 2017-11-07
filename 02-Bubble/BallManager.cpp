@@ -98,12 +98,12 @@ void BallManager::render() const
 
 Ball_Held * BallManager::getNextHeldBall()
 {
+	_colorsInMatrix = _bmat->colorsLeftInMatrix();
 	Ball *b = getNewBall();
 	//Store next held ball for the return
 	Ball_Held *ret = new Ball_Held(_shaderProgram, b);
 	ret->init(b->getColor(), b->getPosition(), _tmap->getMinRenderCoords());
 	
-	_colorsInMatrix = _bmat->colorsLeftInMatrix();
 	//Generate a new ball for display
 	//_nextBall = getNewBall();
 
