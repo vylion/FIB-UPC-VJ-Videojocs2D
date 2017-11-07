@@ -36,6 +36,7 @@ void BallManager::init(const string & levelFile)
 	_minBallCoords = /*(glm::vec2)_tmap->getMinRenderCoords() + */(glm::vec2)_tmap->getBallOffset() * (float)_tmap->getTileSize();
 	if (!readLevel(levelFile)) printf("BallManager: Failed to read levelFile");
 
+	_colorsInMatrix = _bmat->colorsLeftInMatrix();
 	_state = state::W8_AIMER;
 }
 
@@ -124,12 +125,21 @@ int BallManager::getAccumulatedScoreVariation()
 	return -50*_thrownBalls;
 }
 
-Ball * BallManager::getNewBall()
+Ball* BallManager::getNewBall()
 {
 	int color;
-	do {
-		color = rand() % _availableColors + _minColor;
-	} while (!((unsigned int)pow(2, color) & _colorsInMatrix));
+	std::vector<int> colors;
+	for (int i = _minColor; i < _availableColors + _minColor; ++i) {
+		colors.push_back(i);
+	}
+
+	std::random_shuffle(colors.begin(), colors.end());
+	bool found = false;
+
+	for (int i = 0; i < colors.size() && !found; ++i) {
+		color = colors[i];
+		found = ((unsigned int)pow(2, color) & _colorsInMatrix);
+	}
 
 	Ball *b = new Ball(_ballPixelSize, glm::vec2((float)_spritePixelSize), _spritesheet, _shaderProgram);
 	b->init(color, _minBallCoords, _tmap->getMinRenderCoords());

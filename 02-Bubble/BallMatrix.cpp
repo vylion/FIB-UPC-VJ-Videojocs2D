@@ -95,7 +95,6 @@ BallMatrix::BallMatrix( int * colorMatrix,
 		_ballMatrix[0][i]->setTopRow(true);
 	}
 
-	srand((unsigned)time(0));
 	float k = float((rand() % 360)*M_PI / 180);
 	shake = glm::vec2(sin(k), cos(k));
 }

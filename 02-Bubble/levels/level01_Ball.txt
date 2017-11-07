@@ -1,0 +1,11 @@
+BALLMAP
+14 6 4				-- Size of tile map in tiles (x, y) and visible starting height
+16 16 				-- Tile size & block size
+../media/images/balls.png	-- Tilesheet
+2 0				-- Number of available colors and min color
+0000000       
+000000       
+0000000       
+0000001111111
+00000011111111
+0000001111111

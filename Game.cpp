@@ -5,12 +5,15 @@
 
 void Game::init()
 {
+	srand((unsigned)time(0));
+
 	bPlay = true;
 	glClearColor(0.f, 0.f, 0.f, 1.f);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	scene = new Scene_Menu();
 	scene->init();
+
 }
 
 bool Game::update(int deltaTime)
