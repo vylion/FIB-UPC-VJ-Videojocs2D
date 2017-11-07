@@ -6,13 +6,13 @@ void Scene::initShaders()
 {
 	Shader vShader, fShader;
 
-	vShader.initFromFile(VERTEX_SHADER, "../shaders/texture.vert");
+	vShader.initFromFile(VERTEX_SHADER, "shaders/texture.vert");
 	if (!vShader.isCompiled())
 	{
 		std::cout << "Vertex Shader Error" << std::endl;
 		std::cout << "" << vShader.log() << std::endl << std::endl;
 	}
-	fShader.initFromFile(FRAGMENT_SHADER, "../shaders/texture.frag");
+	fShader.initFromFile(FRAGMENT_SHADER, "shaders/texture.frag");
 	if (!fShader.isCompiled())
 	{
 		std::cout << "Fragment Shader Error" << std::endl;
